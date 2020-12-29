@@ -1,11 +1,51 @@
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import reducer from './reducers';
+import thunk from 'redux-thunk';
+import {composeWithDevTools} from 'redux-devtools-extension';
+import {createLogger} from 'redux-logger';
+
+const logger = createLogger({
+    /* https://github.com/evgenyrodionov/redux-logger */
+    collapsed: true,
+    diff: true
+});
+
 
 const initialState = {
 
-	listaConsulta: [{'id':2,'description':'texto default'}],
+	listaConsulta: [
+		{
+		   "precioCompra":12.0,
+		   "codigointerno":"358",
+		   "proveedor":"trupper",
+		   "description":"Palanca de plastico para wc",
+		   "codigoProveedor":"49504",
+		   "precioVenta":18.0,
+		   "ubicacion":"",
+		   "barcode":"7506240620037",
+		   "existencia":7,
+		   "cantidad": 1,
+		   "total": 10.0,
+		},
+		{
+		   "precioCompra":14.0,
+		   "codigointerno":"14",
+		   "proveedor":"trupper",
+		   "description":"Codo 13 x 90 cobre",
+		   "codigoProveedor":"49506",
+		   "precioVenta":10.0,
+		   "ubicacion":"",
+		   "barcode":"7506240621234",
+		   "existencia":7,
+		   "cantidad": 2,
+		   "total": 20.0,
+		},
+	],
 }
 
-const store = createStore(reducer, initialState);
+const store = createStore(reducer, initialState,composeWithDevTools(
+            /* logger must be the last middleware in chain to log actions */
+            applyMiddleware(thunk, logger)  
+        ));
 
 export default store;
