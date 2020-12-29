@@ -7,15 +7,21 @@ import Producto from '../components/Producto'
 import LectorCodigoBarras from '../components/LectorCodigoBarras'
 
 import confLogo from '../images/badge-header.svg';
-import { Grid } from '@material-ui/core'
+import { GridList, GridListTile } from '@material-ui/core'
 import { Button } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles({
-    gridContainer: {
-      paddingLeft: "40px",
-      paddingRight: "40px",
+    root: {
+      display: "flex",
+      flexWrap: "wrap",
+      justifyContent: "space-around",
+      overflow: "hidden",
+    },
+    gridList: {
+       width: 900,
+       height: 300,
     },
 
 });
@@ -25,21 +31,21 @@ function CodigoBarras() {
   const dispatch = useDispatch();
   const lector = LectorCodigoBarras("message");
   const listElements = lista.map((prod) =>
-     <Producto key={prod.codigointerno} data={prod} />  
+     <GridListTile key={prod.id} cols={1} onClick={(e) => dispatch(actions.activeItemConsulta(prod.id))} >
+        <Producto key={prod.id} data={prod} />  
+     </GridListTile>
   );
   const classes = useStyles();
 
   return (
     <div>
       <Button variant="contained" color="primary" startIcon={ <DeleteIcon /> }> 
-        Delete 6
+        Delete 15
       </Button>
       <p> componente codigo de barras  una prueba</p>
-      <Grid container spacing={4} className={classes.gridContainer}>
-        <Grid item xs={4} sm={4} md={4}>
+      <GridList cellHeight={'auto'} spacing={5} className={classes.gridList} cols={1} >
            {listElements}
-        </Grid>   
-      </Grid>
+      </GridList>
       <button onClick={() => dispatch(actions.addItemConsulta({'codigointerno':1,'description':'abc'}))}> Agregar producto </button>
       <Link className="btn btn-primary" to="/tpv">
                 Ve a pagina  tpv

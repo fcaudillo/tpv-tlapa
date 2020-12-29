@@ -12,6 +12,11 @@ import Icon from '@material-ui/core/Icon'
 const useStyles = makeStyles({
     root: {
     	minWidth: 275,
+      backgroundColor: "white"
+    },
+    rootActive: {
+      minWidth: 275,
+      backgroundColor: "#dbffff"
     },
     title: {
     	fontSize: 14,
@@ -26,26 +31,31 @@ const Producto = (props) => {
 	const classes = useStyles();
 
 	return	(
-		   <Card className={classes.root} variant="outlined" >
-		     <CardHeader title={ <div> {props.data.codigointerno} - {props.data.description} </div>} 
-		                 subheader={
-		                 	<div>
-                               <Typography variant='h6' color='primary' display='inline'> 
-                                  {props.data.cantidad} 
-                               </Typography> Unidad(es) a &nbsp; 
-                               <Typography variant='h6' color='primary' display='inline'> 
-                                  ${ props.data.precioVenta} 
-                               </Typography>
-                                &nbsp; / Unidad(es)
-		                 	</div>
-		                 } 
-		                 action={
-						     <Button variant="contained" color="primary" startIcon={ <Icon>add_circle</Icon> }> 
-						        ${props.data.precioVenta}
-						      </Button>
+		   <Card className={props.data.active ? classes.rootActive : classes.root} variant="outlined" >
+    		     <CardHeader title={ <div> {props.data.codigointerno} - {props.data.description} </div>} 
+    		                 subheader={
+      		                 	<div>
+                                     <Typography variant='h6' color='primary' display='inline'> 
+                                        {props.data.cantidad} 
+                                     </Typography> Unidad(es) a &nbsp; 
+                                     <Typography variant='h6' color='primary' display='inline'> 
+                                        ${ props.data.precioVenta} 
+                                     </Typography>
+                                      &nbsp; / Unidad(es)
+      		                 	</div>
+    		                 } 
+    		                 action={
+          						     <Button variant="contained" color="primary" startIcon={ <Icon>add_circle</Icon> } 
+                             onClick={(e) => { 
+                                alert('pulsado add 3');
+                                e.stopPropagation();
+                             }
+                           }> 
+          						        ${props.data.precioVenta}
+          						      </Button>
 
-		                 }
-		                 />
+    		                 }
+    		     />
 
 		   </Card>
 
