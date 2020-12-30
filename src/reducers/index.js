@@ -12,7 +12,17 @@ const reducer = (state,action) => {
               listaConsulta: state.listaConsulta.map(item => {
                                                        item.active =  (item.id == action.payload ? true: false);
                                                        return item; })
-          }        
+          }
+       case 'MODIFY_QUANTITY_CALCULATOR':
+          return {
+             ...state,
+             calculator: {...state.calculator, "cantidad": action.payload},
+          }  
+       case 'MODIFY_TYPE_CALCULATOR':  
+          return {
+             ...state,
+             calculator: {...state.calculator, "type": action.payload},
+          }         
        default:   
           return state;
 

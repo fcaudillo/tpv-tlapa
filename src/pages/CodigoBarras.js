@@ -5,10 +5,11 @@ import * as actions from '../actions'
 import './styles/CodigoBarras.css';
 import Producto from '../components/Producto'
 import LectorCodigoBarras from '../components/LectorCodigoBarras'
+import EditItemConsulta from '../components/EditItemConsulta'
 
 import confLogo from '../images/badge-header.svg';
 import { GridList, GridListTile } from '@material-ui/core'
-import { Button } from '@material-ui/core'
+import { Button, Box } from '@material-ui/core'
 import DeleteIcon from '@material-ui/icons/Delete'
 import { makeStyles } from '@material-ui/core/styles'
 
@@ -40,7 +41,7 @@ function CodigoBarras() {
   return (
     <div>
       <Button variant="contained" color="primary" startIcon={ <DeleteIcon /> }> 
-        Delete 15
+        Delete 16
       </Button>
       <p> componente codigo de barras  una prueba</p>
       <GridList cellHeight={'auto'} spacing={5} className={classes.gridList} cols={1} >
@@ -50,6 +51,7 @@ function CodigoBarras() {
       <Link className="btn btn-primary" to="/tpv">
                 Ve a pagina  tpv
               </Link>
+      <EditItemConsulta  />
     </div>
   );
 }

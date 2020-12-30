@@ -12,7 +12,11 @@ const logger = createLogger({
 
 
 const initialState = {
-
+    calculator: {
+        "cantidad": "",
+        "type": "quantity",
+        "disabledPrice": true,
+    },
 	listaConsulta: [
 		{
 		   "id": 1,	
