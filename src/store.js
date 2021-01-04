@@ -17,6 +17,21 @@ const initialState = {
         "type": "quantity",
         "disabledPrice": true,
     },
+    cardEditItem : {
+		   "id": 2,	
+		   "precioCompra":14.0,
+		   "codigointerno":"14",
+		   "proveedor":"trupper",
+		   "description":"Codo 13 x 90 cobre",
+		   "codigoProveedor":"49506",
+		   "precioVenta":10.0,
+		   "ubicacion":"",
+		   "barcode":"7506240621234",
+		   "existencia":7,
+		   "cantidad": 2,
+		   "total": 20.0,
+		   "active": false,
+	},
 	listaConsulta: [
 		{
 		   "id": 1,	

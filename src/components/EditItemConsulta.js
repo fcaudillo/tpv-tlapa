@@ -2,9 +2,12 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
 import Calculator from '../components/Calculator'
+import CardEditItem from '../components/CardEditItem'
 import { Button, Box } from '@material-ui/core'
-
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Dialog from '@material-ui/core/Dialog'
 import { makeStyles } from '@material-ui/core/styles'
+import Icon from '@material-ui/core/Icon'
 
 const useStyles = makeStyles({
     root: {
@@ -20,30 +23,55 @@ const useStyles = makeStyles({
 
 });
 
-function EditItemConsulta() {
-  const lista = useSelector(store => store.listaConsulta);
+function EditItemConsulta(props) {
+  const onClose = props.onClose;
+  const open = props.open;
+  const cardEditItem = useSelector(store => store.cardEditItem);
   const dispatch = useDispatch();
-  const [quantity, setQuantity] = React.useState(''); 
-  const [quantityPrice, setQuantityPrice] = React.useState(''); 
-  const [type,setType] = React.useState('quantity');
+  //const [type,setType] = React.useState('quantity');
   const [disabledPrice,setDisabledPrice] =  React.useState(true);
 
-  const  updateData = (quantity, quantityPrice,type) => { 
-  	       setType(type);
-  	       setQuantity(quantity);
-  	       setQuantityPrice(quantityPrice);
-  	     }
+  const handleClose = () => {
+     onClose(cardEditItem);
+  }
 
+
+
+  const  updateData = (quantity, quantityPrice,type) => { 
+  	       //setType(type);
+  	       const cantidad = (quantity == "" || quantity == "." ? 0 : parseFloat(quantity));
+  	       const precioVenta = (quantityPrice == "" || quantityPrice == "." ? 0 : parseFloat(quantityPrice));
+  	       dispatch(actions.modifyItemConsulta({...cardEditItem, "cantidad" : cantidad, "precioVenta": precioVenta}));
+  	     }
+   
   return (
-    <div>
-      <p> Quantity : {quantity}, Quantity Price : {quantityPrice} Type: {type} </p>
-      <Box width={300}>        
-         <Calculator type={type} quantity={quantity} quantityPrice={quantityPrice} updateData={ (quantity, quantityPrice, type) => {
-         	
-         	updateData(quantity, quantityPrice,type);
-         }} />  
-      </Box>      
-    </div>
+
+    <Dialog onClose={handleClose} open={open}>
+        <DialogTitle id='simple-dialog-title'>Capture la cantidad deseada </DialogTitle>
+        <div>
+          <Box width={500}>  
+              <CardEditItem data={cardEditItem} />  
+          </Box>
+          <Box width={300}>  
+                 
+             <Calculator type='quantity' quantity={"" + cardEditItem.cantidad} quantityPrice={"" + cardEditItem.precioVenta} updateData={ (quantity, quantityPrice, type) => {
+             	
+             	updateData(quantity, quantityPrice,type);
+             }} />  
+
+             <Button variant="contained" color="primary" startIcon={ <Icon>done</Icon> } 
+                             onClick={(e) => {
+                                dispatch(actions.modifyListItemConsulta(cardEditItem));
+                                handleClose();
+                                e.stopPropagation();
+                             }}
+                           > 
+
+             </Button>
+
+          </Box>      
+        </div>
+    </Dialog>
   );
 }
 

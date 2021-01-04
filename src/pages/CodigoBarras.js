@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
@@ -29,29 +29,44 @@ const useStyles = makeStyles({
 
 function CodigoBarras() {
   const lista = useSelector(store => store.listaConsulta);
+  const cardItem = useSelector(store => store.cardEditItem);
   const dispatch = useDispatch();
   const lector = LectorCodigoBarras("message");
+  const [isOpen, setIsOpen] = useState(false);
   const listElements = lista.map((prod) =>
-     <GridListTile key={prod.id} cols={1} onClick={(e) => dispatch(actions.activeItemConsulta(prod.id))} >
+     <GridListTile key={prod.id} cols={1} onClick={(e) => {
+                                              dispatch(actions.activeItemConsulta(prod.id));
+                                              console.log(cardItem);
+                                          }} 
+      >
         <Producto key={prod.id} data={prod} />  
      </GridListTile>
   );
   const classes = useStyles();
 
+  const openEditCalculator = () => {
+     setIsOpen(true);
+  }
+  const closeEditCalculator = (value) => {
+    setIsOpen(false);
+  }
+
   return (
     <div>
       <Button variant="contained" color="primary" startIcon={ <DeleteIcon /> }> 
-        Delete 16
+        Delete 19
       </Button>
       <p> componente codigo de barras  una prueba</p>
       <GridList cellHeight={'auto'} spacing={5} className={classes.gridList} cols={1} >
            {listElements}
       </GridList>
       <button onClick={() => dispatch(actions.addItemConsulta({'codigointerno':1,'description':'abc'}))}> Agregar producto </button>
+      <button onClick={openEditCalculator} > open dialog </button>
       <Link className="btn btn-primary" to="/tpv">
                 Ve a pagina  tpv
               </Link>
-      <EditItemConsulta  />
+      <EditItemConsulta onClose={closeEditCalculator} open={isOpen}  data={cardItem}  />
+         
     </div>
   );
 }

@@ -10,17 +10,12 @@ export const activeItemConsulta = payload => ({
    payload,
 });
 
-export const modifyQtyCalculator = payload => ({
-   type: 'MODIFY_QUANTITY_CALCULATOR',
+export const modifyItemConsulta = payload => ({
+   type: 'MODIFY_ITEM_CONSULTA',
    payload,
 });
 
-export const modifyTypeCalculator = payload => ({
-   type: 'MODIFY_TYPE_CALCULATOR',
-   payload,
-});
-
-export const modifyDisabledPrice = payload => ({
-   type: 'MODIFY_DISABLED_PRICE',
+export const modifyListItemConsulta = payload => ({
+   type: 'MODIFY_LISTA_CONSULTA',
    payload,
 });
