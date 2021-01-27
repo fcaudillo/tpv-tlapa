@@ -15,13 +15,18 @@ const reducer = (state,action) => {
        case 'ADD_ITEM_CONSULTA':
           return {
           	  ...state,
-          	  listaConsulta: [...state.listaConsulta, action.payload]
+          	  listaConsulta: [action.payload, ...state.listaConsulta.map(item => {
+                                    item.active = false
+                                    return item;
+                                   })
+                                 ],
           }
        case 'ACTIVE_ITEM_CONSULTA':    
             activo = findItemActivo(state.listaConsulta,action.payload);  
             activo.active = true;                          
             return {
               ...state,
+              copyCardEditItem: {...activo},
               cardEditItem : {...activo},
               listaConsulta: state.listaConsulta.map(item => {
                                                        item.active =  (item.id == action.payload ? true: false);

@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
 import Calculator from '../components/Calculator'
 import CardEditItem from '../components/CardEditItem'
-import { Button, Box } from '@material-ui/core'
+import { Button, Box, Grid } from '@material-ui/core'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import Dialog from '@material-ui/core/Dialog'
 import { makeStyles } from '@material-ui/core/styles'
@@ -20,13 +20,21 @@ const useStyles = makeStyles({
        width: 900,
        height: 300,
     },
+    tecla: {
+      maxHeight: '46px', 
+      minHeight: '46px',
+      marginBottom: '20px',
+    },
 
 });
 
 function EditItemConsulta(props) {
+  const classes = useStyles();
   const onClose = props.onClose;
   const open = props.open;
   const cardEditItem = useSelector(store => store.cardEditItem);
+  const originalCardEditItem = useSelector(store => store.copyCardEditItem);
+  const onCancel = props.onCancel;
   const dispatch = useDispatch();
   //const [type,setType] = React.useState('quantity');
   const [disabledPrice,setDisabledPrice] =  React.useState(true);
@@ -35,6 +43,10 @@ function EditItemConsulta(props) {
      onClose(cardEditItem);
   }
 
+  const handleCancel = () => {
+     dispatch(actions.modifyItemConsulta({...originalCardEditItem}));
+     onClose(cardEditItem);
+  }
 
 
   const  updateData = (quantity, quantityPrice,type) => { 
@@ -47,30 +59,58 @@ function EditItemConsulta(props) {
   return (
 
     <Dialog onClose={handleClose} open={open}>
-        <DialogTitle id='simple-dialog-title'>Capture la cantidad deseada </DialogTitle>
-        <div>
-          <Box width={500}>  
+
+        <Box margin={2} >
+          <Box >  
               <CardEditItem data={cardEditItem} />  
           </Box>
-          <Box width={300}>  
+          <Box >               
+             <Box width={490}>
+                <Grid container  >
+
+
+                    <Grid item xs={9}>
+                       <Calculator type='quantity' quantity={"" + cardEditItem.cantidad} quantityPrice={"" + cardEditItem.precioVenta} updateData={ (quantity, quantityPrice, type) => {
+                        
+                        updateData(quantity, quantityPrice,type);
+                       }} /> 
+
+                    </Grid>
+                    <Grid item xs={3}>
+    
+                           <Box spacing={2}>
+                              <Button variant="outlined" className={classes.tecla} startIcon={ <Icon>check_circle_icon</Icon> } 
+                                           onClick={(e) => {
+                                              dispatch(actions.modifyListItemConsulta(cardEditItem));
+                                              handleClose();
+                                              e.stopPropagation();
+                                           }}
+                                         > 
+                                         Aceptar
+                           </Button>                       
+                           <Button variant="outlined" className={classes.tecla} color="primary" startIcon={ <Icon>cancel</Icon> } 
+                                 onClick={(e) => {
+                                    handleCancel();
+                                    e.stopPropagation();
+                                 }}
+                               > 
+                               Cancelar
+                           </Button> 
+                         </Box>              
+                    </Grid>
+
+                </Grid> 
+             </Box>
+             
+
                  
-             <Calculator type='quantity' quantity={"" + cardEditItem.cantidad} quantityPrice={"" + cardEditItem.precioVenta} updateData={ (quantity, quantityPrice, type) => {
-             	
-             	updateData(quantity, quantityPrice,type);
-             }} />  
+ 
 
-             <Button variant="contained" color="primary" startIcon={ <Icon>done</Icon> } 
-                             onClick={(e) => {
-                                dispatch(actions.modifyListItemConsulta(cardEditItem));
-                                handleClose();
-                                e.stopPropagation();
-                             }}
-                           > 
 
-             </Button>
+           
 
           </Box>      
-        </div>
+        </Box>
     </Dialog>
   );
 }

@@ -3,7 +3,7 @@ import socketIOClient from "socket.io-client";
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
 
-const SOCKET_SERVER_URL = "http://192.168.100.13:5000";
+const SOCKET_SERVER_URL = "http://192.168.100.9:5000";
 const SEARCH_PRODUCT_BARCODE = "message"
 
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import { Button } from '@material-ui/core'
+import { Button, Box } from '@material-ui/core'
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { useSelector, useDispatch } from 'react-redux'
@@ -18,6 +18,12 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
+  tecla: {
+    maxWidth: '50px', 
+    maxHeight: '46px', 
+    minWidth: '50px', 
+    minHeight: '46px',
+  }
 }));
 
 export default function Calculator(props) {
@@ -27,127 +33,128 @@ export default function Calculator(props) {
   const [type,setType] = React.useState(props.type);
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={1}>
-        <Grid container item xs={9} spacing={3}>
-          <Grid container item xs={12} spacing={1}>
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "1" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "1": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    1
-                  </Button>
-              </Grid>
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "2" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "2": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    2
-                  </Button>
-              </Grid>
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "3" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "3": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    3
-                  </Button>
-              </Grid>
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "4" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "4": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    4
-                  </Button>
-              </Grid>
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "5" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "5": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    5
-                  </Button>
-              </Grid>
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "6" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "6": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    6
-                  </Button>
-              </Grid>
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "7" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "7": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    7
-                  </Button>
-              </Grid>
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "8" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "8": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    8
-                  </Button>
-              </Grid>
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "9" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "9": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    9
-                  </Button>
-              </Grid>
+    <Box className={classes.root}>
+      <Grid container >
+        <Grid container item xs={7} >
+          <Box width={200} >
+              <Grid container item xs={12} spacing={2} >
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla} color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "1" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "1": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        1
+                      </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "2" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "2": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        2
+                      </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "3" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "3": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        3
+                      </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "4" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "4": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        4
+                      </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla} color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "5" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "5": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        5
+                      </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "6" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "6": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        6
+                      </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "7" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "7": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        7
+                      </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "8" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "8": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        8
+                      </Button>
+                  </Grid>
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "9" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "9": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        9
+                      </Button>
+                  </Grid>
 
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" > 
-                    %
-                  </Button>
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla} color="primary" > 
+                        %
+                      </Button>
+                  </Grid>
+
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                          props.updateData((type == "quantity" ? props.quantity + "0" : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + "0": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        0
+                      </Button>
+                  </Grid>
+
+                  <Grid item xs={4}>
+                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                          if (type == "quantity"){
+                            if (props.quantity.indexOf(".") != -1)
+                               return;
+                          }else if (type == "price") {
+                            if (props.quantityPrice.indexOf(".") != -1)
+                               return;
+                          }
+                          props.updateData((type == "quantity" ? props.quantity + "." : props.quantity), 
+                                           (type == "price" ? props.quantityPrice + ".": props.quantityPrice), 
+                                           type);
+                      }}> 
+                        .
+                      </Button>
+                  </Grid>
+ 
               </Grid>
-
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      props.updateData((type == "quantity" ? props.quantity + "0" : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + "0": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    0
-                  </Button>
-              </Grid>
-
-              <Grid item xs={4}>
-                  <Button variant="contained" color="primary" onClick={ () => {
-                      if (type == "quantity"){
-                        if (props.quantity.indexOf(".") != -1)
-                           return;
-                      }else if (type == "price") {
-                        if (props.quantityPrice.indexOf(".") != -1)
-                           return;
-                      }
-                      props.updateData((type == "quantity" ? props.quantity + "." : props.quantity), 
-                                       (type == "price" ? props.quantityPrice + ".": props.quantityPrice), 
-                                       type);
-                  }}> 
-                    .
-                  </Button>
-              </Grid>
-
-          </Grid>
-
+          </Box>
         </Grid>
         <Grid container item xs={3} spacing={3}>
           <Grid container item xs={12} spacing={1}>
@@ -177,7 +184,7 @@ export default function Calculator(props) {
                     </ToggleButton>
                 </Grid>
                 <Grid item xs={12}>
-                    <Button variant="contained" color="primary"  onClick={ () => {
+                    <Button variant="outlined"  className={classes.tecla}  color="primary"  onClick={ () => {
                       props.updateData((type == "quantity" ? props.quantity.slice(0,-1) : props.quantity), 
                                        (type == "price" ? props.quantityPrice.slice(0,-1) : props.quantityPrice), 
                                        type);
@@ -186,7 +193,7 @@ export default function Calculator(props) {
                     </Button>
                 </Grid>
                 <Grid item xs={12}>
-                    <Button variant="contained" color="primary"  onClick={ () => {
+                    <Button variant="outlined" className={classes.tecla}  color="primary"  onClick={ () => {
                       props.updateData((type == "quantity" ? "": props.quantity), 
                                        (type == "price" ? "" : props.quantityPrice), 
                                        type);
@@ -199,6 +206,6 @@ export default function Calculator(props) {
         </Grid>
 
       </Grid>
-    </div>
+    </Box>
   );
 }

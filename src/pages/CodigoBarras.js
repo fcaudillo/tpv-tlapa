@@ -10,7 +10,7 @@ import EditItemConsulta from '../components/EditItemConsulta'
 import confLogo from '../images/badge-header.svg';
 import { GridList, GridListTile } from '@material-ui/core'
 import { Button, Box } from '@material-ui/core'
-import DeleteIcon from '@material-ui/icons/Delete'
+import EditIcon from '@material-ui/icons/Edit'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles({
@@ -53,15 +53,13 @@ function CodigoBarras() {
 
   return (
     <div>
-      <Button variant="contained" color="primary" startIcon={ <DeleteIcon /> }> 
-        Delete 19
+      <Button variant="contained" disabled={lista.length == 0} color="primary" onClick={openEditCalculator} startIcon={ <EditIcon /> }> 
+         Editar        
       </Button>
-      <p> componente codigo de barras  una prueba</p>
+      <br/>
       <GridList cellHeight={'auto'} spacing={5} className={classes.gridList} cols={1} >
            {listElements}
       </GridList>
-      <button onClick={() => dispatch(actions.addItemConsulta({'codigointerno':1,'description':'abc'}))}> Agregar producto </button>
-      <button onClick={openEditCalculator} > open dialog </button>
       <Link className="btn btn-primary" to="/tpv">
                 Ve a pagina  tpv
               </Link>

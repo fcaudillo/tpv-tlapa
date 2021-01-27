@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Button, Box, Grid } from '@material-ui/core'
 import Navbar from './Navbar';
 
 function Layout(props) {
@@ -7,8 +7,21 @@ function Layout(props) {
 
   return (
     <React.Fragment>
+
       <Navbar />
-      {props.children}
+      <Grid container>
+
+        <Grid item xs={3}>
+          <Box>
+          		Datos ticketc
+          </Box>
+
+        </Grid>
+        <Grid item xs={9}>
+				{props.children}
+        </Grid>
+      </Grid>
+      
     </React.Fragment>
   );
 }
