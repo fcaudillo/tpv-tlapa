@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button, Box, Grid } from '@material-ui/core'
 import Navbar from './Navbar';
+import TicketScreen from '../components/TicketScreen'
 
 function Layout(props) {
-  // const children = props.children;
-
+ 
   return (
     <React.Fragment>
 
@@ -13,7 +13,7 @@ function Layout(props) {
 
         <Grid item xs={3}>
           <Box>
-          		Datos ticketc
+          		<TicketScreen />
           </Box>
 
         </Grid>

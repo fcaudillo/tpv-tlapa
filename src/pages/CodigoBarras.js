@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     },
     gridList: {
        width: 900,
-       height: 300,
+       height: 500,
     },
 
 });

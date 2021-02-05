@@ -17,10 +17,42 @@ const initialState = {
         "type": "quantity",
         "disabledPrice": true,
     },
+    itemTicket: {},
+    listaTicket: [
+    ],
     cardEditItem : {
 	},
 	copyCardEditItem: { },
 	listaConsulta: [
+                {
+                   "id": 1,
+                   "precioCompra":12.0,
+                   "codigointerno":"358",
+                   "proveedor":"trupper",
+                   "description":"Palanca de plastico para wc",
+                   "codigoProveedor":"49504",
+                   "precioVenta":18.0,
+                   "ubicacion":"",
+                   "barcode":"7506240620037",
+                   "existencia":7,
+                   "cantidad": 1,
+                   "total": 10.0,
+                },
+                {
+                   "id": 2,
+                   "precioCompra":14.0,
+                   "codigointerno":"14",
+                   "proveedor":"trupper",
+                   "description":"Codo 13 x 90 cobre",
+                   "codigoProveedor":"49506",
+                   "precioVenta":10.0,
+                   "ubicacion":"",
+                   "barcode":"7506240621234",
+                   "existencia":7,
+                   "cantidad": 2,
+                   "total": 20.0,
+                   "active": false,
+                },
 
 	],
 }

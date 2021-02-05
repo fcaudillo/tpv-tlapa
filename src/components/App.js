@@ -12,7 +12,8 @@ function App() {
       <Layout>
         <Switch>
           <Route exact path="/" component={CodigoBarras} />
-          <Route exact path="/tpv" component={TPV} />
+          <Route exact path="/puntoventa/" component={CodigoBarras} />
+          <Route exact path="/puntoventa/tpv" component={TPV} />
 
           
           <Route component={NotFound} />

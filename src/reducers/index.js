@@ -44,6 +44,38 @@ const reducer = (state,action) => {
             ...state,
             cardEditItem: {...action.payload}
           }       
+       case 'ADD_ITEM_TICKET':
+          action.payload.active = true
+         
+          return {
+                  ...state,
+                  itemTicket : action.payload,
+                  listaTicket: [...state.listaTicket.map(item => {
+                                    item.active = false
+                                    return item;
+                                   }),
+                                   action.payload,
+                                 ],
+          }
+       case 'MODIFY_ITEM_TICKET':
+            activo = findItemActivo(state.listaTicket,action.payload.id);
+            activo.cantidad = action.payload.cantidad;
+            activo.precioVenta = action.payload.precioVenta;
+            return {
+               ...state,
+               itemTicket: activo,
+               listaTicket: [...state.listaTicket],
+
+            }
+       case 'ACTIVE_ITEM_TICKET':
+            activo = findItemActivo(state.listaTicket,action.payload);
+            state.itemTicket.active = false;
+            activo.active = true;
+            return {
+              ...state,
+              itemTicket : activo,
+              listaTicket: [...state.listaTicket]
+          }
        default:   
           return state;
 

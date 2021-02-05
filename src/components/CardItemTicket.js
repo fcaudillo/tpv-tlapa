@@ -8,17 +8,13 @@ import { makeStyles } from '@material-ui/core/styles'
 import IconButton from '@material-ui/core/IconButton'
 import { Button } from '@material-ui/core'
 import Icon from '@material-ui/core/Icon'
-import { useSelector, useDispatch } from 'react-redux'
-import * as actions from '../actions'
 
 const useStyles = makeStyles({
     root: {
-    	minWidth: 275,
-      backgroundColor: "white"
+      backgroundColor: 'white',
     },
     rootActive: {
-      minWidth: 275,
-      backgroundColor: "#dbffff"
+      backgroundColor: 'lightgray',
     },
     title: {
     	fontSize: 14,
@@ -29,9 +25,8 @@ const useStyles = makeStyles({
     },
 });
 
-const Producto = (props) => {
+const CardItemTicket = (props) => {
 	const classes = useStyles();
-        const dispatch = useDispatch();
 
 	return	(
 		   <Card className={props.data.active ? classes.rootActive : classes.root} variant="outlined" >
@@ -40,24 +35,15 @@ const Producto = (props) => {
       		                 	<div>
                                      <Typography variant='h6' color='primary' display='inline'> 
                                         {props.data.cantidad} 
-                                     </Typography> Unidad(es) a &nbsp; 
+                                     </Typography> Unidad a &nbsp; 
                                      <Typography variant='h6' color='primary' display='inline'> 
                                         ${ props.data.precioVenta} 
                                      </Typography>
-                                      &nbsp; / Unidad(es)
+                                      &nbsp; / Unidad(es) =  &nbsp; 
+                                     <Typography variant='h6' color='primary' display='inline'> 
+                                        ${ props.data.cantidad * props.data.precioVenta} 
+                                     </Typography>
       		                 	</div>
-    		                 } 
-    		                 action={
-          						     <Button variant="contained" color="primary" startIcon={ <Icon>add_circle</Icon> } 
-                             onClick={(e) => { 
-                                alert('pulsado add 4');
-                                dispatch(actions.addItemTicket({...props.data}));
-                                e.stopPropagation();
-                             }
-                           }> 
-          						        ${props.data.cantidad * props.data.precioVenta}
-          						      </Button>
-
     		                 }
     		     />
 
@@ -66,4 +52,4 @@ const Producto = (props) => {
 		)
 }
 
-export default Producto;
+export default CardItemTicket;

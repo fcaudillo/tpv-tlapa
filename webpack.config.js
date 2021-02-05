@@ -14,7 +14,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'js/[name].[hash].js',
-    publicPath: 'http://192.168.100.13:9001/',
+    publicPath: '/static/precio/',
     chunkFilename: 'js/[id].[chunkhash].js'
   },
   optimization: {
@@ -35,6 +35,9 @@ module.exports = {
         use: [
           {
             loader: MiniCssExtractPlugin.loader,
+            options: {
+               publicPath: '/static/precio/css/',
+            }
           },
           'css-loader',
         ]
@@ -46,7 +49,8 @@ module.exports = {
           options: {
             limit: 1000,
             name: '[hash].[ext]',
-            outputPath: 'assets'
+            outputPath: 'assets',
+            publicPath: '/static/precio/assets/',
           }
         }
       },
