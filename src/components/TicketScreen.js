@@ -43,6 +43,7 @@ function TicketScreen(props) {
   const getListaTicket = () => listaTicket;
   const getItemTicket = () => itemTicket;
   const totalVenta = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
+//  const totalCantidad = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + ticket.cantidad),0);
 
   const  updateData = (quantity, quantityPrice,type) => { 
   	       const cantidad = (quantity == "" || quantity == "." ? 0 : parseFloat(quantity));
@@ -77,8 +78,8 @@ function TicketScreen(props) {
                     </Grid>
 
                     <Grid item xs={12}>
-                      <h2> Total venta: {totalVenta} </h2>
-                       
+                      <div> Total items: {listaTicket.length} </div>
+                      <div> Total venta: {totalVenta} </div>
                     </Grid>
                     <Grid item xs={12}>
                        <Box padding={2}>
