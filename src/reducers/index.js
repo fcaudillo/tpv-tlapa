@@ -2,15 +2,25 @@
 const findItemActivo = (listaConsulta,id) => {
     for (var i = 0; i < listaConsulta.length; i++){
       if (listaConsulta[i].id == id){
-          return listaConsulta[i]
+          return listaConsulta[i];
       }
     } 
     return None;
 }
 
 
+const findItemActivoIndex = (listaConsulta,id) => {
+    for (var i = 0; i < listaConsulta.length; i++){
+      if (listaConsulta[i].id == id){
+          return i;
+      }
+    } 
+    return -1;
+}
+
 const reducer = (state,action) => {
     let activo;
+    let index;
     switch (action.type) {
        case 'ADD_ITEM_CONSULTA':
           return {
@@ -23,6 +33,8 @@ const reducer = (state,action) => {
           }
        case 'ACTIVE_ITEM_CONSULTA':    
             activo = findItemActivo(state.listaConsulta,action.payload);  
+            console.log(activo);
+            console.log('imprimiendo activo');
             activo.active = true;                          
             return {
               ...state,
@@ -63,7 +75,6 @@ const reducer = (state,action) => {
             activo.precioVenta = action.payload.precioVenta;
             return {
                ...state,
-               itemTicket: activo,
                listaTicket: [...state.listaTicket],
 
             }
@@ -76,6 +87,27 @@ const reducer = (state,action) => {
               itemTicket : activo,
               listaTicket: [...state.listaTicket]
           }
+       case 'DELETE_ITEM_TICKET':
+            activo = findItemActivo(state.listaTicket,action.payload);
+            index = findItemActivoIndex(state.listaTicket,action.payload);
+            state.listaTicket.splice(index,1)
+            if (state.listaTicket.length == 1){
+               activo = state.listaTicket[0]
+               activo.active = true
+            }
+            else if (state.listaTicket.length > 1) {
+               activo = state.listaTicket[index == 0 ? 0 : index - 1]
+               activo.active = true
+            }
+            else {
+               activo = {}
+            }
+            return {
+               ...state,
+               itemTicket  : activo,
+               listaTicket : [...state.listaTicket],
+            }
+            
        default:   
           return state;
 

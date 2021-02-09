@@ -41,3 +41,10 @@ export const modifyListItemTicket = payload => ({
    payload,
 });
 
+export const deleteListItemTicket = payload => ({
+   type: 'DELETE_ITEM_TICKET',
+   payload,
+});
+
+
+

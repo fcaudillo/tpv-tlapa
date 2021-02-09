@@ -40,8 +40,6 @@ function TicketScreen(props) {
   const listaTicket = useSelector(store => store.listaTicket);
   const dispatch = useDispatch();
   const [disabledPrice,setDisabledPrice] =  React.useState(true);
-  const getListaTicket = () => listaTicket;
-  const getItemTicket = () => itemTicket;
   const totalVenta = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
 //  const totalCantidad = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + ticket.cantidad),0);
 

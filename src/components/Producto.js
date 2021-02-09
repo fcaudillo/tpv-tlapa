@@ -50,7 +50,6 @@ const Producto = (props) => {
     		                 action={
           						     <Button variant="contained" color="primary" startIcon={ <Icon>add_circle</Icon> } 
                              onClick={(e) => { 
-                                alert('pulsado add 4');
                                 dispatch(actions.addItemTicket({...props.data}));
                                 e.stopPropagation();
                              }
