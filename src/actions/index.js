@@ -46,5 +46,13 @@ export const deleteListItemTicket = payload => ({
    payload,
 });
 
+export const fetchCatalogoProductosSuccess = payload => ({
+   type: 'FETCH_CATALOGO_PRODUCTOS',
+   payload,
+});
+
+export const fetchCatalogoProductosFailed = () => ({
+   type: 'FETCH_CATALOGO_PRODUCTOS_FAILED'
+});
 
 

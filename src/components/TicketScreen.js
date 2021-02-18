@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
 import Calculator from '../components/Calculator'
@@ -10,6 +10,8 @@ import Icon from '@material-ui/core/Icon'
 import GridList from '@material-ui/core/GridList'
 import GridListTile from '@material-ui/core/GridListTile'
 import CardItemTicket from '../components/CardItemTicket'
+import { Observable, fromEvent } from 'rxjs'
+import DialogPagarTicket from '../components/DialogPagarTicket'
 
 const useStyles = makeStyles({
     root: {
@@ -41,13 +43,49 @@ function TicketScreen(props) {
   const dispatch = useDispatch();
   const [disabledPrice,setDisabledPrice] =  React.useState(true);
   const totalVenta = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
-//  const totalCantidad = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + ticket.cantidad),0);
+  const cantidadLista = useSelector(store => store.listaTicket.length);
+  const contadorItemTicket = useSelector(store => store.contadorItemTicket);
+  const [ isOpenDialogPagarTicket, setIsOpenDialogPagarTicket] = React.useState(false);
+
+  const calculatorRef = useRef();
+  const listaEndRef = useRef();
+  const btnPagar = useRef();
+
+  const scrollToBottom = () => {
+     listaEndRef.current.scrollIntoView({ behavior: "smooth", block:'end', inline : 'nearest' })
+  }
+   
+
+  React.useEffect(() => {
+     calculatorRef.current.setHabilitar(cantidadLista == 0);
+  },[cantidadLista])
+
+  React.useEffect(() => {
+    scrollToBottom()
+  },[contadorItemTicket])
+
+  React.useEffect(() => {
+    const clickPagar$ = fromEvent(btnPagar.current,'click')
+                        .subscribe(evento => openDialogPagarTicket() );
+
+    return () => clickPagar$.unsubscribe(); 
+
+  },[])
+
+  const openDialogPagarTicket = () => {
+    setIsOpenDialogPagarTicket(true);
+  } 
+
+  const closeDialogPagarTicket = () => {
+    setIsOpenDialogPagarTicket(false);
+  }
 
   const  updateData = (quantity, quantityPrice,type) => { 
   	       const cantidad = (quantity == "" || quantity == "." ? 0 : parseFloat(quantity));
   	       const precioVenta = (quantityPrice == "" || quantityPrice == "." ? 0 : parseFloat(quantityPrice));
   	       dispatch(actions.modifyItemTicket({...itemTicket, "cantidad" : cantidad, "precioVenta": precioVenta}));
   	     }
+  
    
   return (
 
@@ -57,8 +95,6 @@ function TicketScreen(props) {
                     <Grid item xs={12}>
                       <Box className={classes.boxTicket}>
                           <div>
-
-
                              <GridList cellHeight='auto' className={classes.gridList} cols={1} component='div'>
                                {listaTicket.map(producto => (
                                   <GridListTile key={producto.id} cols={1} component='div' onClick={(e) => {
@@ -68,8 +104,9 @@ function TicketScreen(props) {
                                     <CardItemTicket data={producto} />
                                   </GridListTile>
                                 ))}
+        
+                                <div ref={listaEndRef} />
                              </GridList>
-
                           </div>
                       </Box>
              
@@ -77,11 +114,18 @@ function TicketScreen(props) {
 
                     <Grid item xs={12}>
                       <div> Total items: {listaTicket.length} </div>
-                      <div> Total venta: {totalVenta} </div>
+                      <Button ref={btnPagar}
+                         variant="outlined"
+                         color = "primary"
+                         disabled = { listaTicket.length == 0 }
+                         fullWidth={true}
+                         style={{ justifyContent: "flex-end"}}>
+                         Total a cobrar $ {totalVenta}
+                      </Button>
                     </Grid>
                     <Grid item xs={12}>
                        <Box padding={2}>
-                           <Calculator type='quantity' quantity={"" + itemTicket.cantidad} quantityPrice={"" + itemTicket.precioVenta} updateData={ (quantity, quantityPrice, type) => {
+                           <Calculator ref={calculatorRef} type='quantity' quantity={"" + itemTicket.cantidad} quantityPrice={"" + itemTicket.precioVenta} updateData={ (quantity, quantityPrice, type) => {
                             updateData(quantity, quantityPrice,type);
                            }} /> 
                        </Box>
@@ -90,7 +134,8 @@ function TicketScreen(props) {
                     </Grid>
 
                 </Grid>
-
+             
+            <DialogPagarTicket onClose={closeDialogPagarTicket} open={isOpenDialogPagarTicket} />
 
           </Box>      
 

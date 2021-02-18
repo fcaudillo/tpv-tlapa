@@ -32,6 +32,8 @@ const useStyles = makeStyles({
 const Producto = (props) => {
 	const classes = useStyles();
         const dispatch = useDispatch();
+        const listaTicket = useSelector(store => store.listaTicket);
+        const listaTicketNormalizado = useSelector(store => store.listaTicketNormalizado);
 
 	return	(
 		   <Card className={props.data.active ? classes.rootActive : classes.root} variant="outlined" >
@@ -50,7 +52,16 @@ const Producto = (props) => {
     		                 action={
           						     <Button variant="contained" color="primary" startIcon={ <Icon>add_circle</Icon> } 
                              onClick={(e) => { 
-                                dispatch(actions.addItemTicket({...props.data}));
+                                var item = listaTicketNormalizado[props.data.codigointerno];
+                                console.log("item: " + props.data.codigointerno)
+                                console.log(item)
+                                if (typeof(item) == "undefined") {
+                                  dispatch(actions.addItemTicket({...props.data}));
+                                }else{
+                                  var itemAModificar = listaTicket[item.index];
+                                  itemAModificar.cantidad = itemAModificar.cantidad + props.data.cantidad;
+                                  dispatch(actions.modifyListItemTicket({...itemAModificar}));
+                                }
                                 e.stopPropagation();
                              }
                            }> 

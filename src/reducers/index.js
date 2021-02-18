@@ -58,10 +58,13 @@ const reducer = (state,action) => {
           }       
        case 'ADD_ITEM_TICKET':
           action.payload.active = true
-         
+          console.log(state.listaTicketNormalizado) 
+          state.listaTicketNormalizado[action.payload.codigointerno] = {'id': action.payload.codigointerno, 'index': state.listaTicket.length};
           return {
                   ...state,
                   itemTicket : action.payload,
+                  contadorItemTicket: state.contadorItemTicket + 1,
+                  listaTicketNormalizado: {...state.listaTicketNormalizado } , 
                   listaTicket: [...state.listaTicket.map(item => {
                                     item.active = false
                                     return item;
@@ -80,17 +83,19 @@ const reducer = (state,action) => {
             }
        case 'ACTIVE_ITEM_TICKET':
             activo = findItemActivo(state.listaTicket,action.payload);
-            state.itemTicket.active = false;
             activo.active = true;
             return {
               ...state,
               itemTicket : activo,
-              listaTicket: [...state.listaTicket]
+              listaTicket: state.listaTicket.map(item => {
+                                                       item.active =  (item.id == action.payload ? true: false);
+                                                       return item; })
           }
        case 'DELETE_ITEM_TICKET':
             activo = findItemActivo(state.listaTicket,action.payload);
             index = findItemActivoIndex(state.listaTicket,action.payload);
             state.listaTicket.splice(index,1)
+            state.listaTicket.forEach( item => item.active = false)
             if (state.listaTicket.length == 1){
                activo = state.listaTicket[0]
                activo.active = true
@@ -102,9 +107,14 @@ const reducer = (state,action) => {
             else {
                activo = {}
             }
+            var lstTemporal = {};
+            for (let i=0; i < state.listaTicket.length; i++){
+               lstTemporal[state.listaTicket[i].codigointerno] = {'id': state.listaTicket[i].codigointerno, 'index': i};
+            }
             return {
                ...state,
                itemTicket  : activo,
+               listaTicketNormalizado: lstTemporal, 
                listaTicket : [...state.listaTicket],
             }
             

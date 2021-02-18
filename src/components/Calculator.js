@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { forwardRef, useImperativeHandle } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -26,11 +26,17 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Calculator(props) {
+const Calculator =  forwardRef((props,ref) => {
   const classes = useStyles();
   const calculator = useSelector(store => store.calculator);
   const dispatch = useDispatch();
   const [type,setType] = React.useState(props.type);
+  const [disabled, setDisabled] = React.useState(props.disabled);
+
+  useImperativeHandle(ref, () =>({
+                                   setHabilitar(estado) {
+                                     setDisabled(estado);
+                                   }}),)
 
   return (
     <Box className={classes.root}>
@@ -39,7 +45,7 @@ export default function Calculator(props) {
           <Box width={200} >
               <Grid container item xs={12} spacing={2} >
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla} color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla} color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "1" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "1": props.quantityPrice), 
                                            type);
@@ -48,7 +54,7 @@ export default function Calculator(props) {
                       </Button>
                   </Grid>
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled}  className={classes.tecla}  color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "2" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "2": props.quantityPrice), 
                                            type);
@@ -57,7 +63,7 @@ export default function Calculator(props) {
                       </Button>
                   </Grid>
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "3" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "3": props.quantityPrice), 
                                            type);
@@ -66,7 +72,7 @@ export default function Calculator(props) {
                       </Button>
                   </Grid>
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "4" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "4": props.quantityPrice), 
                                            type);
@@ -75,7 +81,7 @@ export default function Calculator(props) {
                       </Button>
                   </Grid>
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla} color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla} color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "5" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "5": props.quantityPrice), 
                                            type);
@@ -84,7 +90,7 @@ export default function Calculator(props) {
                       </Button>
                   </Grid>
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "6" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "6": props.quantityPrice), 
                                            type);
@@ -93,7 +99,7 @@ export default function Calculator(props) {
                       </Button>
                   </Grid>
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "7" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "7": props.quantityPrice), 
                                            type);
@@ -102,7 +108,7 @@ export default function Calculator(props) {
                       </Button>
                   </Grid>
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "8" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "8": props.quantityPrice), 
                                            type);
@@ -111,7 +117,7 @@ export default function Calculator(props) {
                       </Button>
                   </Grid>
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "9" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "9": props.quantityPrice), 
                                            type);
@@ -121,13 +127,13 @@ export default function Calculator(props) {
                   </Grid>
 
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla} color="primary" > 
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla} color="primary" > 
                         %
                       </Button>
                   </Grid>
 
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
                           props.updateData((type == "quantity" ? props.quantity + "0" : props.quantity), 
                                            (type == "price" ? props.quantityPrice + "0": props.quantityPrice), 
                                            type);
@@ -137,7 +143,7 @@ export default function Calculator(props) {
                   </Grid>
 
                   <Grid item xs={4}>
-                      <Button variant="outlined" className={classes.tecla}  color="primary" onClick={ () => {
+                      <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
                           if (type == "quantity"){
                             if (props.quantity.indexOf(".") != -1)
                                return;
@@ -161,6 +167,7 @@ export default function Calculator(props) {
                 <Grid item xs={12}>
                     <ToggleButton
                       value="quantity"
+                      disabled={disabled} 
                       selected={type == "quantity" ? true: false}
                       onChange={() => {
                          setType("quantity");
@@ -174,6 +181,7 @@ export default function Calculator(props) {
                 <Grid item xs={12}>
                     <ToggleButton
                       value="price"
+                      disabled={disabled} 
                       selected={type == "price" ? true: false}
                       onChange={() => {
                          setType("price");
@@ -184,7 +192,7 @@ export default function Calculator(props) {
                     </ToggleButton>
                 </Grid>
                 <Grid item xs={12}>
-                    <Button variant="outlined"  className={classes.tecla}  color="primary"  onClick={ () => {
+                    <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary"  onClick={ () => {
                       props.updateData((type == "quantity" ? props.quantity.slice(0,-1) : props.quantity), 
                                        (type == "price" ? props.quantityPrice.slice(0,-1) : props.quantityPrice), 
                                        type);
@@ -193,7 +201,7 @@ export default function Calculator(props) {
                     </Button>
                 </Grid>
                 <Grid item xs={12}>
-                    <Button variant="outlined" className={classes.tecla}  color="primary"  onClick={ () => {
+                    <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary"  onClick={ () => {
                       props.updateData((type == "quantity" ? "": props.quantity), 
                                        (type == "price" ? "" : props.quantityPrice), 
                                        type);
@@ -208,4 +216,6 @@ export default function Calculator(props) {
       </Grid>
     </Box>
   );
-}
+})
+
+export default Calculator;
