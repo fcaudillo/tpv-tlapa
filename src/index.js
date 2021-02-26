@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Provider } from 'react-redux'
 import store from './store'
+import { ProviderContext }  from './Context';
+
 
 import './global.css';
 import App from './components/App';
@@ -10,9 +12,12 @@ import App from './components/App';
 const container = document.getElementById('app');
 function render() {
   ReactDOM.render(
+
+    <ProviderContext>
   	  <Provider store={store}>
   	      <App />
-      </Provider>
+          </Provider>
+    </ProviderContext>
   	, container);
 }
 render()
