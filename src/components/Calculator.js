@@ -23,7 +23,17 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '46px', 
     minWidth: '50px', 
     minHeight: '46px',
-  }
+  },
+  marginTeclaEspecial: {
+    marginTop: '13px'
+  },
+  teclaConMargen: {
+    maxWidth: '50px', 
+    maxHeight: '46px', 
+    minWidth: '50px', 
+    minHeight: '46px',
+    marginTop: '15px'
+  },
 }));
 
 const Calculator =  forwardRef((props,ref) => {
@@ -38,10 +48,11 @@ const Calculator =  forwardRef((props,ref) => {
                                      setDisabled(estado);
                                    }}),)
 
+
   return (
     <Box className={classes.root}>
       <Grid container >
-        <Grid container item xs={7} >
+        <Grid container item xs={8} >
           <Box width={200} >
               <Grid container item xs={12} spacing={2} >
                   <Grid item xs={4}>
@@ -155,6 +166,7 @@ const Calculator =  forwardRef((props,ref) => {
                                            (type == "price" ? props.quantityPrice + ".": props.quantityPrice), 
                                            type);
                       }}> 
+                      
                         .
                       </Button>
                   </Grid>
@@ -162,8 +174,9 @@ const Calculator =  forwardRef((props,ref) => {
               </Grid>
           </Box>
         </Grid>
-        <Grid container item xs={3} spacing={3}>
-          <Grid container item xs={12} spacing={1}>
+        <Grid container item xs={4} >
+          <Box width={100} >
+            <Grid container align = "center" justify = "center" alignItems = "center" item xs={12} >
                 <Grid item xs={12}>
                     <ToggleButton
                       value="quantity"
@@ -180,6 +193,7 @@ const Calculator =  forwardRef((props,ref) => {
                 </Grid>
                 <Grid item xs={12}>
                     <ToggleButton
+                      className={classes.marginTeclaEspecial}
                       value="price"
                       disabled={disabled} 
                       selected={type == "price" ? true: false}
@@ -192,7 +206,8 @@ const Calculator =  forwardRef((props,ref) => {
                     </ToggleButton>
                 </Grid>
                 <Grid item xs={12}>
-                    <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary"  onClick={ () => {
+                    <Button variant="outlined" 
+                       disabled={disabled} className={classes.teclaConMargen}  color="primary"  onClick={ () => {
                       props.updateData((type == "quantity" ? props.quantity.slice(0,-1) : props.quantity), 
                                        (type == "price" ? props.quantityPrice.slice(0,-1) : props.quantityPrice), 
                                        type);
@@ -201,7 +216,8 @@ const Calculator =  forwardRef((props,ref) => {
                     </Button>
                 </Grid>
                 <Grid item xs={12}>
-                    <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary"  onClick={ () => {
+                    <Button 
+                      variant="outlined" disabled={disabled} className={classes.teclaConMargen}  color="primary"  onClick={ () => {
                       props.updateData((type == "quantity" ? "": props.quantity), 
                                        (type == "price" ? "" : props.quantityPrice), 
                                        type);
@@ -209,7 +225,8 @@ const Calculator =  forwardRef((props,ref) => {
                       C
                     </Button>
                 </Grid>
-          </Grid>      
+            </Grid>      
+          </Box>
 
         </Grid>
 

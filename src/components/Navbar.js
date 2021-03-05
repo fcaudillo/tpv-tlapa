@@ -7,14 +7,15 @@ import logo from '../images/logo.svg';
 
 const Navbar = () =>  {
     const value = useContext(ApplicationContext);
+    const { parametros } = value;
     
     return (
       <div className="Navbar">
         <div className="container-fluid">
           <Link className="Navbar__brand" to="/">
             <img className="Navbar__brand-logo" src={logo} alt="Logo" />
-            <span className="font-weight-light">Nombre: { value.parametros.nombre } </span>
-            <span className="font-weight-bold">TPV</span>
+            <span className="font-weight-light">Nombre: { parametros['CLIENTE_GIRO'] } </span>
+            <span className="font-weight-bold">TPV-Dos</span>
           </Link>
         </div>
       </div>

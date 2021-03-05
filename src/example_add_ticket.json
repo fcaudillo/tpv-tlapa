@@ -1,0 +1,18 @@
+{
+   "tipo_movimiento":4,
+   "total":1.15,
+   "descripcion":"Venta al publico",
+   "tipo_impresion":1,
+   "items":[
+      {
+         "cantidad":1,
+         "codigointerno":"2000",
+         "barcode":"  2000",
+         "ubicacion":"UNK",
+         "description":"ABRAZADERA DE UÑA 1/2",
+         "precioCompra":0.82,
+         "precioVenta":1.15,
+         "total":1.15
+      }
+   ]
+}

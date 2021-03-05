@@ -60,6 +60,7 @@ const Producto = (props) => {
                                 }else{
                                   var itemAModificar = listaTicket[item.index];
                                   itemAModificar.cantidad = itemAModificar.cantidad + props.data.cantidad;
+                                  itemAModificar.total = itemAModificar.cantidad * itemAModificar.precioVenta;
                                   dispatch(actions.modifyListItemTicket({...itemAModificar}));
                                 }
                                 e.stopPropagation();

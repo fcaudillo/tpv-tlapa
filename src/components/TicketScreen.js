@@ -45,7 +45,10 @@ function TicketScreen(props) {
   const totalVenta = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
   const cantidadLista = useSelector(store => store.listaTicket.length);
   const contadorItemTicket = useSelector(store => store.contadorItemTicket);
-  const [ isOpenDialogPagarTicket, setIsOpenDialogPagarTicket] = React.useState(false);
+  //const [ isOpenDialogPagarTicket, setIsOpenDialogPagarTicket] = React.useState(false);
+  const isOpenDialogPagarTicket = useSelector(store => store.showDialogPagar);
+
+
 
   const calculatorRef = useRef();
   const listaEndRef = useRef();
@@ -55,6 +58,9 @@ function TicketScreen(props) {
      listaEndRef.current.scrollIntoView({ behavior: "smooth", block:'end', inline : 'nearest' })
   }
    
+  const setIsOpenDialogPagarTicket = (value) => {
+    dispatch(actions.showDialogPagar(value));
+  }
 
   React.useEffect(() => {
      calculatorRef.current.setHabilitar(cantidadLista == 0);

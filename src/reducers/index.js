@@ -57,7 +57,8 @@ const reducer = (state,action) => {
             cardEditItem: {...action.payload}
           }       
        case 'ADD_ITEM_TICKET':
-          action.payload.active = true
+          action.payload.active = true;
+          action.payload.total = action.payload.cantidad * action.payload.precioVenta;
           console.log(state.listaTicketNormalizado) 
           state.listaTicketNormalizado[action.payload.codigointerno] = {'id': action.payload.codigointerno, 'index': state.listaTicket.length};
           return {
@@ -74,8 +75,11 @@ const reducer = (state,action) => {
           }
        case 'MODIFY_ITEM_TICKET':
             activo = findItemActivo(state.listaTicket,action.payload.id);
-            activo.cantidad = action.payload.cantidad;
+            activo.cantidad = activo.cantidad + action.payload.cantidad;
             activo.precioVenta = action.payload.precioVenta;
+            activo.total = activo.cantidad * activo.precioVenta;
+            console.log("MODIFY_ITEM_TICKET ACTIVO");
+            console.log(activo);
             return {
                ...state,
                listaTicket: [...state.listaTicket],
@@ -116,6 +120,30 @@ const reducer = (state,action) => {
                itemTicket  : activo,
                listaTicketNormalizado: lstTemporal, 
                listaTicket : [...state.listaTicket],
+            }
+       case 'SEND_TICKET':
+            return {
+              ...state,
+              ticket: {
+                 movimiento: { data: action.payload.movimiento, isLoading: true, result : {} },
+                 printTicket: { data: action.payload.printTicket, isLoading: true, result: {} },
+              }
+            }
+       case 'PRINT_TICKET_SUCCESS':
+            return {
+              ...state,
+              ticket: { ...state.ticket,
+                        printTicket: { ...state.ticket.printTicket, isLoading: false}
+                       },
+            }
+       case 'PRINT_TICKET_FAIL':
+            return {
+              ...state,
+            }
+       case 'SHOW_DIALOG_PAGAR':
+            return {
+              ...state,
+              showDialogPagar: action.payload,
             }
             
        default:   

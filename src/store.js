@@ -28,6 +28,19 @@ const initialState = {
     contadorItemTicket: 0,
     listaTicket: [
     ],
+    showDialogPagar: false,
+    ticket: {
+       movimiento : {
+          isLoading: false,
+          data : {},
+          result: {},
+       },
+       printTicket : {
+          isLoading : false,
+          data : {},
+          result: {},
+       },
+    },
     listaTicketNormalizado: {}, 
     cardEditItem : {
 	},
