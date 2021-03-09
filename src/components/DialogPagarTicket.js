@@ -37,11 +37,10 @@ function DialogPagarTicket(props) {
   const onCancel = props.onCancel;
   const dispatch = useDispatch();
   const [disabledPrice,setDisabledPrice] =  React.useState(true);
-  const [cantidadRecibida, setCantidadRecibida ] = React.useState(0);
   const totalVenta = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
   const cantidadLista = useSelector(store => store.listaTicket.length);
   const listaTicket = useSelector(store => store.listaTicket);
-
+  const cantidadRecibida = useSelector(store => store.ticket.cantidadRecibida);
   const contadorItemTicket = useSelector(store => store.contadorItemTicket);
   const value = useContext(ApplicationContext);
   const { parametros } = value;
@@ -86,8 +85,7 @@ function DialogPagarTicket(props) {
   }
 
 
-  const imprimirTicket = () => {
-    const imprimirconticket = 1;
+  const imprimirTicket = (imprimirconticket) => {
     const dataPrintTicket = createTemplate();
     const dataMovimiento = createTemplateMovimiento(imprimirconticket);
     const ticket = {
@@ -95,15 +93,14 @@ function DialogPagarTicket(props) {
        printTicket: dataPrintTicket,
     };
     dispatch(actions.sendTicket(ticket));
-    console.log(data);
-    alert("imprimir ticket");
+    console.log(ticket);
   }
 
 
   const  updateData = (quantity, quantityPrice,type) => { 
   	       const cantidad = (quantity == "" || quantity == "." ? 0 : parseFloat(quantity));
   	       const precioVenta = (quantityPrice == "" || quantityPrice == "." ? 0 : parseFloat(quantityPrice));
-               setCantidadRecibida(cantidad);
+               dispatch(actions.modifyCantidadRecibida(cantidad));
   	     }
    
   return (
@@ -139,16 +136,7 @@ function DialogPagarTicket(props) {
               <Grid item xs={12}>
 
                         <Box spacing={2} >
-                           <Button name="btnImprime" 
-                                   variant="outlined" 
-                                   className={classes.tecla} 
-                                   startIcon={ <Icon>check_circle_icon</Icon> }
-                                   onClick = { (e) => {
-                                      imprimirTicket();
-                                      e.stopPropagation();
-                                   }} >
-                                         Aceptar
-                           </Button>                       
+
                            <Button variant="outlined" className={classes.tecla} color="primary" startIcon={ <Icon>cancel</Icon> } 
                                  onClick={(e) => {
                                     handleClose();
@@ -157,6 +145,24 @@ function DialogPagarTicket(props) {
                                > 
                                Cancelar
                            </Button> 
+                           <Button variant="outlined" className={classes.tecla} color="primary" startIcon={ <Icon>cancel</Icon> } 
+                                 onClick={(e) => {
+                                    imprimirTicket(0);
+                                    e.stopPropagation();
+                                 }}
+                               > 
+                              Sin ticket 
+                           </Button> 
+                           <Button name="btnImprime" 
+                                   variant="outlined" 
+                                   className={classes.tecla} 
+                                   startIcon={ <Icon>check_circle_icon</Icon> }
+                                   onClick = { (e) => {
+                                      imprimirTicket(1);
+                                      e.stopPropagation();
+                                   }} >
+                                      Con Ticket 
+                           </Button>                       
                        </Box>              
                </Grid>
            </Grid>

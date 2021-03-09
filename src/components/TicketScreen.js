@@ -48,8 +48,6 @@ function TicketScreen(props) {
   //const [ isOpenDialogPagarTicket, setIsOpenDialogPagarTicket] = React.useState(false);
   const isOpenDialogPagarTicket = useSelector(store => store.showDialogPagar);
 
-
-
   const calculatorRef = useRef();
   const listaEndRef = useRef();
   const btnPagar = useRef();
@@ -59,6 +57,7 @@ function TicketScreen(props) {
   }
    
   const setIsOpenDialogPagarTicket = (value) => {
+    dispatch(actions.modifyCantidadRecibida(0));
     dispatch(actions.showDialogPagar(value));
   }
 

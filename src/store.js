@@ -30,16 +30,11 @@ const initialState = {
     ],
     showDialogPagar: false,
     ticket: {
-       movimiento : {
-          isLoading: false,
-          data : {},
-          result: {},
-       },
-       printTicket : {
-          isLoading : false,
-          data : {},
-          result: {},
-       },
+       isLoading: false,
+       cantidadRecibida: 0,
+       movimiento : {},
+       printTicket : {},
+       messages: [],
     },
     listaTicketNormalizado: {}, 
     cardEditItem : {

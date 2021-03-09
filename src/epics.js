@@ -2,7 +2,7 @@ import 'rxjs'
 import { combineEpics, ofType } from 'redux-observable'
 import * as actions from './actions'
 import { ajax } from 'rxjs/ajax'
-import { Observable } from 'rxjs'
+import { Observable, of } from 'rxjs'
 import { mergeMap, map, catchError } from 'rxjs/operators'
 
 
@@ -16,48 +16,74 @@ export const fetchCatalogoProductos = actions$ =>
            )
        );
 
-export const printTicket = actions$ =>
+export const printTicketEpic = (actions$,state$) =>
        actions$.pipe(
-         ofType("SEND_TICKET"),
-         mergeMap(action =>
-            ajax({
+         ofType("ADD_TICKET_SUCCESS"),
+         mergeMap(action =>  {
+            if (state$.value.ticket.movimiento.tipo_impresion === 0) { //No imprimir el ticket
+               return of(actions.printTicketSuccess({}));
+            }
+
+            return ajax({
               url: 'http://192.168.100.9:5001/print_ticket/',
               headers: {'Content-Type':'application/json'},
               method: 'POST',
-              body: action.payload,
+              body: state$.value.ticket.printTicket,
             }).pipe(
-              map ( result => actions.showDialogPagar(false)),
-              catchError(error  => Observable.of(actions.printTicketFail({fail: 'fallo'})))
+              map ( result => {
+                if (result.status ===200) {
+                  return actions.printTicketSuccess({});
+                } else {
+                  return actions.printTicketFail({message: result.errorMessage});
+                }
+              }),
+              catchError(error  => of(actions.printTicketFail({message: 'Fallo al imprimir el recibo'})))
             )
-        )
+  
+        })
       );     
 
-export const addTicket = (actions$, states$) =>
+export const addTicketEpic = (actions$, state$) =>
    actions$.pipe(
-      ofType ("ADD_TICKET"),
+      ofType ("SEND_TICKET"),
       mergeMap(action =>
          ajax({
-           url: 'http://192.168.100.9.5001/tickets/add',
-           headers: {"X-HTTP-Method-Override": "PUT", "X-CSRFToken": "$.cookie('csrftoken')"},
+           url: 'http://192.168.100.9:5001/tickets/add',
+           headers: {'Content-Type':'application/json'},
            method: 'POST',
-           body: action.payload,
+           body: state$.value.ticket.movimiento,
          }).pipe(
-            map (result => actions.addTicketSuccess(result)),
-            catchError(error => Observable.of(actions.addTicketFail(error)))
+            map (result => {
+               if (result.status === 200) {
+                 console.log(result.response);
+                 return actions.addTicketSuccess(result.response);
+               }else {
+                 return actions.addTicketFail({message:result.errorMessage});
+               }
+
+            }),
+            catchError(error => oof(actions.addTicketFail({message:'Fallo al enviar el ticket'})))
          )
       )
 
    );
 
-/*
-const rootEpic = combineEpics (
-    fetchCatalogoProductos,
-    printTicket
-);
-*/
+export const clearTicket = (actions$, state$) =>
+   actions$.pipe(
+      ofType ("PRINT_TICKET_SUCCESS"),
+      mergeMap(action => 
+         of(actions.clearTicket())
+      )
+   );
+
+export const closeTicket = (actions$, state$) =>
+   actions$.pipe(
+      ofType('CLEAR_TICKET'),
+      mergeMap(action => of(actions.showDialogPagar(false)))
+   );
 
 const rootEpic = (action$, store$, dependencies) =>
-   combineEpics(printTicket,addTicket)(action$,store$,dependencies).pipe(
+   combineEpics(printTicketEpic,addTicketEpic,clearTicket,closeTicket)(action$,store$,dependencies).pipe(
      catchError((error,source) => {
         console.log(error);
         return source;

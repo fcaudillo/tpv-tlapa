@@ -75,7 +75,7 @@ const reducer = (state,action) => {
           }
        case 'MODIFY_ITEM_TICKET':
             activo = findItemActivo(state.listaTicket,action.payload.id);
-            activo.cantidad = activo.cantidad + action.payload.cantidad;
+            activo.cantidad = action.payload.cantidad;
             activo.precioVenta = action.payload.precioVenta;
             activo.total = activo.cantidad * activo.precioVenta;
             console.log("MODIFY_ITEM_TICKET ACTIVO");
@@ -125,15 +125,27 @@ const reducer = (state,action) => {
             return {
               ...state,
               ticket: {
-                 movimiento: { data: action.payload.movimiento, isLoading: true, result : {} },
-                 printTicket: { data: action.payload.printTicket, isLoading: true, result: {} },
+                 isLoading: true,
+                 movimiento: action.payload.movimiento,
+                 printTicket: action.payload.printTicket,
               }
+            }
+       case 'ADD_TICKET_SUCCESS':
+            return {
+                ...state,
+                ticket: {
+                    ...state.ticket,
+                    printTicket: {
+                       ...state.ticket.printTicket,
+                       encabezado: { ...state.ticket.printTicket.encabezado, "fecha": action.payload.fecha},
+                       pie: { ...state.ticket.printTicket.pie, "numero_ticket": action.payload.folio},
+                    }
+                }
             }
        case 'PRINT_TICKET_SUCCESS':
             return {
               ...state,
               ticket: { ...state.ticket,
-                        printTicket: { ...state.ticket.printTicket, isLoading: false}
                        },
             }
        case 'PRINT_TICKET_FAIL':
@@ -145,6 +157,19 @@ const reducer = (state,action) => {
               ...state,
               showDialogPagar: action.payload,
             }
+       case 'MODIFY_CANTIDAD_RECIBIDA':
+            return {
+               ...state,
+               ticket: { ...state.ticket, cantidadRecibida: action.payload },
+            }
+       case 'CLEAR_TICKET':
+            return {
+              ...state,
+              itemTicket: {},
+              contadorItemTicket: 0,
+              listaTicketNormalizado: {},
+              listaTicket: [],
+           }
             
        default:   
           return state;

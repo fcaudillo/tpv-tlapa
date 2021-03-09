@@ -54,9 +54,7 @@ export const fetchCatalogoProductosSuccess = payload => ({
    type: 'FETCH_CATALOGO_PRODUCTOS_SUCCESS',
    payload,
 });
-
-export const fetchCatalogoProductosFailed = () => ({
-   type: 'FETCH_CATALOGO_PRODUCTOS_FAILED'
+export const fetchCatalogoProductosFailed = () => ({ type: 'FETCH_CATALOGO_PRODUCTOS_FAILED'
 });
 
 export const sendTicket = payload => ({
@@ -64,9 +62,12 @@ export const sendTicket = payload => ({
    payload,
 });
 
-export const printTicketSuccess = payload => ({
+export const printTicket = () => ({
+   type: 'PRINT_TICKET',
+});
+
+export const printTicketSuccess = () => ({
    type: 'PRINT_TICKET_SUCCESS',
-   payload,
 });
 
 export const printTicketFail = payload => ({
@@ -93,4 +94,14 @@ export const addTicketFail = payload => ({
   type: 'ADD_TICKET_FAIL',
   payload,
 });
+
+export const clearTicket = () => ({
+  type: 'CLEAR_TICKET'
+});
+
+export const modifyCantidadRecibida = payload => ({
+  type: 'MODIFY_CANTIDAD_RECIBIDA',
+  payload,
+});
+
 
