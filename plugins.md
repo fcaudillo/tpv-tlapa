@@ -1,4 +1,4 @@
-@babel/runtime
+-@babel/runtime
 
 webpack
 webpack-cli

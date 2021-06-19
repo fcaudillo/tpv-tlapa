@@ -13,7 +13,6 @@ import * as actions from '../actions'
 
 const useStyles = makeStyles({
     root: {
-    	minWidth: 275,
       backgroundColor: "white"
     },
     rootActive: {

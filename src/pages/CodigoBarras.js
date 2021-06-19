@@ -21,8 +21,8 @@ const useStyles = makeStyles({
       overflow: "hidden",
     },
     gridList: {
-       width: 900,
-       height: 500,
+       width: '97%',
+       height: 560,
     },
 
 });
@@ -60,10 +60,13 @@ function CodigoBarras() {
       <GridList cellHeight={'auto'} spacing={5} className={classes.gridList} cols={1} >
            {listElements}
       </GridList>
-      <Link className="btn btn-primary" to="/tpv">
-                Ve a pagina  tpv
-              </Link>
+      <Link className="btn btn-primary" to="/puntoventa/add">
+          Crear producto 
+      </Link>
       <EditItemConsulta onClose={closeEditCalculator} open={isOpen}  data={cardItem}  />
+      <Link className="btn btn-primary" to="/puntoventa/tpv">
+           TPV
+      </Link>
          
     </div>
   );

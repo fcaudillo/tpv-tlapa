@@ -4,6 +4,7 @@ import * as actions from './actions'
 import { ajax } from 'rxjs/ajax'
 import { Observable, of } from 'rxjs'
 import { mergeMap, map, catchError } from 'rxjs/operators'
+import Cookies from 'js-cookie'
 
 
 export const fetchCatalogoProductos = actions$ =>
@@ -48,8 +49,9 @@ export const addTicketEpic = (actions$, state$) =>
       ofType ("SEND_TICKET"),
       mergeMap(action =>
          ajax({
-           url: 'http://192.168.100.9:5001/tickets/add',
-           headers: {'Content-Type':'application/json'},
+           // url: 'http://192.168.100.9:5001/tickets/add',
+           url: 'https://tlapape.elverde.mx/tickets/add',
+           headers: {'Content-Type':'application/json','X-HTTP-Method-Override': 'PUT', 'X-CSRFToken': Cookies.get('csrftoken')},
            method: 'POST',
            body: state$.value.ticket.movimiento,
          }).pipe(

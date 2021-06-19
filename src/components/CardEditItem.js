@@ -11,7 +11,7 @@ import Icon from '@material-ui/core/Icon'
 
 const useStyles = makeStyles({
     root: {
-    	minWidth: 275,
+    	width: '85%',
       backgroundColor: "white"
     },
     title: {
