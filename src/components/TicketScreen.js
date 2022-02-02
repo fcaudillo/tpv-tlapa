@@ -45,9 +45,9 @@ function TicketScreen(props) {
   const totalVenta = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
   const cantidadLista = useSelector(store => store.listaTicket.length);
   const contadorItemTicket = useSelector(store => store.contadorItemTicket);
+  const calculatorEditItem = useSelector(store => store.calculatorEditItem);
   //const [ isOpenDialogPagarTicket, setIsOpenDialogPagarTicket] = React.useState(false);
   const isOpenDialogPagarTicket = useSelector(store => store.showDialogPagar);
-
   const calculatorRef = useRef();
   const listaEndRef = useRef();
   const btnPagar = useRef();
@@ -85,13 +85,22 @@ function TicketScreen(props) {
     setIsOpenDialogPagarTicket(false);
   }
 
-  const  updateData = (quantity, quantityPrice,type) => { 
-  	       const cantidad = (quantity == "" || quantity == "." ? 0 : parseFloat(quantity));
-  	       const precioVenta = (quantityPrice == "" || quantityPrice == "." ? 0 : parseFloat(quantityPrice));
-  	       dispatch(actions.modifyItemTicket({...itemTicket, "cantidad" : cantidad, "precioVenta": precioVenta}));
-  	     }
+  const updateData = (quantity, quantityPrice,type) => { 
+          console.log("1. quantity : " + quantity);
+          console.log("1. quantityPice: " + quantityPrice);
+          console.log("1. codigoInterno: " + calculatorEditItem.codigointerno);
+
+          const cantidad = parseFloat(quantity == "" || quantity == "." ? "0" : quantity);
+  	      const precioVenta = parseFloat(quantityPrice == "" || quantityPrice == "." ? "0" : quantityPrice);
+  	      dispatch(actions.modifyItemTicket({...itemTicket, "cantidad" : cantidad, "precioVenta": precioVenta}));
+
+          dispatch(actions.modifyCantidadTicketItemActive({
+            "cantidad": quantity,
+            "precio": quantityPrice,
+          }));             
+  	    }
   
-   
+
   return (
 
           <Box>               
@@ -125,14 +134,23 @@ function TicketScreen(props) {
                          disabled = { listaTicket.length == 0 }
                          fullWidth={true}
                          style={{ justifyContent: "flex-end"}}>
-                         Total a cobrar $ {totalVenta}
+                         Total a cobrar $ {(totalVenta).toFixed(2)}
                       </Button>
                     </Grid>
                     <Grid item xs={12}>
                        <Box padding={2}>
-                           <Calculator ref={calculatorRef} type='quantity' quantity={"" + itemTicket.cantidad} quantityPrice={"" + itemTicket.precioVenta} updateData={ (quantity, quantityPrice, type) => {
-                            updateData(quantity, quantityPrice,type);
-                           }} /> 
+                           <Calculator ref={calculatorRef} type='quantity' quantity={"" + calculatorEditItem.cantidad} 
+                                                           quantityPrice={"" + calculatorEditItem.precio} 
+                                                           startEdit={calculatorEditItem.startEdit} 
+                                                           onChangeToggle = { (type) => {
+                                                                  dispatch(actions.modifyStartEditItemActivo(false));
+                                                               }     
+                                                           }
+
+                                                           updateData={ (quantity, quantityPrice, type) => {
+                                                              updateData(quantity, quantityPrice,type);
+                                                           }} 
+                            /> 
                        </Box>
 
 

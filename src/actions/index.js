@@ -104,4 +104,14 @@ export const modifyCantidadRecibida = payload => ({
   payload,
 });
 
+export const modifyCantidadTicketItemActive = payload => ({
+   type: 'MODIFY_CANTIDAD_ITEM_TICKET',
+   payload,
+ });
+
+ export const modifyStartEditItemActivo = payload => ({
+   type: 'MODIFY_START_ITEM',
+   payload
+ });
+
 

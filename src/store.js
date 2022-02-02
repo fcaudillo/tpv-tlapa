@@ -19,10 +19,11 @@ const logger = createLogger({
 });
 
 const initialState = {
-    calculator: {
+    calculatorEditItem: {
         "cantidad": "",
-        "type": "quantity",
-        "disabledPrice": true,
+        "precio": "",
+        "codigointerno": "",
+        "fechamod": null
     },
     itemTicket: {},
     contadorItemTicket: 0,

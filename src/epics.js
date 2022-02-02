@@ -26,7 +26,7 @@ export const printTicketEpic = (actions$,state$) =>
             }
 
             return ajax({
-              url: 'http://192.168.100.9:5001/print_ticket/',
+              url: 'https://192.168.100.9:5000/print_ticket/',
               headers: {'Content-Type':'application/json'},
               method: 'POST',
               body: state$.value.ticket.printTicket,

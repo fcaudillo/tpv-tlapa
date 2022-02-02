@@ -9,6 +9,8 @@ const SEARCH_PRODUCT_BARCODE = "message"
 
 const LectorCodigoBarras = (negocioId) => {
    const lista = useSelector(store => store.listaConsulta);
+   const listaTicket = useSelector(store => store.listaTicket);
+   const listaTicketNormalizado = useSelector(store => store.listaTicketNormalizado);
    const dispatch = useDispatch();
    const socketRef = useRef();
 
@@ -21,7 +23,24 @@ const LectorCodigoBarras = (negocioId) => {
 	      const item = JSON.parse ( message );
 	      console.log(item);
 	      dispatch(actions.addItemConsulta(item));
-              dispatch(actions.activeItemConsulta(item.id));
+          dispatch(actions.activeItemConsulta(item.id));
+		  console.log("1.addToTicket: " + item.addToTicket)
+		  console.log(typeof(item.addToTicket))
+          if (typeof(item.addToTicket) != "undefined"){
+			  if (item.addToTicket == 1){
+					var productoTicket = listaTicketNormalizado[item.codigointerno];
+					console.log("item from codebar lector : " + item.codigointerno)
+					console.log(productoTicket)
+					if (typeof(productoTicket) == "undefined") {
+						dispatch(actions.addItemTicket({...item}));
+					}else{
+						var itemAModificar = listaTicket[item.index];
+						itemAModificar.cantidad = itemAModificar.cantidad + item.cantidad;
+						itemAModificar.total = itemAModificar.cantidad * itemAModificar.precioVenta;
+						dispatch(actions.modifyItemTicket({...itemAModificar}));
+					}
+			  }
+		  }
 	   })
 
 	   return () => {

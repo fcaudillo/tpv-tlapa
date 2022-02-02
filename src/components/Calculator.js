@@ -38,7 +38,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Calculator =  forwardRef((props,ref) => {
   const classes = useStyles();
-  const calculator = useSelector(store => store.calculator);
   const dispatch = useDispatch();
   const [type,setType] = React.useState(props.type);
   const [disabled, setDisabled] = React.useState(props.disabled);
@@ -57,8 +56,8 @@ const Calculator =  forwardRef((props,ref) => {
               <Grid container item xs={12} spacing={2} >
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla} color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "1" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "1": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "1" : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "") + "1": props.quantityPrice), 
                                            type);
                       }}> 
                         1
@@ -66,8 +65,8 @@ const Calculator =  forwardRef((props,ref) => {
                   </Grid>
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled}  className={classes.tecla}  color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "2" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "2": props.quantityPrice), 
+                          props.updateData((type == "quantity" ?  (props.startEdit ? props.quantity : "") + "2" : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "")  + "2": props.quantityPrice), 
                                            type);
                       }}> 
                         2
@@ -75,8 +74,8 @@ const Calculator =  forwardRef((props,ref) => {
                   </Grid>
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "3" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "3": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "3" : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "") + "3": props.quantityPrice), 
                                            type);
                       }}> 
                         3
@@ -84,8 +83,8 @@ const Calculator =  forwardRef((props,ref) => {
                   </Grid>
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "4" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "4": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "4" : props.quantity), 
+                                           (type == "price" ? ( props.startEdit ? props.quantityPrice : "") + "4": props.quantityPrice), 
                                            type);
                       }}> 
                         4
@@ -93,8 +92,8 @@ const Calculator =  forwardRef((props,ref) => {
                   </Grid>
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla} color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "5" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "5": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "5" : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "") + "5": props.quantityPrice), 
                                            type);
                       }}> 
                         5
@@ -102,8 +101,8 @@ const Calculator =  forwardRef((props,ref) => {
                   </Grid>
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "6" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "6": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "6" : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "") + "6": props.quantityPrice), 
                                            type);
                       }}> 
                         6
@@ -111,8 +110,8 @@ const Calculator =  forwardRef((props,ref) => {
                   </Grid>
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "7" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "7": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "7" : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "") + "7": props.quantityPrice), 
                                            type);
                       }}> 
                         7
@@ -120,8 +119,8 @@ const Calculator =  forwardRef((props,ref) => {
                   </Grid>
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "8" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "8": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "8" : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "") + "8": props.quantityPrice), 
                                            type);
                       }}> 
                         8
@@ -129,8 +128,8 @@ const Calculator =  forwardRef((props,ref) => {
                   </Grid>
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "9" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "9": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "9" : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "") + "9": props.quantityPrice), 
                                            type);
                       }}> 
                         9
@@ -145,16 +144,21 @@ const Calculator =  forwardRef((props,ref) => {
 
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
-                          props.updateData((type == "quantity" ? props.quantity + "0" : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + "0": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "0" : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "") + "0": props.quantityPrice), 
                                            type);
                       }}> 
                         0
                       </Button>
                   </Grid>
 
+
                   <Grid item xs={4}>
                       <Button variant="outlined" disabled={disabled} className={classes.tecla}  color="primary" onClick={ () => {
+                          console.log("Presionando el punto");
+                          console.log('props.quantity: ' + props.quantity);
+                          console.log(props.startEdit);
+
                           if (type == "quantity"){
                             if (props.quantity.indexOf(".") != -1)
                                return;
@@ -162,8 +166,8 @@ const Calculator =  forwardRef((props,ref) => {
                             if (props.quantityPrice.indexOf(".") != -1)
                                return;
                           }
-                          props.updateData((type == "quantity" ? props.quantity + "." : props.quantity), 
-                                           (type == "price" ? props.quantityPrice + ".": props.quantityPrice), 
+                          props.updateData((type == "quantity" ? (props.startEdit ? props.quantity : "") + "." : props.quantity), 
+                                           (type == "price" ? (props.startEdit ? props.quantityPrice : "") + ".": props.quantityPrice), 
                                            type);
                       }}> 
                       
@@ -184,7 +188,7 @@ const Calculator =  forwardRef((props,ref) => {
                       selected={type == "quantity" ? true: false}
                       onChange={() => {
                          setType("quantity");
-                        
+                         props.onChangeToggle("quantity");
                       }}
                     >
                           Qty
@@ -199,7 +203,7 @@ const Calculator =  forwardRef((props,ref) => {
                       selected={type == "price" ? true: false}
                       onChange={() => {
                          setType("price");
-                         
+                         props.onChangeToggle("price");
                       }}
                     >
                           <Icon>monetization_on</Icon>

@@ -113,7 +113,7 @@ function DialogPagarTicket(props) {
                  Total a cobrar
               </Grid>
               <Grid item xs={6}>
-                 { totalVenta }
+                 { totalVenta.toFixed(2) }
               </Grid>
               <Grid item xs={6}>
                 Cantidad recibida
@@ -131,7 +131,7 @@ function DialogPagarTicket(props) {
                  Cambio 
               </Grid>
               <Grid item xs={6}>
-                 { cantidadRecibida - totalVenta }
+                 { (cantidadRecibida - totalVenta).toFixed(2) }
               </Grid>
               <Grid item xs={12}>
 

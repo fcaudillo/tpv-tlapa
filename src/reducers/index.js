@@ -63,6 +63,13 @@ const reducer = (state,action) => {
           state.listaTicketNormalizado[action.payload.codigointerno] = {'id': action.payload.codigointerno, 'index': state.listaTicket.length};
           return {
                   ...state,
+                  calculatorEditItem: {
+                     cantidad : "" + action.payload.cantidad,
+                     precio  : "" + action.payload.precioVenta,
+                     codigointerno: action.payload.codigointerno,
+                     fechaMod: new Date(),
+                     startEdit: false
+                  },
                   itemTicket : action.payload,
                   contadorItemTicket: state.contadorItemTicket + 1,
                   listaTicketNormalizado: {...state.listaTicketNormalizado } , 
@@ -80,21 +87,38 @@ const reducer = (state,action) => {
             activo.total = activo.cantidad * activo.precioVenta;
             console.log("MODIFY_ITEM_TICKET ACTIVO");
             console.log(activo);
+            calculatorEditItem = {...state.calculatorEditItem, startEdit: false };
+            if (activo.active) { //Si el item a modificar es el activo, entonces modificar la cantidad para que se refleje en la calculadora
+               calculatorEditItem = {
+                  cantidad : "" + activo.cantidad,
+                  precio  : "" + activo.precioVenta,
+                  codigointerno: activo.codigointerno,
+                  fechaMod: new Date(),
+                  startEdit: true
+               };
+            }
             return {
                ...state,
                listaTicket: [...state.listaTicket],
-
+               calculatorEditItem,
             }
        case 'ACTIVE_ITEM_TICKET':
             activo = findItemActivo(state.listaTicket,action.payload);
             activo.active = true;
             return {
               ...state,
+              calculatorEditItem: {
+                cantidad : "" + activo.cantidad,
+                precio  : "" + activo.precioVenta,
+                codigointerno : activo.codigointerno,
+                fechaMod: new Date(),
+                startEdit: false
+              },
               itemTicket : activo,
               listaTicket: state.listaTicket.map(item => {
                                                        item.active =  (item.id == action.payload ? true: false);
                                                        return item; })
-          }
+            }
        case 'DELETE_ITEM_TICKET':
             activo = findItemActivo(state.listaTicket,action.payload);
             index = findItemActivoIndex(state.listaTicket,action.payload);
@@ -110,7 +134,27 @@ const reducer = (state,action) => {
             }
             else {
                activo = {}
+               
             }
+            calculatorEditItem = {
+               cantidad : "",
+               precio  : "" ,
+               codigointerno : null,
+               fechaMod: new Date(),
+               startEdit: false
+             };
+            
+            if (activo.active){
+               calculatorEditItem = {
+                  cantidad : "" + activo.cantidad,
+                  precio  : "" + activo.precioVenta,
+                  codigointerno : activo.codigointerno,
+                  fechaMod: new Date(),
+                  startEdit: false
+                };
+
+            }
+      
             var lstTemporal = {};
             for (let i=0; i < state.listaTicket.length; i++){
                lstTemporal[state.listaTicket[i].codigointerno] = {'id': state.listaTicket[i].codigointerno, 'index': i};
@@ -118,6 +162,7 @@ const reducer = (state,action) => {
             return {
                ...state,
                itemTicket  : activo,
+               calculatorEditItem,
                listaTicketNormalizado: lstTemporal, 
                listaTicket : [...state.listaTicket],
             }
@@ -170,6 +215,30 @@ const reducer = (state,action) => {
               listaTicketNormalizado: {},
               listaTicket: [],
            }
+      case 'MODIFY_CANTIDAD_ITEM_TICKET':
+         console.log("Modificando calculatorEditItem: " + state.calculatorEditItem.codigointerno );
+         console.log('cantidad: ' + action.payload.cantidad);
+         console.log('precio: ' + action.payload.precio)
+         var calculatorEditItem = {
+            ...state.calculatorEditItem,
+            cantidad : "" + action.payload.cantidad,
+            precio  : "" + action.payload.precio,
+            fechaMod: new Date(),
+          };
+         return {
+            ...state,
+            calculatorEditItem,
+         }
+      case 'MODIFY_START_ITEM':
+         calculatorEditItem = {
+               ...state.calculatorEditItem,
+               startEdit: action.payload
+            };
+
+         return {
+            ...state,
+            calculatorEditItem,
+         }      
             
        default:   
           return state;

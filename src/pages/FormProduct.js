@@ -17,46 +17,52 @@ const useStyles = makeStyles((theme) => ({
     '& > *': {
       margin: theme.spacing(1),
     },
+    
   },
+  descripcion: {
+    width: "95%"
+  }
 }));
 
 const schema = yup.object().shape({
   codigoInterno:  yup.number().positive().integer(),
   proveedor: yup.string(),
   codigoProveedor: yup.string().required(),
-  codigoBarras: yup.string().required(),
+  codigoBarras: yup.string(),
   descripcion: yup.string().required(),
-  precioCompra: yup.number().test(
-    'is-decimal',
-    'invalid decimal',
-    value => (value + "").match(/^\d*\.{1}\d*$/),
-  ),
-  precioVenta: yup.number().positive().integer().required(),
+  precioCompra: yup.number().positive().required(),
+  precioVenta: yup.number().positive().required(),
   unidadVenta:  yup.string().required(),
   existencia: yup.number().positive().integer().required(),
   minimoExistencia: yup.number().positive().integer().required(),
   maximoExistencia: yup.number().positive().integer().required(),
-  puedeVenderse: yup.string().required(),
+  puedeVenderse: yup.boolean(),
   ubicacion: yup.string()
 });
 
 function FormProduct() {
   const classes = useStyles();
-  const [age, setAge] = React.useState('');
-  const [name, setName] = React.useState('');
+  const [add, setAdd] = React.useState(true);
   const value = useContext(ApplicationContext);
+  const [precioCompraHistorico, setPrecioCompraHistorico] = React.useState("");
+  const [precioVentaHistorico, setPrecioVentaHistorico] = React.useState("");
   const { proveedores, findProveedores } = value;
   const { register, setValue, setFocus, getValues, handleSubmit, formState:{ errors } } = useForm({
     resolver: yupResolver(schema)
   });
+  const { parametros } = value;
 
   React.useEffect(() => {
+     setValue("codigoInterno","0");
      setFocus("codigoProveedor");
   }, [setFocus]);
 
   const onSubmit = (data) => {
+    var url = parametros['URL_API_BASE'] + "/producto/" + (add ? "agregar" : "update");
+    console.log("enviado datos a " + url);
+    
     console.log(data);
-    fetch("http://192.168.100.13:1414/producto/agregar",
+    fetch(url,
     {
         headers: {
           'Accept': 'application/json',
@@ -67,16 +73,27 @@ function FormProduct() {
         body: JSON.stringify(data)
     })
     .then(function(res){
-        console.log("Se agrego con exito")
-        setValue("descripcion","");
-        setValue("codigoProveedor", "");
-        setValue("codigoBarras", "");
-        setValue("precioCompra","");
-        setValue("precioVenta","");
-        setValue("minimoExistencia","");
-        setValue("maximoExistencia","");
-        setValue("ubicacion","");
-        setFocus("codigoProveedor");
+       
+        console.log("Se agrego/actualizo con exito")
+        if (res.ok){
+          setAdd(true);
+          setValue("codigoInterno","0");
+          setValue("descripcion","");
+          setValue("codigoProveedor", "");
+          setValue("codigoBarras", "");
+          setValue("precioCompra","0");
+          setValue("precioVenta","0");
+          setValue("existencia","1");
+          setValue("minimoExistencia","1");
+          setValue("maximoExistencia","3");
+          setValue("ubicacion","UNKNOW");
+          setFocus("codigoProveedor");
+          setPrecioCompraHistorico("");
+          setPrecioVentaHistorico("");
+        }else {
+          alert ('El producto ya existe')
+        }
+
 
       })
     .catch(function(res){ 
@@ -86,20 +103,60 @@ function FormProduct() {
   }
 
   const handleSearchProduct = (event) => {
-     getValues("proveedor")
-     fetch("http://192.168.100.13:1414/find_historico/" + getValues("proveedor") +"/" + getValues("codigoProveedor") )
+     setPrecioCompraHistorico("");
+     setPrecioVentaHistorico("");    
+     setAdd(true);
+     fetch(parametros['URL_API_BASE'] + "/find_historico/" + getValues("proveedor") +"/" + getValues("codigoProveedor") )
        .then(response => response.json())
        .then(data => {
           console.log(data);
           setValue("descripcion",data.descripcion);
           setValue("unidadVenta",data.unidad);
           setValue("codigoProveedor", data.codigoProveedor);
-          setValue("codigoBarras", data.codigoBarras);
+          setValue("codigoBarras", data.codigobarras);
           setValue("precioCompra",data.precioCompra);
           setValue("precioVenta",data.precioPublico);
+          setValue("existencia","1");
+          setValue("minimoExistencia","1");
+          setValue("maximoExistencia","3");
+          setValue("ubicacion","UNKNOW");
+          setValue("puedeVenderse",true);
        });
 
   };
+
+  const handleSearchProductByCodigoInterno = (event) => {
+    setPrecioCompraHistorico("");
+    setPrecioVentaHistorico("");
+    setAdd(false);
+    fetch(parametros['URL_API_BASE'] + "/findByCodigoInterno/" + getValues("codigoInterno") )
+      .then(response => response.json())
+      .then(data => {
+         console.log(data);
+         setValue("descripcion",data.description);
+         setValue("unidadVenta",data.unidadVenta);
+         setValue("proveedor",data.proveedorId);
+         setValue("codigoProveedor", data.codigoProveedor);
+         setValue("codigoBarras", data.barcode);
+         setValue("precioCompra",data.precioCompra);
+         setValue("precioVenta",data.precioVenta);
+         setValue("existencia", data.existencia);
+         setValue("minimoExistencia",data.minimoExistencia);
+         setValue("maximoExistencia",data.maximoExistencia);
+         setValue("puedeVenderse", data.puedeVenderse);  
+         setValue("ubicacion", data.ubicacion);
+
+         fetch(parametros['URL_API_BASE'] + "/find_historico/" + getValues("proveedor") +"/" + getValues("codigoProveedor") )
+            .then(response => response.json())
+            .then(dataHistorico => {
+                console.log(dataHistorico);
+                setPrecioCompraHistorico(dataHistorico.precioCompra);
+                setPrecioVentaHistorico(dataHistorico.precioPublico);
+            }); 
+
+        });
+
+ };
 
 
   return (
@@ -111,6 +168,7 @@ function FormProduct() {
            <Grid item xs={2}>
                 <label htmlFor="codigoInterno">Codigo interno</label>
                 <input id="codigoInterno" {...register("codigoInterno")}  />
+                <Button variant="contained"  variant="contained" onClick={handleSearchProductByCodigoInterno} color="primary" startIcon={ <SearchIcon /> }></Button>
                 {errors.codigoInterno && <p>{errors.codigoInterno.message}</p>     }
                 
 
@@ -160,11 +218,13 @@ function FormProduct() {
         </Grid>
 
         <Grid container spacing={1}>
-           <Grid item xs={10}>
+           <Grid item xs={12}>
               
                 <label htmlFor="descripcion">Descripcion del producto</label>
+                <br/>
                 <input
                   id="descripcion"
+                  className={classes.descripcion}
                   {...register("descripcion")}
                 />
                 {errors.descripcion && <p>{errors.descripcion.message}</p>  }
@@ -181,7 +241,7 @@ function FormProduct() {
                   {...register("precioCompra")}
                 />
                 {errors.precioCompra && <p>{errors.precioCompra.message}</p> }
-          
+                {precioCompraHistorico != "" && <div> <p>{precioCompraHistorico}</p> </div>}
 
            </Grid>
            <Grid item xs={1}>
@@ -190,12 +250,13 @@ function FormProduct() {
            <Grid item xs={2}>
 
                 <label htmlFor="precioVenta">Precio de venta </label>
+                
                 <input
                   id="precioVenta"
                   {...register("precioVenta")}
                 />
                 {errors.precioVenta && <p>{errors.precioVenta.message}</p>  }
-
+                {precioVentaHistorico != "" && <div> <p>{precioVentaHistorico}</p> </div>}
            </Grid>
            <Grid item xs={1}>
              <Button> </Button>
@@ -265,12 +326,15 @@ function FormProduct() {
 
                
           </Grid> 
+          <Grid item xs={1}></Grid>
           <Grid item xs={2}>
                 <label htmlFor="puedeVenderse">Puede venderse </label>
                 <input
                   id="puedeVenderse"
                   type="checkbox"
                   {...register("puedeVenderse")}
+
+                 
                 />
                 {errors.puedeVenderse && <p>{errors.puedeVenderse.message}</p>  }
 

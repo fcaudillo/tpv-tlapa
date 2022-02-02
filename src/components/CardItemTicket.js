@@ -41,7 +41,8 @@ const useStyles = makeStyles((theme) => ({
 
 const CardItemTicket = (props) => {
 	const classes = useStyles();
-        const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const calculatorEditItem = useSelector(store => store.calculatorEditItem);
 
 	return	(
 
@@ -66,20 +67,44 @@ const CardItemTicket = (props) => {
 
             </Grid>
             <Grid item>
-              <Typography variant="subtitle1">${ props.data.cantidad * props.data.precioVenta}</Typography>
+              <Typography variant="subtitle1">${ (props.data.cantidad * props.data.precioVenta).toFixed(2)}</Typography>
             </Grid>
           </Grid>
-          { true &&
+          
              <Grid item xs={12}>
-                <Typography variant='subtitle1' color='primary' display='inline'>
-                       {props.data.cantidad}
-                </Typography> Unidad a &nbsp;
-                <Typography variant='subtitle1' color='primary' display='inline'>
-                  ${ props.data.precioVenta}
-                </Typography>
-                   &nbsp; / Unidad(es)
+              { calculatorEditItem.codigointerno != props.data.codigointerno &&
+                <div>            
+                  <Typography variant='subtitle1' color='primary' display='inline'>
+                                        {props.data.cantidad}     
+                  </Typography> Unidad a &nbsp;
+                </div>
+               }  
+              { calculatorEditItem.codigointerno == props.data.codigointerno &&
+     
+                <div>            
+                  <Typography variant='subtitle1' color='primary' display='inline'>
+                                        {calculatorEditItem.cantidad}     
+                  </Typography> Unidad a &nbsp;
+                </div>
+               }  
+               { calculatorEditItem.codigointerno != props.data.codigointerno &&
+                <div>
+                  <Typography variant='subtitle1' color='primary' display='inline'>
+                      ${ props.data.precioVenta}
+                    </Typography>
+                      &nbsp; / Unidad(es)
+                </div>      
+               } 
+               { calculatorEditItem.codigointerno == props.data.codigointerno &&
+                <div>
+                  <Typography variant='subtitle1' color='primary' display='inline'>
+                      ${ calculatorEditItem.precio}
+                    </Typography>
+                      &nbsp; / Unidad(es)
+                </div>      
+               }    
              </Grid>
-          }
+         
         </Grid>
       </Paper>
    </div>
