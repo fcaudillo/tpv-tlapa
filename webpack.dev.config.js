@@ -13,7 +13,7 @@ module.exports = {
     chunkFilename: 'js/[id].[chunkhash].js'
   },
   devServer: {
-    contentBase: path.resolve(__dirname, 'dist'),
+    static: path.resolve(__dirname, 'dist'),
     open: true,
     port: 9001,
     hot: true,

@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton'
 import { Button } from '@material-ui/core'
 import Icon from '@material-ui/core/Icon'
 
+
 const useStyles = makeStyles({
     root: {
     	width: '85%',
@@ -28,7 +29,10 @@ const CardEditItem = (props) => {
 
 	return	(
 		   <Card className={classes.root} variant="outlined" >
-    		     <CardHeader title={ <div> {props.data.codigointerno} - {props.data.description} </div>} 
+    		     <CardHeader title={ <div> {props.data.codigointerno} - {props.data.description} 
+               
+               
+                                  </div>} 
     		                 subheader={
       		                 	<div>
                                      <Typography variant='h6' color='primary' display='inline'> 

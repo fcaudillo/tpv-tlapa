@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import { Provider } from 'react-redux'
 import store from './store'
 import { ProviderContext }  from './Context';
+import { StyledEngineProvider } from '@mui/material/styles';
 
 
 import './global.css';
@@ -15,8 +16,10 @@ function render() {
 
     <ProviderContext>
   	  <Provider store={store}>
+        <StyledEngineProvider injectFirst>
   	      <App />
-          </Provider>
+        </StyledEngineProvider>
+      </Provider>
     </ProviderContext>
   	, container);
 }

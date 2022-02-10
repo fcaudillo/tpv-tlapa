@@ -4,10 +4,9 @@ export const Configuraciones = {
    "TICKET_PIE":"Gracias por su compra|Hasta pronto",
    "CLIENTE_DIRECCION":"Lago wetter 55. Col. Agua Azul",
    "CLIENTE_GIRO":"Tlapaleria",
-   "CLIENTE_NOMBRE":"COSMOS",
+   "CLIENTE_NOMBRE":"Cosmos",
    "MOVIMIENTO_VENTA": 4,
    "DESCRIPCION_VENTA_PUBLICO": "Venta a publico",
   // "URL_API_BASE":"http://192.168.100.13:1414",
-   "URL_API_BASE":"https://tlapape.elverde.mx",
-   "TIMEOUT_CLEAR_ITEM_ACTIVE": 10,
+   "URL_API_BASE":"https://tlapape.elverde.mx"
 }    

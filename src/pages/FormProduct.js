@@ -1,5 +1,5 @@
 import React, { Component, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import {FormGroup, Button} from '@material-ui/core';
@@ -11,6 +11,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import Cookies from 'js-cookie'
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,7 +24,12 @@ const useStyles = makeStyles((theme) => ({
   },
   descripcion: {
     width: "95%"
+  },
+
+  classAncla: {
+    textDecoration: "underline"
   }
+
 }));
 
 const schema = yup.object().shape({
@@ -40,22 +48,46 @@ const schema = yup.object().shape({
   ubicacion: yup.string()
 });
 
+const porcentajes = [
+  { title: '10%  23.00', porcentaje: 10 },
+  { title: '15%  24.00', porcentaje: 15 },
+  { title: '20%  30.00', porcentaje: 20 }
+];
+
 function FormProduct() {
   const classes = useStyles();
   const [add, setAdd] = React.useState(true);
   const value = useContext(ApplicationContext);
   const [precioCompraHistorico, setPrecioCompraHistorico] = React.useState("");
   const [precioVentaHistorico, setPrecioVentaHistorico] = React.useState("");
+  const [codigointerno, setCodigoInterno] = React.useState("");
   const { proveedores, findProveedores } = value;
   const { register, setValue, setFocus, getValues, handleSubmit, formState:{ errors } } = useForm({
     resolver: yupResolver(schema)
   });
   const { parametros } = value;
+  let { key } = useParams();
+
+  const propsPorcentajes = {
+    options: porcentajes,
+    getOptionLabel: (option) => option.title,
+  };
 
   React.useEffect(() => {
      setValue("codigoInterno","0");
      setFocus("codigoProveedor");
   }, [setFocus]);
+
+
+  React.useEffect( () => {
+    console.log('codigointernius: ' + key)
+    if (typeof(key) != "undefined") {
+      console.log("mode update producto")
+      setValue("codigoInterno",key);
+      setAdd(false)
+      handleSearchProductByCodigoInterno(null);
+    }
+  }, [add])
 
   const onSubmit = (data) => {
     var url = parametros['URL_API_BASE'] + "/producto/" + (add ? "agregar" : "update");
@@ -93,7 +125,7 @@ function FormProduct() {
         }else {
           alert ('El producto ya existe')
         }
-
+        history.back()
 
       })
     .catch(function(res){ 
@@ -132,6 +164,7 @@ function FormProduct() {
     fetch(parametros['URL_API_BASE'] + "/findByCodigoInterno/" + getValues("codigoInterno") )
       .then(response => response.json())
       .then(data => {
+         console.log("xxx")
          console.log(data);
          setValue("descripcion",data.description);
          setValue("unidadVenta",data.unidadVenta);
@@ -146,7 +179,7 @@ function FormProduct() {
          setValue("puedeVenderse", data.puedeVenderse);  
          setValue("ubicacion", data.ubicacion);
 
-         fetch(parametros['URL_API_BASE'] + "/find_historico/" + getValues("proveedor") +"/" + getValues("codigoProveedor") )
+         fetch(parametros['URL_API_BASE'] + "/find_historico/" + data.proveedorId +"/" + data.codigoProveedor)
             .then(response => response.json())
             .then(dataHistorico => {
                 console.log(dataHistorico);
@@ -156,7 +189,12 @@ function FormProduct() {
 
         });
 
- };
+   };
+
+  const changePrice = () => {
+    setValue("precioCompra",precioCompraHistorico);
+    setFocus("precioVenta");
+  }
 
 
   return (
@@ -241,11 +279,11 @@ function FormProduct() {
                   {...register("precioCompra")}
                 />
                 {errors.precioCompra && <p>{errors.precioCompra.message}</p> }
-                {precioCompraHistorico != "" && <div> <p>{precioCompraHistorico}</p> </div>}
+                {precioCompraHistorico != "" && <div> <a  className={classes.classAncla} onClick={changePrice} >{precioCompraHistorico} </a>  </div>}
 
            </Grid>
            <Grid item xs={1}>
-              <Button> $ </Button>
+
            </Grid>
            <Grid item xs={2}>
 

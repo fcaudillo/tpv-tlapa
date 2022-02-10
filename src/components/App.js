@@ -15,10 +15,9 @@ function App() {
         <Switch>
           <Route exact path="/" component={CodigoBarras} />
           <Route exact path="/puntoventa" component={CodigoBarras} />
+          <Route path="/puntoventa/add/:key" component={FormProduct} />
           <Route exact path="/puntoventa/add" component={FormProduct} />
           <Route exact path="/puntoventa/tpv" component={TPV} />
-
-          
           <Route component={NotFound} />
         </Switch>
       </Layout>
