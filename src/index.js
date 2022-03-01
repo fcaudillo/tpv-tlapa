@@ -5,7 +5,7 @@ import { Provider } from 'react-redux'
 import store from './store'
 import { ProviderContext }  from './Context';
 import { StyledEngineProvider } from '@mui/material/styles';
-
+import 'antd/dist/antd.css';
 
 import './global.css';
 import App from './components/App';

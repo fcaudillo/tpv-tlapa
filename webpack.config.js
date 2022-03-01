@@ -72,7 +72,7 @@ module.exports = {
     new AddAssetHtmlPlugin({
       filepath: path.resolve(__dirname, 'dist/js/*.dll.js'),
       outputPath: 'js',
-      publicPath: 'http://192.168.100.13:9001/js'
+      publicPath: 'http://localhost:9001/js'
     }),
     new CleanWebpackPlugin({
       cleanOnceBeforeBuildPatterns: ['**/app.*'],

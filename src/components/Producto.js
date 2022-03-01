@@ -1,13 +1,10 @@
 import React from 'react'
-import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
-import Typography from '@material-ui/core/Typography'
-import CardHeader from '@material-ui/core/CardHeader'
-import { makeStyles } from '@material-ui/core/styles'
-import IconButton from '@material-ui/core/IconButton'
-import { Button } from '@material-ui/core'
-import Icon from '@material-ui/core/Icon'
+import Card from '@mui/material/Card'
+import Typography from '@mui/material/Typography'
+import CardHeader from '@mui/material/CardHeader'
+import { makeStyles } from '@mui/styles'
+import { Button } from '@mui/material'
+import Icon from '@mui/material/Icon'
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
 import Button2 from '@mui/material/Button';
@@ -36,8 +33,8 @@ const useStyles = makeStyles({
 const Producto = (props) => {
 	const classes = useStyles();
         const dispatch = useDispatch();
-        const listaTicket = useSelector(store => store.listaTicket);
-        const listaTicketNormalizado = useSelector(store => store.listaTicketNormalizado);
+        const listaTicket = useSelector(store => store.reducer.listaTicket);
+        const listaTicketNormalizado = useSelector(store => store.reducer.listaTicketNormalizado);
         const [anchorEl, setAnchorEl] = React.useState(null);
         const open = Boolean(anchorEl);
         const history = useHistory();

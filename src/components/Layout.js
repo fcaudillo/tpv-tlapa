@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, Box, Grid } from '@material-ui/core'
+import { Box, Grid } from '@mui/material'
 import Navbar from './Navbar';
 import TicketScreen from '../components/TicketScreen'
+import { Link } from 'react-router-dom';
 
 function Layout(props) {
  
@@ -18,7 +19,23 @@ function Layout(props) {
 
         </Grid>
         <Grid item xs={9}>
-				{props.children}
+          <Grid container>
+              <Grid item xs={12}>
+                  <Link className="btn btn-primary" to="/puntoventa/add">
+                      Crear producto 
+                  </Link>
+                  <Link className="btn btn-primary" to="/puntoventa/tpv">
+                      TPV
+                  </Link>
+                  <Link className="btn btn-primary" to="/puntoventa/listacambioprecio">
+                      Cambio de precios
+                  </Link>
+
+              </Grid>
+              <Grid item xs={12}>
+                  {props.children}
+              </Grid>
+          </Grid>
         </Grid>
       </Grid>
       

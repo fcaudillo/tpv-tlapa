@@ -2,13 +2,8 @@ import React, { forwardRef, useRef, useImperativeHandle } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
 import Calculator from '../components/Calculator'
-import { Button, Box, Grid } from '@material-ui/core'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import Dialog from '@material-ui/core/Dialog'
-import { makeStyles } from '@material-ui/core/styles'
-import Icon from '@material-ui/core/Icon'
-import GridList from '@material-ui/core/GridList'
-import GridListTile from '@material-ui/core/GridListTile'
+import { Button, Box, Grid } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 import CardItemTicket from '../components/CardItemTicket'
 import { Observable, fromEvent } from 'rxjs'
 import DialogPagarTicket from '../components/DialogPagarTicket'
@@ -22,6 +17,7 @@ const useStyles = makeStyles({
     }, 
     gridList: {
        height: 350,
+       overflowY: 'scroll'
     },
     tecla: {
       maxHeight: '46px', 
@@ -32,25 +28,30 @@ const useStyles = makeStyles({
        height: '350px',
        color: 'red',
     },
+    divTicket: {
+      height: '350px',
+      overflowY: 'scroll'
+    },
 
 });
 
 
 function TicketScreen(props) {
   const classes = useStyles();
-  const itemTicket = useSelector(store => store.itemTicket);
-  const listaTicket = useSelector(store => store.listaTicket);
+  const itemTicket = useSelector(store => store.reducer.itemTicket);
+  const listaTicket = useSelector(store => store.reducer.listaTicket);
   const dispatch = useDispatch();
   const [disabledPrice,setDisabledPrice] =  React.useState(true);
-  const totalVenta = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
-  const cantidadLista = useSelector(store => store.listaTicket.length);
-  const contadorItemTicket = useSelector(store => store.contadorItemTicket);
-  const calculatorEditItem = useSelector(store => store.calculatorEditItem);
+  const totalVenta = useSelector(store => store.reducer.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
+  const cantidadLista = useSelector(store => store.reducer.listaTicket.length);
+  const contadorItemTicket = useSelector(store => store.reducer.contadorItemTicket);
+  const calculatorEditItem = useSelector(store => store.reducer.calculatorEditItem);
   //const [ isOpenDialogPagarTicket, setIsOpenDialogPagarTicket] = React.useState(false);
-  const isOpenDialogPagarTicket = useSelector(store => store.showDialogPagar);
+  const isOpenDialogPagarTicket = useSelector(store => store.reducer.showDialogPagar);
   const calculatorRef = useRef();
   const listaEndRef = useRef();
   const btnPagar = useRef();
+  const [typeEditCalc, setTypeEditCalc] = React.useState("quantity");
 
   const scrollToBottom = () => {
      listaEndRef.current.scrollIntoView({ behavior: "smooth", block:'end', inline : 'nearest' })
@@ -109,18 +110,20 @@ function TicketScreen(props) {
                     <Grid item xs={12}>
                       <Box className={classes.boxTicket}>
                           <div>
-                             <GridList cellHeight='auto' className={classes.gridList} cols={1} component='div'>
+                             <Grid container cellHeight='auto' className={classes.gridList} cols={1} component='div'>
                                {listaTicket.map(producto => (
-                                  <GridListTile key={producto.id} cols={1} component='div' onClick={(e) => {
+                                  <Grid item key={producto.id} cols={1} component='div' onClick={(e) => {
                                               dispatch(actions.activeItemTicket(producto.id));
+                                              calculatorRef.current.setTypeFromParent("quantity");
+                                              console.log("cambiando a quantity")
                                           }}
                                   >
                                     <CardItemTicket data={producto} />
-                                  </GridListTile>
+                                  </Grid>
                                 ))}
         
                                 <div ref={listaEndRef} />
-                             </GridList>
+                             </Grid>
                           </div>
                       </Box>
              
@@ -139,7 +142,7 @@ function TicketScreen(props) {
                     </Grid>
                     <Grid item xs={12}>
                        <Box padding={2}>
-                           <Calculator ref={calculatorRef} type='quantity' quantity={"" + calculatorEditItem.cantidad} 
+                           <Calculator ref={calculatorRef} type={typeEditCalc} quantity={"" + calculatorEditItem.cantidad} 
                                                            quantityPrice={"" + calculatorEditItem.precio} 
                                                            startEdit={calculatorEditItem.startEdit} 
                                                            onChangeToggle = { (type) => {

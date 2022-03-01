@@ -1,12 +1,10 @@
 import React from 'react'
-import Typography from '@material-ui/core/Typography'
-import { makeStyles } from '@material-ui/core/styles'
-import IconButton from '@material-ui/core/IconButton'
-import { Button } from '@material-ui/core'
-import Icon from '@material-ui/core/Icon'
-import HighlightOffIcon from '@material-ui/icons/HighlightOff'
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
+import Typography from '@mui/material/Typography'
+import { makeStyles } from '@mui/styles'
+import Icon from '@mui/material/Icon'
+//import HighlightOffIcon from '@mui/icons-material/HighlightOff'
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
 
@@ -15,13 +13,13 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   paper: {
-    padding: theme.spacing(1),
+    padding: 1,
     margin: 'auto',
     maxWidth: 300,
     backgroundColor: 'white',
   },
   paperbackground: {
-    padding: theme.spacing(1),
+    padding: 1,
     margin: 'auto',
     maxWidth: 300,
     backgroundColor: 'lightgray',
@@ -42,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
 const CardItemTicket = (props) => {
 	const classes = useStyles();
   const dispatch = useDispatch();
-  const calculatorEditItem = useSelector(store => store.calculatorEditItem);
+  const calculatorEditItem = useSelector(store => store.reducer.calculatorEditItem);
 
 	return	(
 
@@ -50,12 +48,12 @@ const CardItemTicket = (props) => {
       <Paper className={props.data.active ? classes.paperbackground: classes.paper}>
         <Grid container spacing={1}>
           <Grid item>
-             <IconButton className={classes.image} style={{ color: 'red' }} onClick={(evt) => {
+             <Icon className={classes.image} style={{ color: 'red' }} onClick={(evt) => {
                 dispatch(actions.deleteListItemTicket(props.data.id));
                 evt.stopPropagation();
              }}>
-               <HighlightOffIcon />
-            </IconButton>
+               backspace
+            </Icon>
           </Grid>
           <Grid item xs={12} sm container>
             <Grid item xs container direction="column" spacing={2}>

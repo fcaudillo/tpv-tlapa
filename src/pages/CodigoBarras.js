@@ -6,12 +6,9 @@ import './styles/CodigoBarras.css';
 import Producto from '../components/Producto'
 import LectorCodigoBarras from '../components/LectorCodigoBarras'
 import EditItemConsulta from '../components/EditItemConsulta'
-
-import confLogo from '../images/badge-header.svg';
-import { GridList, GridListTile } from '@material-ui/core'
-import { Button, Box } from '@material-ui/core'
-import EditIcon from '@material-ui/icons/Edit'
-import { makeStyles } from '@material-ui/core/styles'
+import { Grid  } from '@mui/material'
+import { Button, Box } from '@mui/material'
+import { makeStyles } from '@mui/styles'
 
 const useStyles = makeStyles({
     root: {
@@ -23,16 +20,19 @@ const useStyles = makeStyles({
     gridList: {
        width: '97%',
        height: 560,
+       overflowY: 'scroll',
+       marginLeft: '0px',
     },
 
 });
 
 function CodigoBarras() {
-  const lista = useSelector(store => store.listaConsulta);
-  const cardItem = useSelector(store => store.cardEditItem);
+  const lista = useSelector(store => store.reducer.listaConsulta);
+  const cardItem = useSelector(store => store.reducer.cardEditItem);
   const dispatch = useDispatch();
   const lector = LectorCodigoBarras("message");
   const [isOpen, setIsOpen] = useState(false);
+  {/* 
   const listElements = lista.map((prod) =>
      <GridListTile key={prod.id} cols={1} onClick={(e) => {
                                               dispatch(actions.activeItemConsulta(prod.id));
@@ -42,6 +42,15 @@ function CodigoBarras() {
         <Producto key={prod.id} data={prod} />  
      </GridListTile>
   );
+
+  */}
+
+  const listElements = lista.map((prod) =>
+      <Grid item xs={12} key={prod.id}>
+        <Producto key={prod.id} data={prod} />  
+      </Grid>
+   );
+
   const classes = useStyles();
 
   const openEditCalculator = () => {
@@ -53,20 +62,25 @@ function CodigoBarras() {
 
   return (
     <div>
-      <Button variant="contained" disabled={lista.length == 0} color="primary" onClick={openEditCalculator} startIcon={ <EditIcon /> }> 
+      <Button variant="contained" disabled={lista.length == 0} color="primary" onClick={openEditCalculator} > 
          Editar        
       </Button>
       <br/>
-      <GridList cellHeight={'auto'} spacing={5} className={classes.gridList} cols={1} >
+      
+      {/** 
+      <GridList id="ax2" cellHeight={'auto'} spacing={5} className={classes.gridList} cols={1} >
            {listElements}
       </GridList>
-      <Link className="btn btn-primary" to="/puntoventa/add">
-          Crear producto 
-      </Link>
+      */}
+      <Grid container cellHeight={'auto'} spacing={2} className={classes.gridList} cols={1}>
+
+      {listElements}
+
+      </Grid>
+      
+
       <EditItemConsulta onClose={closeEditCalculator} open={isOpen}  data={cardItem}  />
-      <Link className="btn btn-primary" to="/puntoventa/tpv">
-           TPV
-      </Link>
+
          
     </div>
   );

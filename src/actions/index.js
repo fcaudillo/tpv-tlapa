@@ -114,4 +114,23 @@ export const modifyCantidadTicketItemActive = payload => ({
    payload
  });
 
+ export const updateDataFormProduct = payload => ({
+    type: "UPDATE_DATA_FORM_PRODUCT",
+    payload
+ });
+
+ export const clearDataFormProduct = () => ({
+    type: "UPDATE_DATA_FORM_PRODUCT",
+    payload: {
+                  data: {},
+                  dataHistorico: {},
+            }
+ })
+
+ export const actionFormProduct = payload => ({
+    type: 'ACTION_FORM_PRODUCT',
+    payload
+ });
+
+
 

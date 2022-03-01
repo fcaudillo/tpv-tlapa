@@ -1,15 +1,10 @@
 import React, { forwardRef, useImperativeHandle } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import Grid from '@material-ui/core/Grid';
-import { Button, Box } from '@material-ui/core'
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import { useSelector, useDispatch } from 'react-redux'
-import * as actions from '../actions'
-import Icon from '@material-ui/core/Icon'
-import { useHistory } from 'react-router-dom'
-
+import { makeStyles } from '@mui/styles';
+import Grid from '@mui/material/Grid';
+import { Button, Box } from '@mui/material'
+import ToggleButton from '@mui/material/ToggleButton';
+import { useDispatch } from 'react-redux'
+import Icon from '@mui/material/Icon'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -17,9 +12,9 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
   },
   paper: {
-    padding: theme.spacing(1),
+    padding: 1,
     textAlign: 'center',
-    color: theme.palette.text.secondary,
+    color: 'blue',
   },
   tecla: {
     maxWidth: '50px', 
@@ -45,11 +40,17 @@ const Calculator =  forwardRef((props,ref) => {
   const [type,setType] = React.useState(props.type);
   const [disabled, setDisabled] = React.useState(props.disabled);
 
-  useImperativeHandle(ref, () =>({
-                                   setHabilitar(estado) {
-                                     setDisabled(estado);
-                                   }}),)
+  const setHabilitar = (estado) => {
+     setDisabled(estado);
+  }
 
+  const setTypeFromParent = (type) => {
+    setType(type);
+  }
+
+  useImperativeHandle(ref, () =>({setHabilitar, setTypeFromParent}),)
+
+ 
 
   return (
     <Box className={classes.root}>

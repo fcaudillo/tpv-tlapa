@@ -1,36 +1,17 @@
-import React, { Component, useContext } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
-import FormControl from '@material-ui/core/FormControl';
-import {FormGroup, Button} from '@material-ui/core';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Grid from '@material-ui/core/Grid';
-import SearchIcon from '@material-ui/icons/Search';
+import React, { Component, useRef, useContext } from 'react';
+import { Link, useParams } from 'react-dom';
 import { ApplicationContext } from '../Context';
-import { useForm } from "react-hook-form";
+import { useForm, Controller  } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import Cookies from 'js-cookie'
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
+import { TextField, Button, Grid, Icon, FormControl, Input, FormHelperText } from '@mui/material';
+import { useHistory } from 'react-router-dom';
+import InputLabel from '@mui/material/InputLabel';
+import { useSelector, useDispatch } from 'react-redux'
+import { Form } from 'antd'
+import { UpdateProductAction } from '../bussiness/actions/UpdateProductAction'
 
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(1),
-    },
-    
-  },
-  descripcion: {
-    width: "95%"
-  },
-
-  classAncla: {
-    textDecoration: "underline"
-  }
-
-}));
 
 const schema = yup.object().shape({
   codigoInterno:  yup.number().positive().integer(),
@@ -54,84 +35,47 @@ const porcentajes = [
   { title: '20%  30.00', porcentaje: 20 }
 ];
 
-function FormProduct() {
-  const classes = useStyles();
+const FormProduct = ({formInstance, hideModal})  => {
   const [add, setAdd] = React.useState(true);
   const value = useContext(ApplicationContext);
+  const history = useHistory();
   const [precioCompraHistorico, setPrecioCompraHistorico] = React.useState("");
   const [precioVentaHistorico, setPrecioVentaHistorico] = React.useState("");
-  const [codigointerno, setCodigoInterno] = React.useState("");
-  const { proveedores, findProveedores } = value;
-  const { register, setValue, setFocus, getValues, handleSubmit, formState:{ errors } } = useForm({
+  const { proveedores, findProveedores } = value
+  const codigoProveedorRef = useRef()
+  const codigoInternoRef = useRef()
+  const [ disabledCodigoInterno, setDisabledCodigoInterno] = React.useState(false)
+  const { register, setValue, setFocus, getValues, handleSubmit, control,  formState:{ errors } } = useForm({
     resolver: yupResolver(schema)
   });
   const { parametros } = value;
-  let { key } = useParams();
-
-  const propsPorcentajes = {
-    options: porcentajes,
-    getOptionLabel: (option) => option.title,
-  };
+  const EditProduct = useSelector(store => store.editProduct);
+  const dispatch = useDispatch()
+  
 
   React.useEffect(() => {
      setValue("codigoInterno","0");
-     setFocus("codigoProveedor");
+     //setFocus("codigoProveedor");
   }, [setFocus]);
 
-
-  React.useEffect( () => {
-    console.log('codigointernius: ' + key)
-    if (typeof(key) != "undefined") {
-      console.log("mode update producto")
-      setValue("codigoInterno",key);
-      setAdd(false)
-      handleSearchProductByCodigoInterno(null);
+  React.useEffect ( () => {
+     if (EditProduct && 'data' in EditProduct && EditProduct.isOk === true) {
+      populateForm(EditProduct.data, EditProduct.dataHistorico)
+    }else{
+      clearForm()
     }
-  }, [add])
 
-  const onSubmit = (data) => {
-    var url = parametros['URL_API_BASE'] + "/producto/" + (add ? "agregar" : "update");
-    console.log("enviado datos a " + url);
-    
+  }, [EditProduct])
+  
+
+  const onSubmit2 = (data) => {   
+    console.log("Modificando el state nuevo ");
+    dispatch(UpdateProductAction(data))
     console.log(data);
-    fetch(url,
-    {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken')
-        },
-        method: "POST",
-        body: JSON.stringify(data)
-    })
-    .then(function(res){
-       
-        console.log("Se agrego/actualizo con exito")
-        if (res.ok){
-          setAdd(true);
-          setValue("codigoInterno","0");
-          setValue("descripcion","");
-          setValue("codigoProveedor", "");
-          setValue("codigoBarras", "");
-          setValue("precioCompra","0");
-          setValue("precioVenta","0");
-          setValue("existencia","1");
-          setValue("minimoExistencia","1");
-          setValue("maximoExistencia","3");
-          setValue("ubicacion","UNKNOW");
-          setFocus("codigoProveedor");
-          setPrecioCompraHistorico("");
-          setPrecioVentaHistorico("");
-        }else {
-          alert ('El producto ya existe')
-        }
-        history.back()
+  }
 
-      })
-    .catch(function(res){ 
-      console.log(res) 
-    })
-
+  const onSubmit = (dataNew) => {
+    dispatch(actions.updateDataFormProduct({data: dataNew, dataHistorico: dataHistorico}))
   }
 
   const handleSearchProduct = (event) => {
@@ -191,22 +135,84 @@ function FormProduct() {
 
    };
 
+   const populateForm = (data, dataHistorico) => {
+    setDisabledCodigoInterno(false)
+    if (data){
+        setDisabledCodigoInterno(true)
+        setAdd(false)
+        setPrecioCompraHistorico("");
+        setPrecioVentaHistorico("");
+        setValue("codigoInterno",data.codigointerno);
+        setValue("descripcion",data.description);
+        setValue("unidadVenta",data.unidadVenta);
+        setValue("proveedor",data.proveedorId);
+        setValue("codigoProveedor", data.codigoProveedor);
+        setValue("codigoBarras", data.barcode);
+        setValue("precioCompra",data.precioCompra);
+        setValue("precioVenta",data.precioVenta);
+        setValue("existencia", data.existencia);
+        setValue("minimoExistencia",data.minimoExistencia);
+        setValue("maximoExistencia",data.maximoExistencia);
+        setValue("puedeVenderse", data.puedeVenderse);  
+        setValue("ubicacion", data.ubicacion);
+        if (dataHistorico){
+          setPrecioCompraHistorico(dataHistorico.precioCompra);
+          setPrecioVentaHistorico(dataHistorico.precioPublico);
+        }
+     }else{
+      clearForm()
+      setAdd(true)
+    }
+
+   };
+
+  const clearForm = () => {
+    setValue("codigoInterno","0");
+    setValue("descripcion","");
+    setValue("codigoProveedor", "");
+    setValue("codigoBarras", "");
+    setValue("precioCompra","0");
+    setValue("precioVenta","0");
+    setValue("existencia","1");
+    setValue("minimoExistencia","1");
+    setValue("maximoExistencia","3");
+    setValue("ubicacion","UNKNOW");
+  }
+
+
   const changePrice = () => {
     setValue("precioCompra",precioCompraHistorico);
     setFocus("precioVenta");
   }
-
-
+  
+  
   return (
     <div>
       <p> Creacion/Edicion del producto</p>
-      
-    <form className={classes.root} onSubmit={handleSubmit(onSubmit)}>
+     
+      <Form form={formInstance}  onFinish={handleSubmit(onSubmit2)}>
         <Grid container spacing={1}>
            <Grid item xs={2}>
-                <label htmlFor="codigoInterno">Codigo interno</label>
-                <input id="codigoInterno" {...register("codigoInterno")}  />
-                <Button variant="contained"  variant="contained" onClick={handleSearchProductByCodigoInterno} color="primary" startIcon={ <SearchIcon /> }></Button>
+              <Controller
+                  name="codigoInterno"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'First name required' }}
+                  render={({ field: { onChange, value } }) => (
+                    <TextField
+                      label="Codigo interno"
+                      ref = {codigoInternoRef}
+                      disabled = {disabledCodigoInterno}
+                      variant="standard"
+                      value={value}
+                      onChange={onChange}
+                    />
+                    )}  
+                />
+             
+                <Button variant="contained"  variant="contained" onClick={handleSearchProductByCodigoInterno} color="primary" >
+                   <Icon>search</Icon>
+                </Button>
                 {errors.codigoInterno && <p>{errors.codigoInterno.message}</p>     }
                 
 
@@ -214,15 +220,14 @@ function FormProduct() {
             <Grid item xs={1}>
             </Grid>
             <Grid item xs={8}>
-              <label htmlFor="proveedor">Proveedor c</label>
+              <label htmlFor="proveedor">Proveedor</label>
               <select id="proveedor" options={proveedores} {...register("proveedor")}>
                  { proveedores.map ( (proveedor) => (
                    <option key={proveedor.value} value={proveedor.value}>{proveedor.label}</option>
                  ))}
-
-
                  
               </select>  
+                
               {errors.proveedor && <p>{errors.proveedor.message}</p>  }
 
            </Grid>
@@ -230,68 +235,119 @@ function FormProduct() {
 
         <Grid container spacing={1}>
            <Grid item xs={2}>
-                <label htmlFor="codigoProveedor">Codigo proveedor</label>
-               <input
-                  id="codigoProveedor"
-                  {...register("codigoProveedor")}
+                <Controller
+                        name="codigoProveedor"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'codigo proveedor required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            ref={codigoProveedorRef}
+                            label="Codigo proveedor"
+                            variant="standard"
+                            value={value}
+                            onChange={onChange}
+                          />
+                          )}  
                 />
                 {errors.codigoProveedor && <p>{errors.codigoProveedor.message}</p>  }
 
            </Grid>
            <Grid item xs={1}>
-               <Button variant="contained"  variant="contained" onClick={handleSearchProduct} disabled={false} color="primary" startIcon={ <SearchIcon /> }></Button>
+               <Button variant="contained"  variant="contained" onClick={handleSearchProduct} disabled={false} color="primary" >
+                  <Icon>search</Icon>
+               </Button>
            </Grid>
-           <Grid item xs={3} >    
-                <label htmlFor="codigoBarras">Codigo de barras</label>
-                <input
-                  id="codigoBarras"
-                  {...register("codigoBarras")}
-                />
+           <Grid item xs={3} > 
+                  <Controller
+                        name="codigoBarras"
+                        control={control}
+                        defaultValue=""
+                        style ={{width: '100%'}}
+                        rules={{ required: 'codigo barras required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            label="Codigo barras"
+                            variant="standard"
+                            value={value}
+                            onChange={onChange}
+                          />
+
+                         
+                          )}  
+                />   
+                
                 {errors.codigoBarras && <p>{errors.codigoBarras.message}</p>  }
 
            </Grid>
            <Grid item xs={1}>
-             <Button variant="contained" variant="contained" disabled={false} color="primary"  startIcon={ <SearchIcon /> }></Button>
+             <Button variant="contained" variant="contained" disabled={false} color="primary" >
+                 <Icon>search</Icon>
+             </Button>
            </Grid> 
         </Grid>
 
         <Grid container spacing={1}>
            <Grid item xs={12}>
-              
-                <label htmlFor="descripcion">Descripcion del producto</label>
-                <br/>
-                <input
-                  id="descripcion"
-                  className={classes.descripcion}
-                  {...register("descripcion")}
-                />
-                {errors.descripcion && <p>{errors.descripcion.message}</p>  }
+                <Controller
+                        name="descripcion"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'description required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <FormControl fullWidth={true}>
+                            <InputLabel htmlFor="descripcion">Descripcion</InputLabel>
+                            <Input id="descripcion" 
+                                    aria-describedby="my-helper-text" 
+                                    value={value}
+                                    onChange={onChange}    
+                            />
+                            {errors.descripcion && <FormHelperText id="my-helper-text">{errors.descripcion.message}</FormHelperText> }
+                          </FormControl>
+                          )}  
+                />  
+                
 
             </Grid>
          </Grid>
               
         <Grid container spacing={1}>
            <Grid item xs={2}>
-
-                <label htmlFor="precioCompra">Precio de compra </label>
-                <input
-                  id="precioCompra"
-                  {...register("precioCompra")}
-                />
+                <Controller
+                        name="precioCompra"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'precio compra required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            label="Precio compra"
+                            variant="standard"
+                            value={value}
+                            onChange={onChange}
+                          />
+                          )}  
+                />                  
                 {errors.precioCompra && <p>{errors.precioCompra.message}</p> }
-                {precioCompraHistorico != "" && <div> <a  className={classes.classAncla} onClick={changePrice} >{precioCompraHistorico} </a>  </div>}
+                {precioCompraHistorico != "" && <div> <a  onClick={changePrice} >{precioCompraHistorico} </a>  </div>}
 
            </Grid>
            <Grid item xs={1}>
 
            </Grid>
            <Grid item xs={2}>
-
-                <label htmlFor="precioVenta">Precio de venta </label>
-                
-                <input
-                  id="precioVenta"
-                  {...register("precioVenta")}
+                <Controller
+                        name="precioVenta"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'precio venta required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            label="Precio venta"
+                            variant="standard"
+                            value={value}
+                            onChange={onChange}
+                          />
+                          )}  
                 />
                 {errors.precioVenta && <p>{errors.precioVenta.message}</p>  }
                 {precioVentaHistorico != "" && <div> <p>{precioVentaHistorico}</p> </div>}
@@ -299,40 +355,63 @@ function FormProduct() {
            <Grid item xs={1}>
              <Button> </Button>
            </Grid>
-           <Grid item xs={2}>   
-
-                <label htmlFor="unidadVenta">Unidad de venta </label>
-                <input
-                  id="unidadVenta"
-                  {...register("unidadVenta")}
-                />
-                {errors.unidadVenta && <p>{errors.unidadVenta.message}</p>  }
-
+           <Grid item xs={2}>  
+                 <Controller
+                        name="unidadVenta"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'Unidad venta required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            label="Unidad de venta"
+                            variant="standard"
+                            value={value}
+                            onChange={onChange}
+                          />
+                          )}  
+                />                  
+                 {errors.unidadVenta && <p>{errors.unidadVenta.message}</p>  }
           </Grid>
 
         </Grid>
 
         <Grid container spacing={1}>
            <Grid item xs={2}>
-
-                <label htmlFor="existencia">Existencia </label>
-                <input
-                  id="existencia"
-                  {...register("existencia")}
-                />
-                {errors.existencia && <p>{errors.existencia.message}</p>  }
+                 <Controller
+                        name="existencia"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'Existencia required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            label="Existencia"
+                            variant="standard"
+                            value={value}
+                            onChange={onChange}
+                          />
+                          )}  
+                />  
+                 {errors.existencia && <p>{errors.existencia.message}</p>  }
 
            </Grid>
            <Grid item xs={1}>
 
            </Grid>
            <Grid item xs={2}>
-
-                <label htmlFor="minimoExistencia">Minimo en existencia </label>
-                <input
-                  id="minimoExistencia"
-                  {...register("minimoExistencia")}
-                />
+                  <Controller
+                        name="minimoExistencia"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'Minimo existencia required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            label="Minimo existencia"
+                            variant="standard"
+                            value={value}
+                            onChange={onChange}
+                          />
+                          )}  
+                /> 
                 {errors.minimoExistencia && <p>{errors.minimoExistencia.message}</p>  }
  
            </Grid>
@@ -340,12 +419,20 @@ function FormProduct() {
              
            </Grid>
            <Grid item xs={2}>
-
-                <label htmlFor="maximoExistencia">Maximo en existencia </label>
-                <input
-                  id="maximoExistencia"
-                  {...register("maximoExistencia")}
-                />
+               <Controller
+                        name="maximoExistencia"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'Maxicmo existencia required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            label="Maximo existencia"
+                            variant="standard"
+                            value={value}
+                            onChange={onChange}
+                          />
+                          )}  
+                />               
                 {errors.maximoExistencia && <p>{errors.maximoExistencia.message}</p>  }
 
            </Grid>
@@ -355,12 +442,21 @@ function FormProduct() {
 
         <Grid container spacing={1}>
           <Grid item xs={2}>
-                <label htmlFor="ubicacion">ubicacion </label>
-                <input
-                  id="ubicacion"
-                 {...register("ubicacion")}
-                />
-                {errors.ubicacion && <p>{errors.ubicacion.message}</p>  }
+                 <Controller
+                        name="ubicacion"
+                        control={control}
+                        defaultValue=""
+                        rules={{ required: 'Ubicacion required' }}
+                        render={({ field: { onChange, value } }) => (
+                          <TextField
+                            label="Ubicacion"
+                            variant="standard"
+                            value={value}
+                            onChange={onChange}
+                          />
+                          )}  
+                />  
+               {errors.ubicacion && <p>{errors.ubicacion.message}</p>  }
 
                
           </Grid> 
@@ -372,7 +468,6 @@ function FormProduct() {
                   type="checkbox"
                   {...register("puedeVenderse")}
 
-                 
                 />
                 {errors.puedeVenderse && <p>{errors.puedeVenderse.message}</p>  }
 
@@ -380,11 +475,10 @@ function FormProduct() {
           </Grid> 
         </Grid>
         <input type="submit" />
-       </form>    
+       </Form>    
+ 
 	      
-      <Link className="btn btn-primary" to="/">
-                Regresar a codigo barras
-      </Link>
+
     </div>
   );
 }

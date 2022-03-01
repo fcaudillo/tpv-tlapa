@@ -3,11 +3,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
 import Calculator from '../components/Calculator'
 import CardEditItem from '../components/CardEditItem'
-import { Button, Box, Grid } from '@material-ui/core'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import Dialog from '@material-ui/core/Dialog'
-import { makeStyles } from '@material-ui/core/styles'
-import Icon from '@material-ui/core/Icon'
+import { Button, Box, Grid } from '@mui/material'
+import Dialog from '@mui/material/Dialog'
+import { makeStyles } from '@mui/styles'
+import Icon from '@mui/material/Icon'
 
 const useStyles = makeStyles({
     root: {
@@ -32,8 +31,8 @@ function EditItemConsulta(props) {
   const classes = useStyles();
   const onClose = props.onClose;
   const open = props.open;
-  const cardEditItem = useSelector(store => store.cardEditItem);
-  const originalCardEditItem = useSelector(store => store.copyCardEditItem);
+  const cardEditItem = useSelector(store => store.reducer.cardEditItem);
+  const originalCardEditItem = useSelector(store => store.reducer.copyCardEditItem);
   const onCancel = props.onCancel;
   const dispatch = useDispatch();
   //const [type,setType] = React.useState('quantity');

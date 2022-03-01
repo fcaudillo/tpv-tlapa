@@ -2,13 +2,10 @@ import React, { useRef, useContext }  from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
 import Calculator from '../components/Calculator'
-import CardEditItem from '../components/CardEditItem'
-import { Input, Button, Box, Grid } from '@material-ui/core'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import Dialog from '@material-ui/core/Dialog'
-import { makeStyles } from '@material-ui/core/styles'
-import Icon from '@material-ui/core/Icon'
-import { Observable, fromEvent } from 'rxjs';
+import { Input, Button, Box, Grid } from '@mui/material'
+import Dialog from '@mui/material/Dialog'
+import { makeStyles } from '@mui/styles'
+import Icon from '@mui/material/Icon'
 import { ApplicationContext } from '../Context';
 
 const useStyles = makeStyles({
@@ -37,11 +34,11 @@ function DialogPagarTicket(props) {
   const onCancel = props.onCancel;
   const dispatch = useDispatch();
   const [disabledPrice,setDisabledPrice] =  React.useState(true);
-  const totalVenta = useSelector(store => store.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
-  const cantidadLista = useSelector(store => store.listaTicket.length);
-  const listaTicket = useSelector(store => store.listaTicket);
-  const cantidadRecibida = useSelector(store => store.ticket.cantidadRecibida);
-  const contadorItemTicket = useSelector(store => store.contadorItemTicket);
+  const totalVenta = useSelector(store => store.reducer.listaTicket.reduce((cant,ticket) => cant + (ticket.cantidad * ticket.precioVenta),0));
+  const cantidadLista = useSelector(store => store.reducer.listaTicket.length);
+  const listaTicket = useSelector(store => store.reducer.listaTicket);
+  const cantidadRecibida = useSelector(store => store.reducer.ticket.cantidadRecibida);
+  const contadorItemTicket = useSelector(store => store.reducer.contadorItemTicket);
   const value = useContext(ApplicationContext);
   const { parametros } = value;
 

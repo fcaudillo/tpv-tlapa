@@ -18,7 +18,40 @@ const findItemActivoIndex = (listaConsulta,id) => {
     return -1;
 }
 
-const reducer = (state,action) => {
+const initialState = {
+   calculatorEditItem: {
+       "cantidad": "",
+       "precio": "",
+       "codigointerno": "",
+       "fechamod": null
+   },
+   itemTicket: {},
+   contadorItemTicket: 0,
+   listaTicket: [
+   ],
+   showDialogPagar: false,
+   updateDataProduct: {
+       data: {},
+       dataHistorico: {},
+     },
+   actionFormProduct: 'NONE',
+   ticket: {
+      isLoading: false,
+      cantidadRecibida: 0,
+      movimiento : {},
+      printTicket : {},
+      messages: [],
+   },
+   listaTicketNormalizado: {}, 
+   cardEditItem : {
+  },
+  copyCardEditItem: { },
+  listaConsulta: [
+  ],
+}
+
+
+const reducer = (state = initialState, action) => {
     let activo;
     let index;
     switch (action.type) {
@@ -238,12 +271,22 @@ const reducer = (state,action) => {
          return {
             ...state,
             calculatorEditItem,
-         }      
-            
-       default:   
-          return state;
-
+         } 
+         
+      case 'UPDATE_DATA_FORM_PRODUCT':
+         return {
+            ...state,
+            updateDataProduct: action.payload,
+         }
+      case 'ACTION_FORM_PRODUCT':
+         console.log("action.payload " + action.payload)
+         return {
+            ...state,
+            actionFormProduct: action.payload,
+         }
     }
+
+    return state;
 	
 }
 

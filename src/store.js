@@ -7,6 +7,10 @@ import { createEpicMiddleware } from 'redux-observable';
 import promise from 'redux-promise-middleware'
 import rootEpic from './epics'
 import reduxPromiseMiddleware from 'redux-promise-middleware'
+import { combineReducers } from 'redux';
+
+import LoadProductReducer from './reducers/LoadProductReducer'
+import UpdateProductReducer from './reducers/UpdateProductReducer'
 
 const epicMiddleware = createEpicMiddleware();
 
@@ -30,6 +34,10 @@ const initialState = {
     listaTicket: [
     ],
     showDialogPagar: false,
+    updateDataProduct: {
+        data: {},
+        dataHistorico: {},
+      },
     ticket: {
        isLoading: false,
        cantidadRecibida: 0,
@@ -45,10 +53,16 @@ const initialState = {
 	],
 }
 
+const rootReducer = combineReducers({
+    reducer,
+    editProduct: LoadProductReducer,
+    updateProduct: UpdateProductReducer
+});
 
-const store = createStore(reducer, initialState,composeWithDevTools(
+/** ,epicMilddleware */
+const store = createStore(rootReducer, initialState,composeWithDevTools(
             /* logger must be the last middleware in chain to log actions */
-              applyMiddleware(thunk,epicMiddleware,logger)
+              applyMiddleware(thunk, epicMiddleware ,logger)
         ));
 
 epicMiddleware.run(rootEpic);
