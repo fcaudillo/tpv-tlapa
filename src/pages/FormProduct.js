@@ -4,14 +4,15 @@ import { ApplicationContext } from '../Context';
 import { useForm, Controller  } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
-import Cookies from 'js-cookie'
-import { TextField, Button, Grid, Icon, FormControl, Input, FormHelperText } from '@mui/material';
+import { TextField, Button, Grid, Icon, FormControl,  FormHelperText } from '@mui/material';
 import { useHistory } from 'react-router-dom';
-import InputLabel from '@mui/material/InputLabel';
 import { useSelector, useDispatch } from 'react-redux'
-import { Form } from 'antd'
+import { Form, Input, InputNumber, Checkbox } from 'antd'
 import { UpdateProductAction } from '../bussiness/actions/UpdateProductAction'
+import { useFormik } from 'formik'
+import Select from '../ComponentsHtml/Select/Select'
 
+const { Option } = Select;
 
 const schema = yup.object().shape({
   codigoInterno:  yup.number().positive().integer(),
@@ -37,12 +38,13 @@ const porcentajes = [
 
 const FormProduct = ({formInstance, hideModal})  => {
   const [add, setAdd] = React.useState(true);
-  const value = useContext(ApplicationContext);
+   const value = useContext(ApplicationContext);
   const history = useHistory();
   const [precioCompraHistorico, setPrecioCompraHistorico] = React.useState("");
   const [precioVentaHistorico, setPrecioVentaHistorico] = React.useState("");
   const { proveedores, findProveedores } = value
   const codigoProveedorRef = useRef()
+  const proveedorRef = useRef()
   const codigoInternoRef = useRef()
   const [ disabledCodigoInterno, setDisabledCodigoInterno] = React.useState(false)
   const { register, setValue, setFocus, getValues, handleSubmit, control,  formState:{ errors } } = useForm({
@@ -51,6 +53,16 @@ const FormProduct = ({formInstance, hideModal})  => {
   const { parametros } = value;
   const EditProduct = useSelector(store => store.editProduct);
   const dispatch = useDispatch()
+  const puedeVenderseRef = useRef();
+
+  const formik = useFormik({
+    initialValues : initialValues(),
+    onSubmit : (formData) => {
+       console.log("Envio de formulario")
+       dispatch(UpdateProductAction(formData))
+       console.log(formData)
+    }
+  })
   
 
   React.useEffect(() => {
@@ -62,21 +74,11 @@ const FormProduct = ({formInstance, hideModal})  => {
      if (EditProduct && 'data' in EditProduct && EditProduct.isOk === true) {
       populateForm(EditProduct.data, EditProduct.dataHistorico)
     }else{
-      clearForm()
+      formik.resetForm()
     }
 
   }, [EditProduct])
   
-
-  const onSubmit2 = (data) => {   
-    console.log("Modificando el state nuevo ");
-    dispatch(UpdateProductAction(data))
-    console.log(data);
-  }
-
-  const onSubmit = (dataNew) => {
-    dispatch(actions.updateDataFormProduct({data: dataNew, dataHistorico: dataHistorico}))
-  }
 
   const handleSearchProduct = (event) => {
      setPrecioCompraHistorico("");
@@ -86,17 +88,17 @@ const FormProduct = ({formInstance, hideModal})  => {
        .then(response => response.json())
        .then(data => {
           console.log(data);
-          setValue("descripcion",data.descripcion);
-          setValue("unidadVenta",data.unidad);
-          setValue("codigoProveedor", data.codigoProveedor);
-          setValue("codigoBarras", data.codigobarras);
-          setValue("precioCompra",data.precioCompra);
-          setValue("precioVenta",data.precioPublico);
-          setValue("existencia","1");
-          setValue("minimoExistencia","1");
-          setValue("maximoExistencia","3");
-          setValue("ubicacion","UNKNOW");
-          setValue("puedeVenderse",true);
+          formik.setFieldValue("descripcion",data.descripcion);
+          formik.setFieldValue("unidadVenta",data.unidad);
+          formik.setFieldValue("codigoProveedor", data.codigoProveedor);
+          formik.setFieldValue("codigoBarras", data.codigobarras);
+          formik.setFieldValue("precioCompra",data.precioCompra);
+          formik.setFieldValue("precioVenta",data.precioPublico);
+          formik.setFieldValue("existencia","1");
+          formik.setFieldValue("minimoExistencia","1");
+          formik.setFieldValue("maximoExistencia","3");
+          formik.setFieldValue("ubicacion","UNKNOW");
+          formik.setFieldValue("puedeVenderse",true);
        });
 
   };
@@ -110,18 +112,18 @@ const FormProduct = ({formInstance, hideModal})  => {
       .then(data => {
          console.log("xxx")
          console.log(data);
-         setValue("descripcion",data.description);
-         setValue("unidadVenta",data.unidadVenta);
-         setValue("proveedor",data.proveedorId);
-         setValue("codigoProveedor", data.codigoProveedor);
-         setValue("codigoBarras", data.barcode);
-         setValue("precioCompra",data.precioCompra);
-         setValue("precioVenta",data.precioVenta);
-         setValue("existencia", data.existencia);
-         setValue("minimoExistencia",data.minimoExistencia);
-         setValue("maximoExistencia",data.maximoExistencia);
-         setValue("puedeVenderse", data.puedeVenderse);  
-         setValue("ubicacion", data.ubicacion);
+         formik.setFieldValue("descripcion",data.description);
+         formik.setFieldValue("unidadVenta",data.unidadVenta);
+         formik.setFieldValue("proveedor",data.proveedorId);
+         formik.setFieldValue("codigoProveedor", data.codigoProveedor);
+         formik.setFieldValue("codigoBarras", data.barcode);
+         formik.setFieldValue("precioCompra",data.precioCompra);
+         formik.setFieldValue("precioVenta",data.precioVenta);
+         formik.setFieldValue("existencia", data.existencia);
+         formik.setFieldValue("minimoExistencia",data.minimoExistencia);
+         formik.setFieldValue("maximoExistencia",data.maximoExistencia);
+         formik.setFieldValue("puedeVenderse", data.puedeVenderse);  
+         formik.setFieldValue("ubicacion", data.ubicacion);
 
          fetch(parametros['URL_API_BASE'] + "/find_historico/" + data.proveedorId +"/" + data.codigoProveedor)
             .then(response => response.json())
@@ -142,74 +144,53 @@ const FormProduct = ({formInstance, hideModal})  => {
         setAdd(false)
         setPrecioCompraHistorico("");
         setPrecioVentaHistorico("");
-        setValue("codigoInterno",data.codigointerno);
-        setValue("descripcion",data.description);
-        setValue("unidadVenta",data.unidadVenta);
-        setValue("proveedor",data.proveedorId);
-        setValue("codigoProveedor", data.codigoProveedor);
-        setValue("codigoBarras", data.barcode);
-        setValue("precioCompra",data.precioCompra);
-        setValue("precioVenta",data.precioVenta);
-        setValue("existencia", data.existencia);
-        setValue("minimoExistencia",data.minimoExistencia);
-        setValue("maximoExistencia",data.maximoExistencia);
-        setValue("puedeVenderse", data.puedeVenderse);  
-        setValue("ubicacion", data.ubicacion);
+        formik.setFieldValue("codigoInterno",data.codigointerno);
+        formik.setFieldValue("descripcion",data.description);
+        formik.setFieldValue("unidadVenta",data.unidadVenta);
+        formik.setFieldValue("proveedor",data.proveedorId);
+        //formik.setFieldValue("proveedor",5);
+        formik.setFieldValue("codigoProveedor", data.codigoProveedor);
+        formik.setFieldValue("codigoBarras",data.barcode);
+        formik.setFieldValue("precioCompra",data.precioCompra);
+        formik.setFieldValue("precioVenta",data.precioVenta);
+        formik.setFieldValue("existencia", data.existencia);
+        formik.setFieldValue("minimoExistencia",data.minimoExistencia);
+        formik.setFieldValue("maximoExistencia",data.maximoExistencia);
+        formik.setFieldValue("puedeVenderse",data.puedeVenderse);  
+        formik.setFieldValue("ubicacion", data.ubicacion);
+        proveedorRef.current.value = data.proveedorId
+
         if (dataHistorico){
           setPrecioCompraHistorico(dataHistorico.precioCompra);
           setPrecioVentaHistorico(dataHistorico.precioPublico);
         }
      }else{
-      clearForm()
+      formik.resetForm()
       setAdd(true)
     }
 
    };
 
-  const clearForm = () => {
-    setValue("codigoInterno","0");
-    setValue("descripcion","");
-    setValue("codigoProveedor", "");
-    setValue("codigoBarras", "");
-    setValue("precioCompra","0");
-    setValue("precioVenta","0");
-    setValue("existencia","1");
-    setValue("minimoExistencia","1");
-    setValue("maximoExistencia","3");
-    setValue("ubicacion","UNKNOW");
-  }
 
 
   const changePrice = () => {
-    setValue("precioCompra",precioCompraHistorico);
-    setFocus("precioVenta");
+    formik.setFieldValue("precioCompra",precioCompraHistorico);
+    formik.setFieldValue("precioVenta");
   }
   
   
   return (
     <div>
-      <p> Creacion/Edicion del producto</p>
-     
-      <Form form={formInstance}  onFinish={handleSubmit(onSubmit2)}>
+
+      <Form form={formInstance} onFinish={formik.handleSubmit} layout="vertical">
         <Grid container spacing={1}>
            <Grid item xs={2}>
-              <Controller
-                  name="codigoInterno"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: 'First name required' }}
-                  render={({ field: { onChange, value } }) => (
-                    <TextField
-                      label="Codigo interno"
-                      ref = {codigoInternoRef}
-                      disabled = {disabledCodigoInterno}
-                      variant="standard"
-                      value={value}
-                      onChange={onChange}
-                    />
-                    )}  
-                />
-             
+               <Form.Item  label="Codigo interno:"> 
+                 <InputNumber placeholder="input placeholder" 
+                     value={formik.values.codigoInterno}
+                     onChange={(evt) => formik.setFieldValue("codigoInterno", evt.target.value)} />
+               </Form.Item>
+
                 <Button variant="contained"  variant="contained" onClick={handleSearchProductByCodigoInterno} color="primary" >
                    <Icon>search</Icon>
                 </Button>
@@ -220,14 +201,16 @@ const FormProduct = ({formInstance, hideModal})  => {
             <Grid item xs={1}>
             </Grid>
             <Grid item xs={8}>
-              <label htmlFor="proveedor">Proveedor</label>
-              <select id="proveedor" options={proveedores} {...register("proveedor")}>
-                 { proveedores.map ( (proveedor) => (
-                   <option key={proveedor.value} value={proveedor.value}>{proveedor.label}</option>
-                 ))}
-                 
-              </select>  
-                
+                  <Select ref={proveedorRef} 
+                     label = "Proveedor"
+                     options = {proveedores}
+                     onChange={(evt) => {
+                            console.log("select evt")
+                            console.log(evt)
+                            formik.setFieldValue("proveedor", evt.target.value)
+                          }
+                      } />
+
               {errors.proveedor && <p>{errors.proveedor.message}</p>  }
 
            </Grid>
@@ -235,21 +218,12 @@ const FormProduct = ({formInstance, hideModal})  => {
 
         <Grid container spacing={1}>
            <Grid item xs={2}>
-                <Controller
-                        name="codigoProveedor"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: 'codigo proveedor required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            ref={codigoProveedorRef}
-                            label="Codigo proveedor"
-                            variant="standard"
-                            value={value}
-                            onChange={onChange}
-                          />
-                          )}  
-                />
+                <Form.Item label="Codigo proveedor">
+                    <Input placeholder="input placeholder"
+                     value={formik.values.codigoProveedor}
+                     onChange={(evt) => formik.setFieldValue("codigoProveedor", evt.target.value)} />
+                 </Form.Item>
+
                 {errors.codigoProveedor && <p>{errors.codigoProveedor.message}</p>  }
 
            </Grid>
@@ -259,24 +233,11 @@ const FormProduct = ({formInstance, hideModal})  => {
                </Button>
            </Grid>
            <Grid item xs={3} > 
-                  <Controller
-                        name="codigoBarras"
-                        control={control}
-                        defaultValue=""
-                        style ={{width: '100%'}}
-                        rules={{ required: 'codigo barras required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            label="Codigo barras"
-                            variant="standard"
-                            value={value}
-                            onChange={onChange}
-                          />
-
-                         
-                          )}  
-                />   
-                
+                 <Form.Item label="Codigo barras">
+                    <Input placeholder="Codigo de barras" 
+                          value={formik.values.codigoBarras}
+                          onChange={(evt) => formik.setFieldValue("codigoBarras", evt.target.value)} />
+                 </Form.Item>
                 {errors.codigoBarras && <p>{errors.codigoBarras.message}</p>  }
 
            </Grid>
@@ -289,44 +250,23 @@ const FormProduct = ({formInstance, hideModal})  => {
 
         <Grid container spacing={1}>
            <Grid item xs={12}>
-                <Controller
-                        name="descripcion"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: 'description required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <FormControl fullWidth={true}>
-                            <InputLabel htmlFor="descripcion">Descripcion</InputLabel>
-                            <Input id="descripcion" 
-                                    aria-describedby="my-helper-text" 
-                                    value={value}
-                                    onChange={onChange}    
-                            />
-                            {errors.descripcion && <FormHelperText id="my-helper-text">{errors.descripcion.message}</FormHelperText> }
-                          </FormControl>
-                          )}  
-                />  
-                
-
+                 <Form.Item label="Descripcion">
+                    <Input placeholder="Descripcion" 
+                      value={formik.values.descripcion}
+                      onChange={(evt) => formik.setFieldValue("descripcion", evt.target.value)} />
+                 </Form.Item>
+                 {errors.descripcion && <FormHelperText id="my-helper-text">{errors.descripcion.message}</FormHelperText> }
+  
             </Grid>
          </Grid>
               
         <Grid container spacing={1}>
            <Grid item xs={2}>
-                <Controller
-                        name="precioCompra"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: 'precio compra required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            label="Precio compra"
-                            variant="standard"
-                            value={value}
-                            onChange={onChange}
-                          />
-                          )}  
-                />                  
+                  <Form.Item label="Precio compra">
+                    <InputNumber placeholder="Precio de compra" 
+                           value={formik.values.precioCompra}
+                           onChange={(evt) => formik.setFieldValue("precioCompra", evt.target.value)} />
+                 </Form.Item>
                 {errors.precioCompra && <p>{errors.precioCompra.message}</p> }
                 {precioCompraHistorico != "" && <div> <a  onClick={changePrice} >{precioCompraHistorico} </a>  </div>}
 
@@ -335,20 +275,11 @@ const FormProduct = ({formInstance, hideModal})  => {
 
            </Grid>
            <Grid item xs={2}>
-                <Controller
-                        name="precioVenta"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: 'precio venta required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            label="Precio venta"
-                            variant="standard"
-                            value={value}
-                            onChange={onChange}
-                          />
-                          )}  
-                />
+                 <Form.Item label="Precio venta">
+                    <InputNumber placeholder="Precio de venta" 
+                           value={formik.values.precioVenta}
+                           onChange={(evt) => formik.setFieldValue("precioVenta", evt.target.value)} />
+                 </Form.Item>
                 {errors.precioVenta && <p>{errors.precioVenta.message}</p>  }
                 {precioVentaHistorico != "" && <div> <p>{precioVentaHistorico}</p> </div>}
            </Grid>
@@ -356,20 +287,11 @@ const FormProduct = ({formInstance, hideModal})  => {
              <Button> </Button>
            </Grid>
            <Grid item xs={2}>  
-                 <Controller
-                        name="unidadVenta"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: 'Unidad venta required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            label="Unidad de venta"
-                            variant="standard"
-                            value={value}
-                            onChange={onChange}
-                          />
-                          )}  
-                />                  
+                 <Form.Item label="Unidad venta">
+                    <Input placeholder="Unidad de venta" 
+                           value={formik.values.unidadVenta}
+                           onChange={(evt) => formik.setFieldValue("unidadVenta", evt.target.value)} />
+                 </Form.Item>
                  {errors.unidadVenta && <p>{errors.unidadVenta.message}</p>  }
           </Grid>
 
@@ -377,41 +299,24 @@ const FormProduct = ({formInstance, hideModal})  => {
 
         <Grid container spacing={1}>
            <Grid item xs={2}>
-                 <Controller
-                        name="existencia"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: 'Existencia required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            label="Existencia"
-                            variant="standard"
-                            value={value}
-                            onChange={onChange}
-                          />
-                          )}  
-                />  
-                 {errors.existencia && <p>{errors.existencia.message}</p>  }
+                 <Form.Item label="existencia">
+                    <InputNumber placeholder="Existencia"
+                     value={formik.values.existencia}
+                     onChange={(evt) => formik.setFieldValue("existencia", evt.target.value)} />
+                 </Form.Item>
+                {errors.existencia && <p>{errors.existencia.message}</p>  }
 
            </Grid>
            <Grid item xs={1}>
 
            </Grid>
            <Grid item xs={2}>
-                  <Controller
-                        name="minimoExistencia"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: 'Minimo existencia required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            label="Minimo existencia"
-                            variant="standard"
-                            value={value}
-                            onChange={onChange}
-                          />
-                          )}  
-                /> 
+                 <Form.Item label="Minimo existencia">
+                    <InputNumber placeholder="Minimo Existencia" 
+                          value={formik.values.minimoExistencia}
+                          onChange={(evt) => formik.setFieldValue("minimoExistencia", evt.target.value)} />
+                 </Form.Item>
+
                 {errors.minimoExistencia && <p>{errors.minimoExistencia.message}</p>  }
  
            </Grid>
@@ -419,20 +324,12 @@ const FormProduct = ({formInstance, hideModal})  => {
              
            </Grid>
            <Grid item xs={2}>
-               <Controller
-                        name="maximoExistencia"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: 'Maxicmo existencia required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            label="Maximo existencia"
-                            variant="standard"
-                            value={value}
-                            onChange={onChange}
-                          />
-                          )}  
-                />               
+                 <Form.Item label="Maximo existencia">
+                    <InputNumber placeholder="Maximo Existencia" 
+                           value={formik.values.maximoExistencia}
+                           onChange={(evt) => formik.setFieldValue("maximoExistencia", evt.target.value)} />
+                 </Form.Item>
+               
                 {errors.maximoExistencia && <p>{errors.maximoExistencia.message}</p>  }
 
            </Grid>
@@ -442,45 +339,59 @@ const FormProduct = ({formInstance, hideModal})  => {
 
         <Grid container spacing={1}>
           <Grid item xs={2}>
-                 <Controller
-                        name="ubicacion"
-                        control={control}
-                        defaultValue=""
-                        rules={{ required: 'Ubicacion required' }}
-                        render={({ field: { onChange, value } }) => (
-                          <TextField
-                            label="Ubicacion"
-                            variant="standard"
-                            value={value}
-                            onChange={onChange}
-                          />
-                          )}  
-                />  
-               {errors.ubicacion && <p>{errors.ubicacion.message}</p>  }
+                 <Form.Item label="ubicacion">
+                    <Input placeholder="ubicacion" 
+                           value={formik.values.ubicacion}
+                           onChange={(evt) => formik.setFieldValue("ubicacion", evt.target.value)} />
+                 </Form.Item>
+                {errors.ubicacion && <p>{errors.ubicacion.message}</p>  }
 
                
           </Grid> 
           <Grid item xs={1}></Grid>
           <Grid item xs={2}>
-                <label htmlFor="puedeVenderse">Puede venderse </label>
-                <input
-                  id="puedeVenderse"
-                  type="checkbox"
-                  {...register("puedeVenderse")}
-
-                />
-                {errors.puedeVenderse && <p>{errors.puedeVenderse.message}</p>  }
+             <Form.Item name="puedeVenderse" label="Puede venderse" valuePropName='value' >
+             <Checkbox
+                  checked={formik.values.puedeVenderse}
+                  onChange={(evt) => {
+                    formik.setFieldValue("puedeVenderse", evt.target.checked)
+                    console.log("Que trae evt")
+                    console.log(evt)
+                   }}  
+               >
+                 
+               </Checkbox>
+             </Form.Item>
+             {errors.puedeVenderse && <p>{errors.puedeVenderse.message}</p>  }
 
                
           </Grid> 
         </Grid>
-        <input type="submit" />
+
        </Form>    
  
 	      
 
     </div>
   );
+}
+
+function initialValues() {
+  return {
+     codigoInterno: "",
+     proveedor: "",
+     codigoProveedor: "",
+     codigoBarras: "",
+     descripcion: "",
+     precioCompra: 0,
+     precioVenta: 0,
+     unidadVenta: "PZA",
+     existencia: 1,
+     minimoExistencia: 1,
+     maximoExistencia: 3,
+     ubicacion : "UNK",
+     puedeVenderse: true
+  }
 }
 
 export default FormProduct;
