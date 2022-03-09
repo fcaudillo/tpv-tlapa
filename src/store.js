@@ -11,6 +11,8 @@ import { combineReducers } from 'redux';
 
 import LoadProductReducer from './reducers/LoadProductReducer'
 import UpdateProductReducer from './reducers/UpdateProductReducer'
+import LoadProductHistoryReducer from './reducers/LoadProductHistoryReducer';
+import SaveProductReducer from './reducers/SaveProductReducer'
 
 const epicMiddleware = createEpicMiddleware();
 
@@ -56,7 +58,9 @@ const initialState = {
 const rootReducer = combineReducers({
     reducer,
     editProduct: LoadProductReducer,
-    updateProduct: UpdateProductReducer
+    updateProduct: UpdateProductReducer,
+    historyProduct: LoadProductHistoryReducer,
+    saveProduct: SaveProductReducer
 });
 
 /** ,epicMilddleware */

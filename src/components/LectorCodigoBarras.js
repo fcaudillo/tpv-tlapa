@@ -8,9 +8,9 @@ const SEARCH_PRODUCT_BARCODE = "message"
 
 
 const LectorCodigoBarras = (negocioId) => {
-   const lista = useSelector(store => store.listaConsulta);
-   const listaTicket = useSelector(store => store.listaTicket);
-   const listaTicketNormalizado = useSelector(store => store.listaTicketNormalizado);
+   const lista = useSelector(store => store.reducer.listaConsulta);
+   const listaTicket = useSelector(store => store.reducer.listaTicket);
+   const listaTicketNormalizado = useSelector(store => store.reducer.listaTicketNormalizado);
    const dispatch = useDispatch();
    const socketRef = useRef();
 

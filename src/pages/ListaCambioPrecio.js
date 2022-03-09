@@ -12,8 +12,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as actions from '../actions'
 import * as logicProduct  from '../bussiness/logicFormProduct'
 import {loadProduct} from '../bussiness/actions/loadProduct'
-import { UpdateProductAction } from '../bussiness/actions/UpdateProductAction'
-
 
 
 const ListaCambioPrecio = (props) => {
@@ -23,12 +21,14 @@ const ListaCambioPrecio = (props) => {
   const proveedorRef = useRef();
   const [listaCambios, setListaCambios] = React.useState([]);
   const [visible, setVisible] = React.useState(false);
-   
+  const [visibleDelete, setVisibleDelete] = React.useState(false) 
+  
   const dispatch = useDispatch()
   const updateDataProduct = useSelector(store => store.editProduct);
   const {data, dataHistorico } = updateDataProduct
   const [form] = Form.useForm()
   const resultUdateProduct = useSelector(store => store.updateProduct)
+  const [productDelete, setProductDelete] = React.useState({})
 
  
   const columns = [
@@ -38,7 +38,11 @@ const ListaCambioPrecio = (props) => {
       render: (text, record) => (
         <Space size="middle">
           <a onClick={(event) => editarProducto(record.codigointerno)}>Editar</a>
-          <a onClick={() => deleteItem(record.id)}>Delete</a>
+          <a onClick={() => {
+              setProductDelete({id: record.id, description: record.description})
+              setVisibleDelete(true);
+              
+          }}>Delete</a>
         </Space>
       ),
     },
@@ -117,7 +121,7 @@ const ListaCambioPrecio = (props) => {
 
   const deleteItem = (id) => {
 
-    var url = parametros['URL_API_BASE'] + "/deletecambioprecios/" + id;
+    var url = parametros['URL_API_BASE'] + "/xxdeletecambioprecios/" + id;
     console.log("delete datos a " + url);
  
     fetch(url,
@@ -136,7 +140,8 @@ const ListaCambioPrecio = (props) => {
         let newLista = listaCambios.filter ( (data) => {
            return data.id != id
         })
-        setListaCambios(newLista);
+        setListaCambios(newLista)
+        setVisibleDelete(false)
 
       })
     .catch(function(res){ 
@@ -148,7 +153,6 @@ const ListaCambioPrecio = (props) => {
  const actualizarProducto = () => {
    console.log("llamando actionFormProduct con update")
    form.submit()
-   //dispatch(actions.actionFormProduct('UPDATE'));
    console.log("fin ")
  }
       
@@ -193,6 +197,25 @@ const ListaCambioPrecio = (props) => {
           
             <FormProduct formInstance={form}  hideModal={ () => setVisible(false)}  />
          </Modal>
+
+         <Modal
+             visible={visibleDelete}
+             footer={[
+               <Button key="2"
+                   onClick={() =>setVisibleDelete(false)}
+                 >No</Button>,
+               <Button key="3" 
+                   onClick={() => {
+                      deleteItem(productDelete.id);
+                     }}
+                   type="primary">
+                   Si
+               </Button>
+             ]}
+          >
+          <p> ¿Desea eliminar este producto?</p>
+          <p>{productDelete.description} </p>
+       </Modal>
     </div>
   );
 }

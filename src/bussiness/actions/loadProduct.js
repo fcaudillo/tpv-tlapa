@@ -9,24 +9,18 @@ import {
 
 export const loadProduct = (data) => {
 
-  
-  const config={
-    method: 'POST',
-    body:JSON.stringify(data),
-    headers:{'Content-Type':'application/json'}
-  };
-
-  console.log('RECUEST:',FIND_CODIGO_INTERNO, config);
+ 
+  console.log('RECUEST:',FIND_CODIGO_INTERNO + "/" + data + "/");
   
   return ( dispatch ) => {
     console.log("SE ESTA EJECUTando consulta a BASE DE DATOS")
     if(data === 'PURGE'){
       dispatch( { type: LOAD_PRODUCT_PURGE, payload: 'PURGE'} )
     }else{
-      fetch(FIND_CODIGO_INTERNO + "/" + data )
+      fetch(FIND_CODIGO_INTERNO + "/" + data  + "/")
       .then(response => response.json())
       .then(producto => {
-         fetch(SEARCH_HISTORICO_PRODUCTO + "/" + producto.proveedorId +"/" + producto.codigoProveedor)
+         fetch(SEARCH_HISTORICO_PRODUCTO + "/" + producto.proveedorId +"/" + producto.codigoProveedor + "/")
             .then(response => response.json())
             .then(dataHist => {
                 console.log(producto)

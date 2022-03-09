@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
@@ -9,6 +9,9 @@ import EditItemConsulta from '../components/EditItemConsulta'
 import { Grid  } from '@mui/material'
 import { Button, Box } from '@mui/material'
 import { makeStyles } from '@mui/styles'
+import FormProduct from './FormProduct'
+import {loadProduct} from '../bussiness/actions/loadProduct'
+import { Modal, Form } from 'antd'
 
 const useStyles = makeStyles({
     root: {
@@ -32,6 +35,10 @@ function CodigoBarras() {
   const dispatch = useDispatch();
   const lector = LectorCodigoBarras("message");
   const [isOpen, setIsOpen] = useState(false);
+  const [visible, setVisible] = useState(false)
+  const [form] = Form.useForm()
+  const resultUdateProduct = useSelector(store => store.updateProduct)
+  
   {/* 
   const listElements = lista.map((prod) =>
      <GridListTile key={prod.id} cols={1} onClick={(e) => {
@@ -45,11 +52,7 @@ function CodigoBarras() {
 
   */}
 
-  const listElements = lista.map((prod) =>
-      <Grid item xs={12} key={prod.id}>
-        <Producto key={prod.id} data={prod} />  
-      </Grid>
-   );
+
 
   const classes = useStyles();
 
@@ -58,6 +61,31 @@ function CodigoBarras() {
   }
   const closeEditCalculator = (value) => {
     setIsOpen(false);
+  }
+
+  React.useEffect( () => {
+    if (resultUdateProduct && 'resultUpdate' in resultUdateProduct && resultUdateProduct.resultUpdate.isOk === true) {
+      setVisible(false); 
+    }
+  },[resultUdateProduct])
+
+  const editarProducto = (codigo) => {
+    console.log("Nuevo editar producto ABC  ")
+    dispatch(loadProduct('PURGE'))
+    dispatch(loadProduct(codigo))
+    setVisible(true); 
+  }
+
+  const listElements = lista.map((prod) =>
+  <Grid item xs={12} key={prod.id}>
+    <Producto key={prod.id} data={prod} edit={editarProducto} />  
+  </Grid>
+  );
+
+  const actualizarProducto = () => {
+    console.log("llamando actionFormProduct con update")
+    form.submit()
+    console.log("fin ")
   }
 
   return (
@@ -81,6 +109,17 @@ function CodigoBarras() {
 
       <EditItemConsulta onClose={closeEditCalculator} open={isOpen}  data={cardItem}  />
 
+      <Modal
+            title="Actualizar producto"
+            centered
+            visible={visible}
+            onOk={() => actualizarProducto()}
+            onCancel={() => setVisible(false)}
+            width={1000}
+          >
+          
+            <FormProduct formInstance={form}  hideModal={ () => setVisible(false)}  />
+         </Modal>
          
     </div>
   );

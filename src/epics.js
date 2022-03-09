@@ -21,7 +21,7 @@ export const printTicketEpic = (actions$,state$) =>
        actions$.pipe(
          ofType("ADD_TICKET_SUCCESS"),
          mergeMap(action =>  {
-            if (state$.value.ticket.movimiento.tipo_impresion === 0) { //No imprimir el ticket
+            if (state$.value.reducer.ticket.movimiento.tipo_impresion === 0) { //No imprimir el ticket
                return of(actions.printTicketSuccess({}));
             }
 
@@ -29,7 +29,7 @@ export const printTicketEpic = (actions$,state$) =>
               url: 'https://192.168.100.9:5000/print_ticket/',
               headers: {'Content-Type':'application/json'},
               method: 'POST',
-              body: state$.value.ticket.printTicket,
+              body: state$.value.reducer.ticket.printTicket,
             }).pipe(
               map ( result => {
                 if (result.status ===200) {
@@ -49,11 +49,11 @@ export const addTicketEpic = (actions$, state$) =>
       ofType ("SEND_TICKET"),
       mergeMap(action =>
          ajax({
-           // url: 'http://192.168.100.9:5001/tickets/add',
+           //url: 'http://192.168.100.13:1414/tickets/add',
            url: 'https://tlapape.elverde.mx/tickets/add',
            headers: {'Content-Type':'application/json','X-HTTP-Method-Override': 'PUT', 'X-CSRFToken': Cookies.get('csrftoken')},
            method: 'POST',
-           body: state$.value.ticket.movimiento,
+           body: state$.value.reducer.ticket.movimiento,
          }).pipe(
             map (result => {
                if (result.status === 200) {

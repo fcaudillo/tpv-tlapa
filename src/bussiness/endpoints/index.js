@@ -1,5 +1,7 @@
 export const URL_SERVER='https://tlapape.elverde.mx';
 
+//export const URL_SERVER='http://192.168.100.13:1414';
+
 
 
 export const FIND_CODIGO_INTERNO= URL_SERVER+'/findByCodigoInterno'

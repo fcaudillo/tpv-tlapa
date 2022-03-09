@@ -13,6 +13,7 @@ import Menu from '@mui/material/Menu';
 import { useHistory } from 'react-router-dom'
 
 
+
 const useStyles = makeStyles({
     root: {
       backgroundColor: "white"
@@ -38,6 +39,7 @@ const Producto = (props) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const open = Boolean(anchorEl);
         const history = useHistory();
+        const { edit } = props
 
  
         const handleClick = (event) => {
@@ -48,11 +50,16 @@ const Producto = (props) => {
         };
 
         const handleAction = (action, key) => {
-          history.push("/puntoventa/add/"+ key);
+          //history.push("/puntoventa/add/"+ key);
+           if (action == "editar"){
+              edit(key)
+              handleClose();
+           }
 
         }
       
 	return	(
+    
 		   <Card className={props.data.active ? classes.rootActive : classes.root} variant="outlined" >
     		     <CardHeader title={ <div> 
                 <span>
@@ -121,6 +128,8 @@ const Producto = (props) => {
 
 		   </Card>
 
+       
+     
 		)
 }
 
