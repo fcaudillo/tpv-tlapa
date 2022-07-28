@@ -7,6 +7,8 @@ import CodigoBarras from '../pages/CodigoBarras';
 import NotFound from '../pages/NotFound';
 import FormProduct from '../pages/FormProduct';
 import ListaCambioPrecio from '../pages/ListaCambioPrecio';
+import VentaDiaria from '../pages/VentaDiaria'
+
 import './styles/App.css';
 
 function App() {
@@ -21,6 +23,7 @@ function App() {
           <Route exact path="/puntoventa/add" component={FormProduct} />
           <Route exact path="/puntoventa/tpv" component={TPV} />
           <Route exact path="/puntoventa/listacambioprecio" component={ListaCambioPrecio} />
+          <Route exact path="/puntoventa/ventadiaria" component={VentaDiaria} />
           <Route component={NotFound} />
         </Switch>
       </Layout>

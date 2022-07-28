@@ -7,6 +7,31 @@ import {
   LOAD_PRODUCT_PURGE
 } from '../types'
 
+
+const findHistorico = (producto) => {
+  console.log("producto")
+  console.log(producto)
+  return new Promise ( (resolve, reject) => {
+        fetch(SEARCH_HISTORICO_PRODUCTO + "/" + producto.proveedorId +"/" + producto.codigoProveedor + "/")
+            .then( response => {
+               if (response.status == 200) { 
+                  response.json().then( (dataHist) => {
+                     return resolve({data:producto, dataHistorico: dataHist, isOk: true})
+                  })
+                  
+               }else{
+                  return resolve ({data:producto, dataHistorico: {}, isOk: true})
+               }
+
+            })
+            .catch(error => {
+              return resolve ({data:producto, dataHistorico: {}, isOk: true})
+            });
+
+        });  
+
+}
+
 export const loadProduct = (data) => {
 
  
@@ -19,24 +44,18 @@ export const loadProduct = (data) => {
     }else{
       fetch(FIND_CODIGO_INTERNO + "/" + data  + "/")
       .then(response => response.json())
-      .then(producto => {
-         fetch(SEARCH_HISTORICO_PRODUCTO + "/" + producto.proveedorId +"/" + producto.codigoProveedor + "/")
-            .then(response => response.json())
-            .then(dataHist => {
-                console.log(producto)
-                console.log(dataHist)
-                const response = {data:producto, dataHistorico: dataHist, isOk: true}
-                dispatch ({ type: LOAD_PRODUCT_SUCCESS, payload: response} )
-            })
-            .catch(error => {
-              const responseError = {
-                isOk: false,
-                error: error
-              }
-              console.log('loadProduct: ',responseError);
-              dispatch({ type: LOAD_PRODUCT_ERROR, payload: responseError })
-            });
-
+      .then(producto => findHistorico(producto))
+      .then(dat => {
+          console.log(dat)
+          dispatch ({ type: LOAD_PRODUCT_SUCCESS, payload: dat} )
+        })
+        .catch(error => {
+          const responseError = {
+            isOk: false,
+            error: error
+          }
+          console.log('loadProduct: ',responseError);
+          dispatch({ type: LOAD_PRODUCT_ERROR, payload: responseError })
         });
 
 

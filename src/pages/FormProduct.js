@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from 'react';
+import React, { useRef, useContext, useCallback } from 'react';
 import { ApplicationContext } from '../Context';
 import * as yup from "yup";
 import { useSelector, useDispatch } from 'react-redux'
@@ -19,7 +19,7 @@ const porcentajes = [
   { title: '20%  30.00', porcentaje: 20 }
 ];
 
-const FormProduct = ({formInstance, hideModal, mode = "Editar"})  => {
+const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  => {
   const [add, setAdd] = React.useState(true);
   const value = useContext(ApplicationContext);
   const [precioCompraHistorico, setPrecioCompraHistorico] = React.useState("");
@@ -50,6 +50,10 @@ const FormProduct = ({formInstance, hideModal, mode = "Editar"})  => {
   
 
   React.useEffect ( () => {
+       if (mode != "Editar"){
+         return
+       }
+
        if (EditProduct && 'data' in EditProduct && EditProduct.isOk === true) {
          populateForm(EditProduct.data, EditProduct.dataHistorico)
        }
@@ -58,11 +62,21 @@ const FormProduct = ({formInstance, hideModal, mode = "Editar"})  => {
 
   React.useEffect( () => {
 
+    if (mode != "Create"){
+      return
+    }
+
     if (saveProduct && 'saveProductPurge' in saveProduct){
-         setPrecioCompraHistorico("");
+        setPrecioCompraHistorico("");
         setPrecioVentaHistorico(""); 
-        formik.resetForm()
-        formik.setValues("proveedor", proveedorRef.current.value)
+        (async () => {
+            await formik.setValues(initialValues())
+            
+            formik.setFieldError("descripcion", "");
+            await formik.setFieldValue("proveedor", proveedorRef.current.value);
+            formik.setErrors({errors : {}})
+            enterLoading(0,false);
+        }) ();
     }
 
     if (saveProduct && 'resultSaveError' in saveProduct && saveProduct.resultSaveError.isOk == true) {
@@ -85,57 +99,62 @@ const FormProduct = ({formInstance, hideModal, mode = "Editar"})  => {
     setPrecioCompraHistorico("");
     setPrecioVentaHistorico("");     
     if (historyProduct && 'dataHistorico' in historyProduct && historyProduct.isOk == true ){
-      const dataHistorico = historyProduct.dataHistorico
-      formik.setFieldValue("descripcion",dataHistorico.descripcion);
-      formik.setFieldValue("unidadVenta",dataHistorico.unidad);
-      formik.setFieldValue("codigoProveedor", dataHistorico.codigoProveedor);
-      formik.setFieldValue("codigoBarras", dataHistorico.codigobarras);
-      formik.setFieldValue("precioCompra",dataHistorico.precioCompra);
-      formik.setFieldValue("precioVenta",dataHistorico.precioPublico);
-      formik.setFieldValue("existencia","1");
-      formik.setFieldValue("minimoExistencia","1");
-      formik.setFieldValue("maximoExistencia","3");
-      formik.setFieldValue("ubicacion","UNKNOW");
-      formik.setFieldValue("puedeVenderse",true);
-      setPrecioCompraHistorico(dataHistorico.precioCompra);
-      setPrecioVentaHistorico(dataHistorico.precioPublico);
+      populteHistory(historyProduct.dataHistorico);
     }
 
   }, [historyProduct])
+
+
+  const populteHistory = async ( dataHistorico ) => {
+    await formik.setFieldValue("descripcion",dataHistorico.descripcion);
+    await formik.setFieldValue("unidadVenta",dataHistorico.unidad);
+    await formik.setFieldValue("codigoProveedor", dataHistorico.codigoProveedor);
+    await formik.setFieldValue("codigoBarras", dataHistorico.codigobarras);
+    await formik.setFieldValue("precioCompra",dataHistorico.precioCompra);
+    await formik.setFieldValue("precioVenta",dataHistorico.precioPublico);
+    await formik.setFieldValue("existencia","1");
+    await formik.setFieldValue("minimoExistencia","1");
+    await formik.setFieldValue("maximoExistencia","3");
+    await formik.setFieldValue("ubicacion","UNKNOW");
+    await formik.setFieldValue("puedeVenderse",true);
+    setPrecioCompraHistorico(dataHistorico.precioCompra);
+    setPrecioVentaHistorico(dataHistorico.precioPublico);
+  }
   
-  const populateForm = (data, dataHistorico) => {
+  const populateForm = async (data, dataHistorico) => {
     setDisabledCodigoInterno(false)
     if (data){
         setDisabledCodigoInterno(true)
         setAdd(false)
         setPrecioCompraHistorico("");
         setPrecioVentaHistorico("");
-        formik.setFieldValue("codigoInterno",data.codigointerno);
-        formik.setFieldValue("descripcion",data.description);
-        formik.setFieldValue("unidadVenta",data.unidadVenta);
-        formik.setFieldValue("proveedor",data.proveedorId);
-        //formik.setFieldValue("proveedor",5);
-        formik.setFieldValue("codigoProveedor", data.codigoProveedor);
-        formik.setFieldValue("codigoBarras",data.barcode);
-        formik.setFieldValue("precioCompra",data.precioCompra);
-        formik.setFieldValue("precioVenta",data.precioVenta);
-        formik.setFieldValue("existencia", data.existencia);
-        formik.setFieldValue("minimoExistencia",data.minimoExistencia);
-        formik.setFieldValue("maximoExistencia",data.maximoExistencia);
-        formik.setFieldValue("puedeVenderse",data.puedeVenderse);  
-        formik.setFieldValue("ubicacion", data.ubicacion);
+        await formik.setFieldValue("codigoInterno",data.codigointerno);
+        await  formik.setFieldValue("descripcion",data.description);
+        await  formik.setFieldValue("unidadVenta",data.unidadVenta);
+        await  formik.setFieldValue("proveedor",data.proveedorId);
+        await  formik.setFieldValue("codigoProveedor", data.codigoProveedor);
+        await  formik.setFieldValue("codigoBarras",data.barcode);
+        await  formik.setFieldValue("precioCompra",data.precioCompra);
+        await  formik.setFieldValue("precioVenta",data.precioVenta);
+        await  formik.setFieldValue("existencia", data.existencia);
+        await  formik.setFieldValue("minimoExistencia",data.minimoExistencia);
+        await  formik.setFieldValue("maximoExistencia",data.maximoExistencia);
+        await  formik.setFieldValue("puedeVenderse",data.puedeVenderse);  
+        await  formik.setFieldValue("ubicacion", data.ubicacion);
+        proveedorRef.current.selectedIndex = -1;
         proveedorRef.current.value = data.proveedorId
-
+          
+          
         if (dataHistorico){
           setPrecioCompraHistorico(dataHistorico.precioCompra);
           setPrecioVentaHistorico(dataHistorico.precioPublico);
-        }
+        }  
      }else{
-      formik.resetForm()
+       formik.resetForm()
       setAdd(true)
     }
 
-  };
+  }
 
   const handleSearchProduct = () => {
      dispatch(LoadProductHistoryAction({proveedorId: formik.values.proveedor , codigoProveedor: formik.values.codigoProveedor}))
@@ -145,10 +164,10 @@ const FormProduct = ({formInstance, hideModal, mode = "Editar"})  => {
     dispatch(LoadProductHistoryAction({proveedorId: formik.values.proveedor , codigoProveedor: formik.values.codigoBarras}))
  }
 
-  const changePrice = () => {
-    formik.setFieldValue("precioCompra",precioCompraHistorico);
+  const  changePrice = async () => {
+    await formik.setFieldValue("precioCompra",precioCompraHistorico);
     if (precioVentaHistorico && precioVentaHistorico > 0) {
-      formik.setFieldValue("precioVenta", precioVentaHistorico)
+      await formik.setFieldValue("precioVenta", precioVentaHistorico);
     }
   }
   
@@ -331,8 +350,6 @@ function initialValues() {
      puedeVenderse: true
   }
 }
-
-
 function validationSchema() {
   return {
     codigoInterno:  yup.number().positive().integer(),
