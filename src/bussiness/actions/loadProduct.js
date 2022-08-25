@@ -12,7 +12,10 @@ const findHistorico = (producto) => {
   console.log("producto")
   console.log(producto)
   return new Promise ( (resolve, reject) => {
-        fetch(SEARCH_HISTORICO_PRODUCTO + "/" + producto.proveedorId +"/" + producto.codigoProveedor + "/")
+        fetch(SEARCH_HISTORICO_PRODUCTO + "/" + producto.proveedorId +"/" + producto.codigoProveedor + "/",{
+              method: 'GET',
+              headers:  new Headers({'content-type': 'application/json'})
+            })
             .then( response => {
                if (response.status == 200) { 
                   response.json().then( (dataHist) => {
@@ -42,7 +45,10 @@ export const loadProduct = (data) => {
     if(data === 'PURGE'){
       dispatch( { type: LOAD_PRODUCT_PURGE, payload: 'PURGE'} )
     }else{
-      fetch(FIND_CODIGO_INTERNO + "/" + data  + "/")
+      fetch(FIND_CODIGO_INTERNO + "/" + data  + "/", {
+        method: 'GET',
+        headers:  new Headers({'content-type': 'application/json'})
+      })
       .then(response => response.json())
       .then(producto => findHistorico(producto))
       .then(dat => {

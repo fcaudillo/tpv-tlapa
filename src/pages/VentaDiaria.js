@@ -73,9 +73,9 @@ const VentaDiaria = (props) => {
                         method: "GET"
                     });
     if (response.status == 200){
-      console.log("Lista obtenida")
-      const lista = await response.json()
-      setVentaDiaria(lista)
+      console.log("Lista obtenida nueva --")
+      const result = await response.json()
+      setVentaDiaria(result.lines)
     }else{
       console.log("Error en consulta venta diaria")
     }

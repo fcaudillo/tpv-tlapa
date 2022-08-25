@@ -16,7 +16,7 @@ import CodigoBarras from '../pages/CodigoBarras';
 import ListaCambioPrecio from '../pages/ListaCambioPrecio';
 import VentaDiaria from '../pages/VentaDiaria'
 import SearchProducts from '../pages/SearchProducts'
-import Busqueda from '../pages/Busqueda'
+import { SEARCH_AUTOCOMPLETE } from '../bussiness/endpoints'
 import { Subject, BehaviorSubject, fromEvent, debounceTime, filter, map, mergeMap, toArray } from 'rxjs'
 import { ajax } from 'rxjs/ajax'
 import { SearchProductAction  } from '../bussiness/actions/SearchProductAction';
@@ -41,7 +41,7 @@ function Layout(props) {
             filter( data => data.length > 3)
           ).subscribe( text => {
             
-            ajax.post('http://localhost:8080/product/search/autocomplete',
+            ajax.post(SEARCH_AUTOCOMPLETE,
                        {textSearch: text, maxOccurrences: 15},
                        { 'Content-Type': 'application/json' })
                        .pipe(
@@ -123,32 +123,18 @@ function Layout(props) {
         </Grid>
         <Grid item xs={9}>
           <Grid container>
-              <Grid item xs={12}>
+              <Grid item xs={3}>
               <div class="btn-group">
                   <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                     Producto
                   </button>
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item" onClick = {() => showCrearProducto() }>Crear producto</a></li>
-                    <li>
-                      <Link className="dropdown-item" to="/puntoventa/listacambioprecio">
-                        Cambio de precios
-                      </Link>
-                    </li>
-                    <li>
-                      <Link className="dropdown-item" to="/puntoventa/ventadiaria">
-                         Productos vendidos
-                      </Link> 
-                    </li>
-                    <li><hr class="dropdown-divider"></hr></li>
-                    <li>
-                       <Link className="dropdown-item" to="/">
-                        Punto de venta
-                      </Link>
-                    </li>
                   </ul>
               </div>
-               <div>
+              </Grid>
+              <Grid item xs={3}>
+               <span>
 
                 <AutoComplete
                   value={value}
@@ -162,8 +148,8 @@ function Layout(props) {
                 >
                   <Input.Search size="large" placeholder="Buscar productos..." enterButton />
                 </AutoComplete>
-               </div>
-
+               </span>
+              
 
               </Grid>
               <Grid item xs={12}>

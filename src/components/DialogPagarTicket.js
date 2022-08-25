@@ -7,6 +7,7 @@ import Dialog from '@mui/material/Dialog'
 import { makeStyles } from '@mui/styles'
 import Icon from '@mui/material/Icon'
 import { ApplicationContext } from '../Context';
+import Cookies from 'js-cookie'
 
 const useStyles = makeStyles({
     root: {
@@ -81,7 +82,7 @@ function DialogPagarTicket(props) {
      return data;
   }
 
-
+/*
   const imprimirTicket = (imprimirconticket) => {
     const dataPrintTicket = createTemplate();
     const dataMovimiento = createTemplateMovimiento(imprimirconticket);
@@ -92,6 +93,48 @@ function DialogPagarTicket(props) {
     dispatch(actions.sendTicket(ticket));
     console.log(ticket);
   }
+**/
+
+ const  imprimirTicket = async (imprimirconticket) => {
+   const dataPrintTicket = createTemplate();
+   const dataMovimiento = createTemplateMovimiento(imprimirconticket);
+   const ticket = {
+      movimiento: dataMovimiento,
+      printTicket: dataPrintTicket,
+   };
+   const response = await fetch('https://tlapape.elverde.mx/tickets/add',
+      {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': Cookies.get('csrftoken')
+          },
+          method: "POST",
+          body: JSON.stringify(dataMovimiento)
+      });
+
+      if (response.status === 200) {
+         console.log(response);
+         if (imprimirconticket == 1){
+           const respImp = await fetch( 'https://192.168.100.9:5000/print_ticket/',{
+               headers: {'Content-Type':'application/json'},
+               method: 'POST',
+               body: JSON.stringify(dataPrintTicket)
+             })
+            if (respImp.status != 200){
+               alert("Error de impresion")
+            } 
+         }
+         dispatch(actions.clearTicket())
+         handleClose();
+         
+       }else {
+         const errorMessage = await response.json()
+         dispatch(actions.addTicketFail({message:errorMessage}));
+       }
+      
+   console.log(ticket);
+ }
 
 
   const  updateData = (quantity, quantityPrice,type) => { 

@@ -12,7 +12,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import * as actions from '../actions'
 import * as logicProduct  from '../bussiness/logicFormProduct'
 import {loadProduct} from '../bussiness/actions/loadProduct'
-
+import { URL_FIND_CAMBIO_PRECIOS, URL_DELETE_CAMBIO_PRECIO } from '../bussiness/endpoints';
 
 const ListaCambioPrecio = (props) => {
   const value = useContext(ApplicationContext);
@@ -94,7 +94,7 @@ const ListaCambioPrecio = (props) => {
   }
 
   const handleSearch = (event) => {
-    var url = parametros['URL_API_BASE'] + "/findcambioprecios/" + proveedorRef.current.value;
+    var url = URL_FIND_CAMBIO_PRECIOS + "/" + proveedorRef.current.value;
     console.log("get datos a " + url);
  
     fetch(url,
@@ -121,17 +121,19 @@ const ListaCambioPrecio = (props) => {
 
   const deleteItem = (id) => {
 
-    var url = parametros['URL_API_BASE'] + "/xxdeletecambioprecios/" + id;
-    console.log("delete datos a " + url);
+    var url = URL_DELETE_CAMBIO_PRECIO + "/" + id;
+    console.log("delete datos a " + "/" + url);
  
     fetch(url,
     {
+        method: 'DELETE',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
           'X-CSRFToken': Cookies.get('csrftoken')
         },
-        method: "GET"
+        
+        
     })
     .then(response => response.json())
     .then(function(res){

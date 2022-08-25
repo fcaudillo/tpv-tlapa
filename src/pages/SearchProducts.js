@@ -3,8 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ApplicationContext } from '../Context';
 import Cookies from 'js-cookie'
 import { TextField, Grid, Icon, FormControl, Input, FormHelperText } from '@mui/material';
-import { useHistory } from 'react-router-dom';
-import icons from '@ant-design/icons'
+import { makeStyles } from '@mui/styles'
 import { Modal, Button, Form } from 'antd';
 import { Table, Tag, Space } from 'antd';
 import FormProduct from './FormProduct';
@@ -12,9 +11,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import {loadProduct} from '../bussiness/actions/loadProduct'
 import ProductoSearch from '../components/ProductoSearch'
 
-
+const useStyles = makeStyles({
+  divSearchProducts: {
+    overflowY: 'scroll',
+    height: "68vh"
+  },
+});
 
 const SearchProducts = (props) => {
+  const classes = useStyles();
   const value = useContext(ApplicationContext);
   const [visible, setVisible] = React.useState(false);
   const resultUdateProduct = useSelector(store => store.updateProduct)
@@ -56,7 +61,7 @@ const SearchProducts = (props) => {
          <Grid container spacing={1}>
            
            <Grid item xs={12}>
-               <div>
+               <div className={classes.divSearchProducts}>
                    {
                       products.map( (prod) => <ProductoSearch  key={prod.codigoInterno} data={prod} edit={editarProducto} />)
                    }
