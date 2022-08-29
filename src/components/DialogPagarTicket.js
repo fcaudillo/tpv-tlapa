@@ -8,6 +8,7 @@ import { makeStyles } from '@mui/styles'
 import Icon from '@mui/material/Icon'
 import { ApplicationContext } from '../Context';
 import Cookies from 'js-cookie'
+import { URL_ADD_TICKET, URL_PRINT_TICKET } from '../bussiness/endpoints'
 
 const useStyles = makeStyles({
     root: {
@@ -72,12 +73,14 @@ function DialogPagarTicket(props) {
   }
 
   const createTemplateMovimiento = (tipoimpresion) => {
-    const data = {
-      "tipo_movimiento": parametros["MOVIMIENTO_VENTA"],
-      "total": totalVenta,
-      "descripcion": parametros["DESCRIPCION_VENTA_PUBLICO"],
-      "tipo_impresion": tipoimpresion,
-      "items" : [...listaTicket]
+    const data ={
+      "ticket" : {
+         "tipo_movimiento": parametros["MOVIMIENTO_VENTA"],
+         "total": totalVenta,
+         "descripcion": parametros["DESCRIPCION_VENTA_PUBLICO"],
+         "tipo_impresion": tipoimpresion,
+         "items" : [...listaTicket]
+        }
      };
      return data;
   }
@@ -102,7 +105,7 @@ function DialogPagarTicket(props) {
       movimiento: dataMovimiento,
       printTicket: dataPrintTicket,
    };
-   const response = await fetch('https://tlapape.elverde.mx/tickets/add',
+   const response = await fetch(URL_ADD_TICKET,
       {
           headers: {
             'Accept': 'application/json',
@@ -116,7 +119,7 @@ function DialogPagarTicket(props) {
       if (response.status === 200) {
          console.log(response);
          if (imprimirconticket == 1){
-           const respImp = await fetch( 'https://192.168.100.9:5000/print_ticket/',{
+           const respImp = await fetch( URL_PRINT_TICKET,{
                headers: {'Content-Type':'application/json'},
                method: 'POST',
                body: JSON.stringify(dataPrintTicket)
