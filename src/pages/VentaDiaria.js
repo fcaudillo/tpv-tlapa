@@ -7,7 +7,7 @@ import icons from '@ant-design/icons'
 import { Modal, Button, Form } from 'antd';
 import { Table, DatePicker, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux'
-import { VENTA_DIARIA_URL } from '../bussiness/endpoints'
+import { VENTA_DIARIA_URL, URL_PRINT_TICKET, FIND_TICKET_URL } from '../bussiness/endpoints'
 
 const VentaDiaria = (props) => {
   const value = useContext(ApplicationContext);
@@ -29,6 +29,11 @@ const VentaDiaria = (props) => {
           }}>Reimprimir</a>
         </Space>
       ),
+    },
+    {
+      title: 'Ticket',
+      dataIndex: 'movimientoId',
+      key: 'movimientoId',
     },
     {
       title: 'Cantidad',
@@ -82,9 +87,23 @@ const VentaDiaria = (props) => {
 
   }
 
-  const imprimirTicket = (id) => {
+  const imprimirTicket = async (id) => {
 
-    console.log("Imprimir ticket: " + id);
+    const response = await fetch (FIND_TICKET_URL + "/" + id, {
+      headers: {'Content-Type':'application/json'},
+      method: 'GET'
+    });
+
+    const dataPrintTicket = await response.json();
+    const respImp = await fetch( URL_PRINT_TICKET,{
+      headers: {'Content-Type':'application/json'},
+      method: 'POST',
+      body: JSON.stringify(dataPrintTicket)
+    });
+
+   if (respImp.status != 200){
+      alert("Error de impresion")
+   }
  
     
 

@@ -14,6 +14,7 @@ import UpdateProductReducer from './reducers/UpdateProductReducer'
 import LoadProductHistoryReducer from './reducers/LoadProductHistoryReducer';
 import SaveProductReducer from './reducers/SaveProductReducer'
 import SearchProductReducer from './reducers/SearchProductReducer';
+import LoadProductMissingReducer from './reducers/LoadProductMissingReducer'
 
 
 const epicMiddleware = createEpicMiddleware();
@@ -63,7 +64,8 @@ const rootReducer = combineReducers({
     updateProduct: UpdateProductReducer,
     historyProduct: LoadProductHistoryReducer,
     saveProduct: SaveProductReducer, 
-    searchProduct: SearchProductReducer
+    searchProduct: SearchProductReducer,
+    productMissing: LoadProductMissingReducer
 });
 
 /** ,epicMilddleware */

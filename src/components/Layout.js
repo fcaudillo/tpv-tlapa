@@ -15,7 +15,8 @@ import ScreenLoading  from './ScreenLoading';
 import CodigoBarras from '../pages/CodigoBarras';
 import ListaCambioPrecio from '../pages/ListaCambioPrecio';
 import VentaDiaria from '../pages/VentaDiaria'
-import SearchProducts from '../pages/SearchProducts'
+import SearchProducts from '../pages/SearchProducts';
+import ListProductMissing from '../pages/ListProductMissing'
 import { SEARCH_AUTOCOMPLETE } from '../bussiness/endpoints'
 import { Subject, BehaviorSubject, fromEvent, debounceTime, filter, map, mergeMap, toArray } from 'rxjs'
 import { ajax } from 'rxjs/ajax'
@@ -42,7 +43,7 @@ function Layout(props) {
           ).subscribe( text => {
             
             ajax.post(SEARCH_AUTOCOMPLETE,
-                       {textSearch: text, maxOccurrences: 15},
+                       {textSearch: text, maxOccurrences: 200},
                        { 'Content-Type': 'application/json' })
                        .pipe(
                           map(r  => r.response.aggregations.autocomplete),
@@ -95,7 +96,7 @@ function Layout(props) {
           type: "DESCRIPTION",
           description: data,
           page: 1,
-          sizePage: 15
+          sizePage: 200
         }
       ))
   };
@@ -166,6 +167,10 @@ function Layout(props) {
                     <TabPane tab="Diario" key="diario">
                       <VentaDiaria />
                     </TabPane>
+                    <TabPane tab="Comprar" key="compra">
+                      <ListProductMissing />
+                    </TabPane>
+                    
                  </Tabs>
                 </Grid>
              

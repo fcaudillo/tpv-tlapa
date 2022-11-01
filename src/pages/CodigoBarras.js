@@ -11,7 +11,9 @@ import { Button, Box } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import FormProduct from './FormProduct'
 import {loadProduct} from '../bussiness/actions/loadProduct'
+import { loadProductMissing } from '../bussiness/actions/loadProductMissingAction'
 import { Modal, Form } from 'antd'
+import ProductMissing from './ProductMissing';
 
 const useStyles = makeStyles({
     root: {
@@ -38,6 +40,7 @@ function CodigoBarras() {
   const [visible, setVisible] = useState(false)
   const [form] = Form.useForm()
   const resultUdateProduct = useSelector(store => store.updateProduct)
+  const INSTANCE_PRODUCT_MISSING = 'instanceCodigoBarras';
   
   {/* 
   const listElements = lista.map((prod) =>
@@ -76,9 +79,15 @@ function CodigoBarras() {
     setVisible(true); 
   }
 
+  const editarProductoMissing = (codigo) => {
+    console.log("Editar producto missing")
+    dispatch(loadProductMissing('PURGE'))
+    dispatch(loadProductMissing(codigo,INSTANCE_PRODUCT_MISSING))
+  }
+
   const listElements = lista.map((prod) =>
   <Grid item xs={12} key={prod.id}>
-    <Producto key={prod.id} data={prod} edit={editarProducto} />  
+    <Producto key={prod.id} data={prod} edit={editarProducto}  editProductMissing={editarProductoMissing}  />  
   </Grid>
   );
 
@@ -120,6 +129,7 @@ function CodigoBarras() {
           
             <FormProduct formInstance={form}  hideModal={ () => setVisible(false)}  />
          </Modal>
+         <ProductMissing instanceDialog = { INSTANCE_PRODUCT_MISSING} />
          
     </div>
   );

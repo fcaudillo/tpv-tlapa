@@ -19,8 +19,7 @@ export const SearchProductAction = (data) => {
               data,
               {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-CSRFToken': Cookies.get('csrftoken')
+                'Content-Type': 'application/json'
               }
             )
             .pipe(

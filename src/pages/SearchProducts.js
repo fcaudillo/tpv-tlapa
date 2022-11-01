@@ -9,7 +9,9 @@ import { Table, Tag, Space } from 'antd';
 import FormProduct from './FormProduct';
 import { useDispatch, useSelector } from 'react-redux'
 import {loadProduct} from '../bussiness/actions/loadProduct'
+import { loadProductMissing } from '../bussiness/actions/loadProductMissingAction'
 import ProductoSearch from '../components/ProductoSearch'
+import ProductMissing from './ProductMissing';
 
 const useStyles = makeStyles({
   divSearchProducts: {
@@ -27,6 +29,7 @@ const SearchProducts = (props) => {
   const searchProduct = useSelector(store => store.searchProduct);
   const { products } = searchProduct
   const [form] = Form.useForm()
+  const INSTANCE_PRODUCT_MISSING = 'instanceSearchProduct';
    
   
   React.useEffect( () => {
@@ -48,6 +51,12 @@ const SearchProducts = (props) => {
     setVisible(true); 
   }
 
+  const editarProductoMissing = (codigo) => {
+    console.log("Editar producto missing")
+    dispatch(loadProductMissing('PURGE'))
+    dispatch(loadProductMissing(codigo, INSTANCE_PRODUCT_MISSING))
+  }
+
  
  const actualizarProducto = () => {
    console.log("llamando actionFormProduct con update")
@@ -63,7 +72,7 @@ const SearchProducts = (props) => {
            <Grid item xs={12}>
                <div className={classes.divSearchProducts}>
                    {
-                      products.map( (prod) => <ProductoSearch  key={prod.codigoInterno} data={prod} edit={editarProducto} />)
+                      products.map( (prod) => <ProductoSearch  key={prod.codigoInterno} data={prod} edit={editarProducto} editProductMissing={editarProductoMissing} />)
                    }
                   <p></p>
                </div>
@@ -82,6 +91,9 @@ const SearchProducts = (props) => {
           
             <FormProduct formInstance={form}  hideModal={ () => setVisible(false)}  />
          </Modal>
+         <ProductMissing instanceDialog = { INSTANCE_PRODUCT_MISSING} />
+
+         
     </div>
   );
 }

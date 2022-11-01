@@ -12,10 +12,9 @@ export const UpdateProductAction = (data) => {
   const config={
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken')
+          'Content-Type': 'application/json'
         },
-        method: "POST",
+        method: "PUT",
         body: JSON.stringify(data)
     }
 

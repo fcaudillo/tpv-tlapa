@@ -16,7 +16,11 @@ export const LoadProductHistoryAction = (data) => {
     if(data === 'PURGE'){
       dispatch( { type: LOAD_PRODUCT_HISTORY_PURGE, payload: 'PURGE'} )
     }else{
-         fetch(SEARCH_HISTORICO_PRODUCTO + "/" + data.proveedorId +"/" + data.codigoProveedor)
+         fetch(SEARCH_HISTORICO_PRODUCTO + "/" + data.proveedorId +"/" + data.codigoProveedor,{
+            headers: {
+               'Content-Type': 'application/json'
+            }
+         })
             .then(response => response.json())
             .then(dataHist => {
                 console.log(dataHist)

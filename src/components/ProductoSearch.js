@@ -37,7 +37,7 @@ const ProductoSearch = (props) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const open = Boolean(anchorEl);
         const history = useHistory();
-        const { data, edit } = props
+        const { data, edit, editProductMissing } = props
 
  
         const handleClick = (event) => {
@@ -50,6 +50,9 @@ const ProductoSearch = (props) => {
         const handleAction = (action, key) => {
            if (action == "editar"){
               edit(key)
+              handleClose();
+           }else if (action == "solicitar"){
+              editProductMissing(key);
               handleClose();
            }
 
@@ -86,7 +89,7 @@ const ProductoSearch = (props) => {
                   </Menu>
                 </span>
                 <span>
-                - {data.description}
+                - {data.descripcion}
                 </span>
              </div>} 
     		                 
@@ -100,7 +103,7 @@ const ProductoSearch = (props) => {
                                   dispatch(actions.addItemTicket({
                                     "precioVenta": data.precioVenta,
                                     "minimoExistencia": data.minimoExistencia,
-                                    "description": data.description,
+                                    "description": data.descripcion,
                                     "addToTicket": 0,
                                     "puedeVenderse": data.puedeVenders,
                                     "precioCompra": data.precioCompra,

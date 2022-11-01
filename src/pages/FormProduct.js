@@ -106,7 +106,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
 
 
   const populteHistory = async ( dataHistorico ) => {
-    await formik.setFieldValue("descripcion",dataHistorico.descripcion);
+    await formik.setFieldValue("descripcion",dataHistorico.descripcion.toUpperCase());
     await formik.setFieldValue("unidadVenta",dataHistorico.unidad);
     await formik.setFieldValue("codigoProveedor", dataHistorico.codigoProveedor);
     await formik.setFieldValue("codigoBarras", dataHistorico.codigobarras);
@@ -353,7 +353,7 @@ function initialValues() {
 function validationSchema() {
   return {
     codigoInterno:  yup.number().positive().integer(),
-    proveedor: yup.string(),
+    proveedor: yup.number().required(),
     codigoProveedor: yup.string().required(),
     codigoBarras: yup.string(),
     descripcion: yup.string().required(),

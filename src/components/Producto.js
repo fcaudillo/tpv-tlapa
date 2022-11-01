@@ -39,7 +39,7 @@ const Producto = (props) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const open = Boolean(anchorEl);
         const history = useHistory();
-        const { edit } = props
+        const { edit, editProductMissing } = props
 
  
         const handleClick = (event) => {
@@ -53,6 +53,9 @@ const Producto = (props) => {
           //history.push("/puntoventa/add/"+ key);
            if (action == "editar"){
               edit(key)
+              handleClose();
+           }else if (action == "solicitar") {
+              editProductMissing(key)
               handleClose();
            }
 
