@@ -65,7 +65,7 @@ const ListaCambioPrecio = (props) => {
     {
       title: 'Precio compra Ant',
       dataIndex: 'precioCompraAnt',
-      key: 'precioCompra',
+      key: 'precioCompraAnt',
     },
     {
       title: 'Precio compra',
@@ -101,8 +101,7 @@ const ListaCambioPrecio = (props) => {
     {
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken')
+          'Content-Type': 'application/json'
         },
         method: "GET"
     })
@@ -129,8 +128,7 @@ const ListaCambioPrecio = (props) => {
         method: 'DELETE',
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': Cookies.get('csrftoken')
+          'Content-Type': 'application/json'
         },
         
         

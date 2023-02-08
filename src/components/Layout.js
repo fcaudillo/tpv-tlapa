@@ -4,7 +4,7 @@ import Navbar from './Navbar';
 import TicketScreen from '../components/TicketScreen'
 import { Link } from 'react-router-dom';
 import { Form , Modal, Button } from 'antd'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { SaveProductAction } from '../bussiness/actions/SaveProductAction'
 import  FormProduct  from '../pages/FormProduct'
 import 'antd/dist/antd.css';
@@ -17,11 +17,16 @@ import ListaCambioPrecio from '../pages/ListaCambioPrecio';
 import VentaDiaria from '../pages/VentaDiaria'
 import SearchProducts from '../pages/SearchProducts';
 import ListProductMissing from '../pages/ListProductMissing'
+import ManagmentCategory from '../pages/ManagmentCategory'
 import { SEARCH_AUTOCOMPLETE } from '../bussiness/endpoints'
 import { Subject, BehaviorSubject, fromEvent, debounceTime, filter, map, mergeMap, toArray } from 'rxjs'
 import { ajax } from 'rxjs/ajax'
 import { SearchProductAction  } from '../bussiness/actions/SearchProductAction';
+import { SearchProductCategoryAction } from '../bussiness/actions/SearchProductCategoryAction';
 import 'antd/dist/antd.css';
+import * as actions from '../actions'
+import { changeTabAction } from '../bussiness/actions/ChangeTabAction'
+
 
 function Layout(props) {
   const LOADING_CREAR_PRODUCTO = 0
@@ -33,6 +38,8 @@ function Layout(props) {
   const [visibleCrearProducto, setVisibleCrearProducto] = React.useState(false)
   const textSearch = React.useRef(new BehaviorSubject(""));
   const [ tabActive, setTabActive ] = React.useState("lector");
+  const globalCodebar = useSelector(store => store.reducer.globalCodebar);
+  
 
   React.useEffect(() => {
     // subscribe to 
@@ -59,6 +66,19 @@ function Layout(props) {
 
   },[])
 
+  React.useEffect( () => {
+
+    if ( 'barcode' in globalCodebar) {
+      //(globalCodebar.barcode);
+      if (globalCodebar.barcode && globalCodebar.barcode.length < 4){
+        dispatch(SearchProductCategoryAction(globalCodebar.barcode))
+        setTabActive("busqueda");
+      }
+      
+    }
+    
+  },[globalCodebar])
+
   const enterLoading = (index, status) => {
     const newLoadings = [...loadings]
     newLoadings[index] = status
@@ -78,6 +98,7 @@ function Layout(props) {
 
   const onChangePanel = (key) => {
     setTabActive(key)
+    dispatch(changeTabAction( key));
   };
 
   const onSearch = (dataSearch) => {
@@ -105,6 +126,9 @@ function Layout(props) {
     setValue(data);
   };
 
+  const enviaTest = () => {
+    dispatch(actions.modifyGlobalCodebar({"barcode": '100', "date": new Date()}));
+  }
 
   const [value, setValue] = useState('');
   const [options, setOptions] = useState([]);
@@ -169,6 +193,9 @@ function Layout(props) {
                     </TabPane>
                     <TabPane tab="Comprar" key="compra">
                       <ListProductMissing />
+                    </TabPane>
+                    <TabPane tab="Categorias" key="prodcate">
+                      <ManagmentCategory />
                     </TabPane>
                     
                  </Tabs>

@@ -19,6 +19,10 @@ const findItemActivoIndex = (listaConsulta,id) => {
 }
 
 const initialState = {
+   globalCodebar: {
+       "codebar": "",
+       "date": new Date()
+   },
    calculatorEditItem: {
        "cantidad": "",
        "precio": "",
@@ -219,6 +223,11 @@ const reducer = (state = initialState, action) => {
                        pie: { ...state.ticket.printTicket.pie, "numero_ticket": action.payload.folio},
                     }
                 }
+            }
+       case 'MODIFY_GLOBAL_CODEBAR':
+            return {
+               ...state,
+               globalCodebar: action.payload
             }
        case 'PRINT_TICKET_SUCCESS':
             return {

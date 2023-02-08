@@ -132,5 +132,10 @@ export const modifyCantidadTicketItemActive = payload => ({
     payload
  });
 
+ export const modifyGlobalCodebar = payload => ({
+   type: 'MODIFY_GLOBAL_CODEBAR',
+   payload,
+});
+
 
 

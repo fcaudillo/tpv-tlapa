@@ -72,8 +72,7 @@ const VentaDiaria = (props) => {
                     {
                         headers: {
                           'Accept': 'application/json',
-                          'Content-Type': 'application/json',
-                          'X-CSRFToken': Cookies.get('csrftoken')
+                          'Content-Type': 'application/json'
                         },
                         method: "GET"
                     });

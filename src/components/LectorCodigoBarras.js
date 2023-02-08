@@ -22,25 +22,34 @@ const LectorCodigoBarras = (negocioId) => {
 	   	  console.log(message);
 	      const item = JSON.parse ( message );
 	      console.log(item);
-	      dispatch(actions.addItemConsulta(item));
-          dispatch(actions.activeItemConsulta(item.id));
-		  console.log("1.addToTicket: " + item.addToTicket)
-		  console.log(typeof(item.addToTicket))
-          if (typeof(item.addToTicket) != "undefined"){
-			  if (item.addToTicket == 1){
-					var productoTicket = listaTicketNormalizado[item.codigointerno];
-					console.log("item from codebar lector : " + item.codigointerno)
-					console.log(productoTicket)
-					if (typeof(productoTicket) == "undefined") {
-						dispatch(actions.addItemTicket({...item}));
-					}else{
-						var itemAModificar = listaTicket[item.index];
-						itemAModificar.cantidad = itemAModificar.cantidad + item.cantidad;
-						itemAModificar.total = itemAModificar.cantidad * itemAModificar.precioVenta;
-						dispatch(actions.modifyItemTicket({...itemAModificar}));
+         
+		  if ( 'rawBarcode' in item) {
+			dispatch(actions.modifyGlobalCodebar({"barcode": item.rawBarcode, "qty": item.qty, "date": new Date()}));
+		  }else {
+				dispatch(actions.addItemConsulta(item));
+				dispatch(actions.activeItemConsulta(item.id));
+				//dispatch(actions.modifyGlobalCodebar({"barcode": item.codigointerno, "date": new Date()}));
+				console.log("1.addToTicket: " + item.addToTicket)
+				console.log(typeof(item.addToTicket))
+				if (typeof(item.addToTicket) != "undefined"){
+					if (item.addToTicket == 1){
+							var productoTicket = listaTicketNormalizado[item.codigointerno];
+							console.log("item from codebar lector : " + item.codigointerno)
+							console.log(productoTicket)
+							if (typeof(productoTicket) == "undefined") {
+								dispatch(actions.addItemTicket({...item}));
+							}else{
+								var itemAModificar = listaTicket[item.index];
+								itemAModificar.cantidad = itemAModificar.cantidad + item.cantidad;
+								itemAModificar.total = itemAModificar.cantidad * itemAModificar.precioVenta;
+								dispatch(actions.modifyItemTicket({...itemAModificar}));
+							}
 					}
-			  }
+				}
+
 		  }
+
+
 	   })
 
 	   return () => {

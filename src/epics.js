@@ -51,7 +51,7 @@ export const addTicketEpic = (actions$, state$) =>
          ajax({
            // url: 'http://192.168.100.9:5001/tickets/add',
            url: 'https://tlapape.elverde.mx/tickets/add',
-           headers: {'Content-Type':'application/json','X-HTTP-Method-Override': 'PUT', 'X-CSRFToken': Cookies.get('csrftoken')},
+           headers: {'Content-Type':'application/json','X-HTTP-Method-Override': 'PUT'},
            method: 'POST',
            body: state$.value.ticket.movimiento,
          }).pipe(

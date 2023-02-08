@@ -12,6 +12,9 @@ import {loadProduct} from '../bussiness/actions/loadProduct'
 import { loadProductMissing } from '../bussiness/actions/loadProductMissingAction'
 import ProductoSearch from '../components/ProductoSearch'
 import ProductMissing from './ProductMissing';
+import * as funcs from '../bussiness'
+import { SearchProductCategoryAction } from '../bussiness/actions/SearchProductCategoryAction'
+
 
 const useStyles = makeStyles({
   divSearchProducts: {
@@ -30,7 +33,14 @@ const SearchProducts = (props) => {
   const { products } = searchProduct
   const [form] = Form.useForm()
   const INSTANCE_PRODUCT_MISSING = 'instanceSearchProduct';
-   
+  const [categories, setCategories] = React.useState([]);
+  const categoryRef = useRef();
+  
+  
+  React.useEffect(async () => {
+    var categories = await funcs.findByCategories();
+    setCategories(categories);
+  },[])
   
   React.useEffect( () => {
      console.log(products); 
@@ -64,10 +74,28 @@ const SearchProducts = (props) => {
    console.log("fin ")
  }
 
+ const onChangeCategory = () => {
+    if (categoryRef.current != null && categoryRef.current.value != null){
+
+      dispatch(SearchProductCategoryAction(categoryRef.current.value))
+    }
+
+  }
 
   return (
     <div>
          <Grid container spacing={1}>
+           <Grid item xs={12}>
+           
+                  <label htmlFor="categories">Categorias </label>
+                  <select id="categories" ref={categoryRef} options={categories} onChange={onChangeCategory}>
+                      { categories.map ( (category) => (
+                      <option key={category.id} value={category.key}>{category.key} - {category.name}</option>
+                      ))}
+                  </select>  
+                  <br/>
+
+           </Grid>
            
            <Grid item xs={12}>
                <div className={classes.divSearchProducts}>
