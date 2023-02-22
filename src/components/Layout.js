@@ -18,6 +18,7 @@ import VentaDiaria from '../pages/VentaDiaria'
 import SearchProducts from '../pages/SearchProducts';
 import ListProductMissing from '../pages/ListProductMissing'
 import ManagmentCategory from '../pages/ManagmentCategory'
+import HierarchyCategory from '../pages/HierarchyCategory'
 import { SEARCH_AUTOCOMPLETE } from '../bussiness/endpoints'
 import { Subject, BehaviorSubject, fromEvent, debounceTime, filter, map, mergeMap, toArray } from 'rxjs'
 import { ajax } from 'rxjs/ajax'
@@ -149,13 +150,12 @@ function Layout(props) {
         <Grid item xs={9}>
           <Grid container>
               <Grid item xs={3}>
-              <div class="btn-group">
-                  <button type="button" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    Producto
+
+              <div class="dropdown">
+                  <button type="button" onClick = {() => showCrearProducto() }  class="btn btn-primary dropdown-toggle" >
+                    Crear Producto
                   </button>
-                  <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onClick = {() => showCrearProducto() }>Crear producto</a></li>
-                  </ul>
+                 
               </div>
               </Grid>
               <Grid item xs={3}>
@@ -196,6 +196,9 @@ function Layout(props) {
                     </TabPane>
                     <TabPane tab="Categorias" key="prodcate">
                       <ManagmentCategory />
+                    </TabPane>
+                    <TabPane tab="Jerarquia" key="hierarchy">
+                      <HierarchyCategory />
                     </TabPane>
                     
                  </Tabs>

@@ -333,10 +333,7 @@ const ManagmentCategory = (props) => {
       <p>Productos por categoria</p>
 
         <Grid container spacing={1}>
-           <Grid item xs={1}>
-                Arrows
-           </Grid> 
-           <Grid container item xs={5} spacing={1} >
+           <Grid container item xs={6} spacing={1} >
                 <Grid item xs={12} >
                   <label htmlFor="categories">Categoria</label>
                   <select id="categories" ref={categoryRef} options={categories} onChange={onChangeCategory}>
@@ -371,11 +368,6 @@ const ManagmentCategory = (props) => {
                                 }
                               }
                           }}>Editar</Button>
-
-                  <Button onClick={() => { setOpenConfirmDelete(true)}}>Open confirm</Button>
-
-
-
 
            </Grid>
            <Grid container item xs={5} spacing={1}>
