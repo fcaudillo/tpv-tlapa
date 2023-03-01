@@ -1,18 +1,19 @@
 import React, { Component, useRef, useContext } from 'react';
 import { ApplicationContext } from '../Context';
-import { TextField, Grid, Icon, FormControl, Input, FormHelperText } from '@mui/material';
-import { Modal, Button, Form } from 'antd';
+import { TextField, Grid, Icon, FormControl, Input, FormHelperText, Alert } from '@mui/material';
+import { Modal, Button, Form, Tree } from 'antd';
 import { Table, Tag, Space, Switch,  message, Popconfirm } from 'antd';
 
 import { useDispatch, useSelector } from 'react-redux'
 import * as funcs from '../bussiness'
-import { SearchProductAction  } from '../bussiness/actions/SearchProductAction';
-import { SEARCH_AUTOCOMPLETE } from '../bussiness/endpoints'
-import { Subject, BehaviorSubject, fromEvent, debounceTime, filter, map, mergeMap, toArray, async } from 'rxjs'
-import { AutoComplete, Input as InputAutocomplete } from 'antd';
-import { ajax } from 'rxjs/ajax'
-import * as actions from '../actions'
-import FormCategory from './FormCategory';
+import {TreeCategories, Arbol2} from './Arbol'
+
+import { Accordion } from '../ComponentsHtml/Accordion/Accordion';
+import { AccordionItem } from '../ComponentsHtml/Accordion/AccordionItem';
+import { AccordionHeader } from '../ComponentsHtml/Accordion/AccordionHeader';
+import { AccordionBody } from '../ComponentsHtml/Accordion/AccordionBody';
+import * as actions from '../bussiness/index.js'
+
 
 const HierarchyCategory = (props) => {
   const valueContext = useContext(ApplicationContext);
@@ -21,7 +22,28 @@ const HierarchyCategory = (props) => {
   const dispatch = useDispatch()
   const [productDelete, setProductDelete] = React.useState({})
   const [openConfirmDelete, setOpenConfirmDelete] = React.useState(false);
+  const [idActiveCategory, setIdActiveCategory] = React.useState({id: -1})
+  const [arbol, setArbol] = React.useState([]);
+  const categoryOperations = useSelector(store => store.category)
+  const [newSubcategory, setNewSubcategory] = React.useState({});
+  const subcategoriesSearch = useSelector(store => store.subcategoriesSearch);
+
+
   
+  const addCategory = (category) => {
+
+    if (idActiveCategory.id == -1) {
+      alert("Seleccione una categoria destino");
+      return;
+    }
+
+    category.categories = [];
+    category.open = false;
+    category.active = false;
+    setNewSubcategory(category);
+
+    dispatch(actions.addCategoryToCategory(idActiveCategory.id, category.id));
+  }
 
   const columnsCategory = [
     {
@@ -30,7 +52,7 @@ const HierarchyCategory = (props) => {
       render: (text, record) => (
         <Space size="middle">
           <a onClick={() => {
-              addProductToCategory(record.id);          
+              addCategory(record);          
           }}>Add</a>
         </Space>
       ),
@@ -51,9 +73,23 @@ const HierarchyCategory = (props) => {
   React.useEffect(async () => {
      var categories = await funcs.findByCategories();
      setCategories(categories);
-    // subscribe to 
+     console.log(categories);
+     dispatch(funcs.findSubcategories("root"));
+    
 
   },[])
+
+  React.useEffect(() => {
+
+    if (subcategoriesSearch && 'resultSubcategories' in subcategoriesSearch
+                            && 'data' in subcategoriesSearch.resultSubcategories
+                            && subcategoriesSearch.resultSubcategories.isOk == true) {
+
+      setArbol(subcategoriesSearch.resultSubcategories.data)
+    }
+
+
+  },[subcategoriesSearch])
 
   
   const loadProductsCategory = async (key) => {
@@ -67,23 +103,25 @@ const HierarchyCategory = (props) => {
 
   }
 
-  const addProductToCategory = async (sku) => {
+  React.useEffect( () => {
 
-    var pr = await funcs.findProduct(sku);
+    if ( categoryOperations && 
+          'resultAddCategoryToCategory' in categoryOperations && 
+          categoryOperations.resultAddCategoryToCategory.isOk == true) {
+      idActiveCategory.categories.push(newSubcategory);
+      //TreeCategories[0].categories.push(newSubcategory);   
 
-    if ( ! ('codigointerno' in pr)) {
-        alert("El producto " + sku + " no existe");
-        return;
     }
 
-    var data = {
-         "sku": sku,
-         "ranker": listProductCategory.length + 1
-    };
-    
-    await funcs.addProductToCategory(categoryRef.current.value, data)
-    await loadProductsCategory(categoryRef.current.value)
-}
+    if ( categoryOperations && 
+          'resultAddCategoryToCategoryError' in categoryOperations && 
+          'code' in categoryOperations.resultAddCategoryToCategoryError) {
+       alert(categoryOperations.resultAddCategoryToCategoryError.description)    
+
+    }
+
+  },[categoryOperations])
+
  
   const deleteItem = async (sku) => {
 
@@ -98,133 +136,63 @@ const HierarchyCategory = (props) => {
     
   }
 
+  const printItem = (item, index) => {
+
+
+     return (
+         <AccordionItem key={index}>
+              <AccordionHeader title={item.name + (item.categories != null && item.categories.length > 0 ? ' (' + item.categories.length +  ')' : '') }
+                        active={idActiveCategory.id === item.id}
+                       
+                        open={item.open}
+
+                        toogle={
+                          () => {
+                            item.open = !item.open;
+                            setIdActiveCategory(item)
+                          }
+                        }
+                  />
+              <AccordionBody open={item.open}
+                            
+                 >
+                      {item.categories.map((item2,index2) => printItem (item2,index2) )}
+               </AccordionBody>
+
+
+         </AccordionItem>
+
+     );
+
+  };
+
+  const agregarCategory = () => {
+
+    //dispatch(funcs.findSubcategories("root"));
+   
+  
+
+    /*
+    var category = {name: 'nuevo', title: 'title nuevo'}
+    category.categories = [];
+    category.open = false;
+    category.active = false;
+    TreeCategories[0].categories.push(category);
+    setArbol([...TreeCategories]);  
+    */
+  }
    
   return (
     <div>
       <p>Jerarquia de categorias</p>
 
+        <Button onClick={() => agregarCategory() } > Agregar categoria  </Button>
         <Grid container spacing={1}>
            <Grid container item xs={6} spacing={1} style={{ display: "flex", justifyContent: "flex-start" }} >
-                <div id="accordion">
-  <div class="card">
-    <div class="card-header" id="heading-1">
-      <h5 class="mb-0">
-        <a role="button" data-toggle="collapse" href="#collapse-1" aria-expanded="true" aria-controls="collapse-1">
-          Item 1
-        </a>
-      </h5>
-    </div>
-    <div id="collapse-1" class="collapse show" data-parent="#accordion" aria-labelledby="heading-1">
-      <div class="card-body">
 
-        <div id="accordion-1">
-          <div class="card">
-            <div class="card-header" id="heading-1-1">
-              <h5 class="mb-0">
-                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-1-1" aria-expanded="false" aria-controls="collapse-1-1">
-                  Item 1 > 1
-                </a>
-              </h5>
-            </div>
-            <div id="collapse-1-1" class="collapse" data-parent="#accordion-1" aria-labelledby="heading-1-1">
-              <div class="card-body">
-
-                  <div id="accordion-1-1">
-                    <div class="card">
-                      <div class="card-header" id="heading-1-1-1">
-                        <h5 class="mb-0">
-                          <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-1-1-1" aria-expanded="false" aria-controls="collapse-1-1-1">
-                            Item 1 > 1 > 1
-                          </a>
-                        </h5>
-                      </div>
-                      <div id="collapse-1-1-1" class="collapse" data-parent="#accordion-1-1" aria-labelledby="heading-1-1-1">
-                        <div class="card-body">
-                          Text 1 > 1 > 1
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card">
-                      <div class="card-header" id="heading-1-1-2">
-                        <h5 class="mb-0">
-                          <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-1-1-2" aria-expanded="false" aria-controls="collapse-1-1-2">
-                            Item 1 > 1 > 2
-                          </a>
-                        </h5>
-                      </div>
-                      <div id="collapse-1-1-2" class="collapse" data-parent="#accordion-1-1" aria-labelledby="heading-1-1-2">
-                        <div class="card-body">
-                          Text 1 > 1 > 2
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card">
-                      <div class="card-header" id="heading-1-1-3">
-                        <h5 class="mb-0">
-                          <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-1-1-3" aria-expanded="false" aria-controls="collapse-1-1-3">
-                            Item 1 > 1 > 3
-                          </a>
-                        </h5>
-                      </div>
-                      <div id="collapse-1-1-3" class="collapse" data-parent="#accordion-1-1" aria-labelledby="heading-1-1-3">
-                        <div class="card-body">
-                          Text 1 > 1 > 3
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-              </div>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-header" id="heading-1-2">
-              <h5 class="mb-0">
-                <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-1-2" aria-expanded="false" aria-controls="collapse-1-2">
-                  Item 1 > 2
-                </a>
-              </h5>
-            </div>
-            <div id="collapse-1-2" class="collapse" data-parent="#accordion-1" aria-labelledby="heading-1-2">
-              <div class="card-body">
-                Text 1 > 2
-              </div>
-            </div>
-          </div>
-        </div>      
-      
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header" id="heading-2">
-      <h5 class="mb-0">
-        <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-2" aria-expanded="false" aria-controls="collapse-2">
-          Item 2
-        </a>
-      </h5>
-    </div>
-    <div id="collapse-2" class="collapse" data-parent="#accordion" aria-labelledby="heading-2">
-      <div class="card-body">
-        Text 2
-      </div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header" id="heading-3">
-      <h5 class="mb-0">
-        <a class="collapsed" role="button" data-toggle="collapse" href="#collapse-3" aria-expanded="false" aria-controls="collapse-3">
-          Item 3
-        </a>
-      </h5>
-    </div>
-    <div id="collapse-3" class="collapse" data-parent="#accordion" aria-labelledby="heading-3">
-      <div class="card-body">
-        Text 3
-      </div>
-    </div>
-  </div>
-</div>
+           <Accordion >
+               {arbol.map( (item,index) => printItem (item,index) )}
+           </Accordion>
 
             </Grid>
             <Grid item xs={1}>

@@ -34,3 +34,6 @@ export const SOCKET_SERVER_URL = "https://192.168.100.9:5000";
 export const URL_GRAPH_URL = URL_LOCALHOST + "/graph"
 export const URL_FIND_CATEGORIES = URL_GRAPH_URL + "/category";
 export const URL_UPLOAD_URL = URL_LOCALHOST + "/upload";
+
+export const ADD_CATEGORY_TO_CATEGORY_URL = "http://localhost:8080/graph";
+export const SUBCATEGORIES_OF_CATEGORIA_URL = "http://localhost:8080/graph/category/findSubcategories";

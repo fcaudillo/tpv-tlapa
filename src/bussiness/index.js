@@ -6,7 +6,9 @@ import { findCategories,
          findProductBySku,
          saveCategoryGraph,
          updateCategoryGraph,
-         deleteCategoryGraph } from '../bussiness/actions/CategoryAction'
+         deleteCategoryGraph,
+         addCategoryToCategoryAction } from '../bussiness/actions/CategoryAction'
+import { findSubcategoriesAction } from './actions/SubcategoriesSearchAction';
 
 
 export const findByCategories = findCategories;
@@ -18,5 +20,7 @@ export const findProduct = findProductBySku;
 export const saveCategory = saveCategoryGraph;
 export const updateCategory = updateCategoryGraph;
 export const deleteCategory = deleteCategoryGraph;
+export const addCategoryToCategory = addCategoryToCategoryAction;
+export const findSubcategories = findSubcategoriesAction;
 
 

@@ -1,0 +1,17 @@
+.accordion-title {
+    color: #FFCF48;
+    outline: none;
+    border: 0;
+  }
+
+  .accordion-title span {
+    color: black;
+    font-size: 14px;
+    border: 0;
+  }
+
+  .accordion-title-active {
+     color: blue;
+     font-size: 14px;
+     border: 0;
+  }

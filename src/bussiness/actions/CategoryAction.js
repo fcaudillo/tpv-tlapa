@@ -2,7 +2,12 @@
 import { URL_FIND_CATEGORIES, URL_UPLOAD_URL, URL_GRAPH_URL} from '../endpoints'
 import { ajax } from 'rxjs/ajax'
 import { Subject, BehaviorSubject, fromEvent, debounceTime, filter, map, mergeMap, toArray } from 'rxjs'
-
+import { ADD_CATEGORY_TO_CATEGORY_URL } from '../endpoints';
+import {
+  ADD_CATEGORY_TO_CATEGORY_SUCCESS,
+  ADD_CATEGORY_TO_CATEGORY_ERROR,
+  ADD_CATEGORY_TO_CATEGORY_PURGE
+} from '../types'
 
 export const findCategories = async () => {
 
@@ -77,7 +82,7 @@ export const productToCategory = async (categoryId, data) => {
 export const reorderList = (data) => {
     
     return new Promise((resolve, reject) => {
-            ajax.put(`${URL_GRAPH_URL}/category/${data.categoryId}/order/by/ranker`,
+            ajax.put(`${URL_GRAPH_URL}/category/{categoryIdParent}/add/{categoryIdChild}`,
                 data,
                 {
                 'Accept': 'application/json',
@@ -209,4 +214,41 @@ export const saveCategoryGraph = (data) => {
         });  
 
 }
+
+
+export const addCategoryToCategoryAction = (categoryIdParent, categoryIdChild) => {
+
+  const config={
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        method: "POST"
+    }
+
+  console.log('add category to category :',`${ADD_CATEGORY_TO_CATEGORY_URL}/category/${categoryIdParent}/add/${categoryIdChild}`, config);
+  
+  return ( dispatch ) => {
+     if(categoryIdParent ===  'PURGE'){
+      dispatch( { type: ADD_CATEGORY_TO_CATEGORY_PURGE, payload: 'PURGE'} )
+    }else{
+      var statusCode = 0
+      fetch( `${ADD_CATEGORY_TO_CATEGORY_URL}/category/${categoryIdParent}/add/${categoryIdChild}`, config )
+      .then(json => {
+        json.json().then((responseJson) => {
+          if (json.status === 200) {
+            dispatch({ type: ADD_CATEGORY_TO_CATEGORY_SUCCESS, payload: { statusCode: 200, isOk: true, categoryIdChild}  })
+          }else {
+            dispatch({ type: ADD_CATEGORY_TO_CATEGORY_ERROR, payload: responseJson })
+          }
+        }); 
+      }).catch(error => {
+        dispatch({ type: ADD_CATEGORY_TO_CATEGORY_ERROR, payload: {code : 'code01', description:error} })
+      });
+
+    }
+  }
+
+}
+
 
