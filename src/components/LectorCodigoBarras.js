@@ -24,8 +24,8 @@ const LectorCodigoBarras = (negocioId) => {
 	      console.log(item);
          
 		  if ( 'rawBarcode' in item) {
-			dispatch(actions.modifyGlobalCodebar({"barcode": item.rawBarcode, "qty": item.qty, "date": new Date()}));
-		  }else {
+			dispatch(actions.modifyGlobalCodebar({"barcode": item.rawBarcode, "qty": item.qty,"addToTicket": item.addToTicket, "addLector": true,  "date": new Date()}));
+		  }/*else {
 				dispatch(actions.addItemConsulta(item));
 				dispatch(actions.activeItemConsulta(item.id));
 				//dispatch(actions.modifyGlobalCodebar({"barcode": item.codigointerno, "date": new Date()}));
@@ -47,7 +47,7 @@ const LectorCodigoBarras = (negocioId) => {
 					}
 				}
 
-		  }
+		  }*/
 
 
 	   })

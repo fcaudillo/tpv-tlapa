@@ -18,6 +18,9 @@ import LoadProductMissingReducer from './reducers/LoadProductMissingReducer'
 import ChangeTabReducer from './reducers/ChangeTabReducer';
 import CategoryReducer from './reducers/CategoryReducer';
 import SubcategoriesSearchReducer from './reducers/SubcategoriesSearchReducer'
+import FindAllProductReducer from './reducers/FindAllProductsReducer'
+import FindAllCategoriesReducer from './reducers/FindAllCategoriesReducer'
+import UpdateGlobalProductReducer from './reducers/UpdateGlobalProductReducer'
 
 const epicMiddleware = createEpicMiddleware();
 
@@ -71,6 +74,9 @@ const rootReducer = combineReducers({
     changeTab: ChangeTabReducer,
     category: CategoryReducer,
     subcategoriesSearch: SubcategoriesSearchReducer,
+    findAllProduct: FindAllProductReducer,   
+    findAllCategories: FindAllCategoriesReducer,  
+    updateGlobalProduct: UpdateGlobalProductReducer,         
 });
 
 /** ,epicMilddleware */

@@ -7,6 +7,7 @@ import {
 
   const initialState = {
      products : [],
+     source: '',
      productsError: {},
   }
   
@@ -14,9 +15,9 @@ import {
     
     switch (action.type){
       case SEARCH_PRODUCT_SUCCESS:
-        return {...state, products: action.payload };
+        return {...state, products: action.payload, source: action.source };
       case SEARCH_PRODUCT_ERROR:
-        return {...state, productsError: action.payload };
+        return {...state, productsError: action.payload, source: action.source };
       case SEARCH_PRODUCT_PURGE:
         return { ...initialState, productsPurge: action.payload };
     }

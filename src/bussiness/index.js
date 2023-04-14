@@ -7,8 +7,10 @@ import { findCategories,
          saveCategoryGraph,
          updateCategoryGraph,
          deleteCategoryGraph,
-         addCategoryToCategoryAction } from '../bussiness/actions/CategoryAction'
+         addCategoryToCategoryAction,
+         reorderSubcategoriesGraph } from '../bussiness/actions/CategoryAction'
 import { findSubcategoriesAction } from './actions/SubcategoriesSearchAction';
+import { deleteSubcategoryAction } from './actions/DeleteSubcategoryAction';
 
 
 export const findByCategories = findCategories;
@@ -22,5 +24,7 @@ export const updateCategory = updateCategoryGraph;
 export const deleteCategory = deleteCategoryGraph;
 export const addCategoryToCategory = addCategoryToCategoryAction;
 export const findSubcategories = findSubcategoriesAction;
+export const deleteSubcategory = deleteSubcategoryAction;
+export const reorderSubcategories = reorderSubcategoriesGraph;
 
 

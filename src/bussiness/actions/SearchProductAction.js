@@ -9,7 +9,7 @@ import {
     SEARCH_PRODUCT_PURGE
 } from '../types'
 
-export const SearchProductAction = (data) => {
+export const SearchProductAction = (data,source="") => {
      return (dispatch) => {
         console.log("SearchProductAction");
         if (data === 'PURGE') {
@@ -27,7 +27,7 @@ export const SearchProductAction = (data) => {
             )
             .subscribe (products => {
                console.log('data from Action = ' + products);
-               dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: products})
+               dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: products, source: source})
              });
 
         }

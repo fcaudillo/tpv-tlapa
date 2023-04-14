@@ -27,7 +27,10 @@ import { SearchProductCategoryAction } from '../bussiness/actions/SearchProductC
 import 'antd/dist/antd.css';
 import * as actions from '../actions'
 import { changeTabAction } from '../bussiness/actions/ChangeTabAction'
-
+import { findAllProductsAction } from '../bussiness/actions/FindAllProductAction';
+import { findAllCategoriesAction } from '../bussiness/actions/FindAllCategoriesAction';
+import { SEARCH_PRODUCT_SUCCESS } from '../bussiness/types';
+import * as funcs from '../bussiness'
 
 function Layout(props) {
   const LOADING_CREAR_PRODUCTO = 0
@@ -40,9 +43,21 @@ function Layout(props) {
   const textSearch = React.useRef(new BehaviorSubject(""));
   const [ tabActive, setTabActive ] = React.useState("lector");
   const globalCodebar = useSelector(store => store.reducer.globalCodebar);
-  
+  const [allProducts, setAllProducts] = React.useState([]);
+  const [productsNormalize, setProductsNormalize] = React.useState({});
+  const findAllProduct = useSelector(store => store.findAllProduct);
+  const findAllCategories = useSelector(store => store.findAllCategories);
+  const [allCategories, setAllCategories] = React.useState([]);
+  const [categoriesNormalize, setCategoriesNormalize] = React.useState({});
+  const listaTicket = useSelector(store => store.reducer.listaTicket);
+  const listaTicketNormalizado = useSelector(store => store.reducer.listaTicketNormalizado);
+  const updateGlobalProduct = useSelector(store => store.updateGlobalProduct);
 
   React.useEffect(() => {
+
+    dispatch(findAllProductsAction());
+    dispatch(findAllCategoriesAction());
+    dispatch(funcs.findSubcategories("root"));
     // subscribe to 
     textSearch.current.asObservable()
           .pipe (
@@ -72,13 +87,128 @@ function Layout(props) {
     if ( 'barcode' in globalCodebar) {
       //(globalCodebar.barcode);
       if (globalCodebar.barcode && globalCodebar.barcode.length < 4){
-        dispatch(SearchProductCategoryAction(globalCodebar.barcode))
-        setTabActive("busqueda");
+
+        if ( globalCodebar.barcode in categoriesNormalize ){
+          var cat = allCategories[categoriesNormalize[globalCodebar.barcode]];
+          var products = cat.products.map ( pr => 
+              allProducts[productsNormalize[pr.sku]]
+          );
+          if (products && products.length > 0){
+             dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: products});
+             setTabActive("busqueda");
+          }
+          
+
+        }else{
+          dispatch(SearchProductCategoryAction(globalCodebar.barcode))
+          setTabActive("busqueda");
+        }
+
+        
+        
+      }else if (globalCodebar.barcode && globalCodebar.barcode.length >= 4){
+        var itemProduct = allProducts[productsNormalize[globalCodebar.barcode]];
+        if (typeof(itemProduct) == "undefined"){
+           return;
+        }
+        var item = {...itemProduct};
+        item.id = guid();
+        // Se copia con el fin de homologar a lo que antes se tenia.
+        item.codigointerno = item.codigoInterno
+        item.barcode = item.codigoBarras
+        item.addToTicket = globalCodebar.addToTicket
+        item.description = item.descripcion
+        item.proveedorId = item.proveedor
+        item.cantidad = globalCodebar.qty
+        // find de homologacion
+
+        console.log("Item");
+        console.log(item);
+
+        if ( 'addLector' in globalCodebar && globalCodebar.addLector == true) {
+            dispatch(actions.addItemConsulta(item));
+            dispatch(actions.activeItemConsulta(item.id));
+        }
+				
+				//dispatch(actions.modifyGlobalCodebar({"barcode": item.codigointerno, "date": new Date()}));
+				console.log("1.addToTicket: " + item.addToTicket)
+				console.log(typeof(item.addToTicket))
+				if (typeof(item.addToTicket) != "undefined"){
+					if (item.addToTicket == 1){
+							var productoTicket = listaTicketNormalizado[item.codigointerno];
+							console.log("item from codebar lector : " + item.codigointerno)
+							console.log(productoTicket)
+							if (typeof(productoTicket) == "undefined") {
+								dispatch(actions.addItemTicket({...item}));
+							}else{
+								var itemAModificar = listaTicket[productoTicket.index];
+								itemAModificar.cantidad = itemAModificar.cantidad + item.cantidad;
+								itemAModificar.total = itemAModificar.cantidad * itemAModificar.precioVenta;
+								dispatch(actions.modifyItemTicket({...itemAModificar}));
+							}
+					}
+				}
+
+
+
       }
+      
       
     }
     
   },[globalCodebar])
+
+  React.useEffect( () => {
+
+    if (findAllProduct && 'resultAllProducts' in findAllProduct && findAllProduct.resultAllProducts.isOk == true){
+      console.log("Todos los productos")
+      setAllProducts(findAllProduct.resultAllProducts.data);
+      setProductsNormalize(findAllProduct.resultAllProducts.mapProducts)
+    }
+
+
+  },[findAllProduct])
+
+  React.useEffect(  () => {
+
+    if (updateGlobalProduct && 'resultUpdate' in updateGlobalProduct
+        && 'data' in updateGlobalProduct.resultUpdate 
+        && updateGlobalProduct.resultUpdate.isOk == true){
+        var product = updateGlobalProduct.resultUpdate.data;
+        var item = allProducts[productsNormalize[product.codigoInterno]];
+        if (item != null) {
+           //Modificar la posicion del arreglo.
+          item.codigoProveedor = product.codigoProveedor
+          item.codigoBarras    = product.codigoBarras
+          item.descripcion     = product.descripcion
+          item.precioCompra    = product.precioCompra
+          item.precioVenta     = product.precioVenta
+          item.unidadVenta    = product.unidadVenta
+          item.existencia     = product.existencia
+          item.minimoExistencia = product.minimoExistencia
+          item.maximoExistencia = product.maximoExistencia
+          item.ubicacion        = product.ubicacion
+          item.puedeVenderse    = product.puedeVenderse
+
+        }
+
+    }
+
+  },[updateGlobalProduct])
+
+
+  React.useEffect( () => {
+
+    if (findAllCategories && 'resultAllCategories' in findAllCategories && findAllCategories.resultAllCategories.isOk == true){
+      console.log("Todos los categories")
+      console.log(findAllCategories.resultAllCategories.data);
+      console.log(findAllCategories.resultAllCategories.mapCategories);
+      setAllCategories(findAllCategories.resultAllCategories.data);
+      setCategoriesNormalize(findAllCategories.resultAllCategories.mapCategories)
+    }
+
+
+  },[findAllCategories])
 
   const enterLoading = (index, status) => {
     const newLoadings = [...loadings]
@@ -119,7 +249,8 @@ function Layout(props) {
           description: data,
           page: 1,
           sizePage: 200
-        }
+        },
+        "autocomplete"
       ))
   };
 
@@ -128,12 +259,19 @@ function Layout(props) {
   };
 
   const enviaTest = () => {
-    dispatch(actions.modifyGlobalCodebar({"barcode": '100', "date": new Date()}));
+    dispatch(actions.modifyGlobalCodebar({"barcode": '1414', "date": new Date()}));
   }
 
   const [value, setValue] = useState('');
   const [options, setOptions] = useState([]);
 
+  function guid() {
+    function _p8(s) {
+        var p = (Math.random().toString(16)+"000000000").substr(2,8);
+        return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+    }
+    return _p8() + _p8(true) + _p8(true) + _p8();
+  }
 
   return ( 
     <React.Fragment>
@@ -155,7 +293,11 @@ function Layout(props) {
                   <button type="button" onClick = {() => showCrearProducto() }  class="btn btn-primary dropdown-toggle" >
                     Crear Producto
                   </button>
-                 
+                  {/*  
+                  <button type="button" onClick = {() => enviaTest() }  class="btn btn-primary dropdown-toggle" >
+                     Test codigo producto.
+                  </button>
+                 */}
               </div>
               </Grid>
               <Grid item xs={3}>

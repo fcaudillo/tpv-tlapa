@@ -251,4 +251,37 @@ export const addCategoryToCategoryAction = (categoryIdParent, categoryIdChild) =
 
 }
 
+export const reorderSubcategoriesGraph = (category) => {
+  console.log("Reorder subcategories")
+  console.log(`${URL_GRAPH_URL}/category/${category.id}/subcategory/order/by/ranker`);
+  return new Promise ( (resolve, reject) => {
+        fetch(`${URL_GRAPH_URL}/category/${category.id}/subcategory/order/by/ranker`,{
+              method: 'PUT',
+              body: JSON.stringify(category),
+              headers:  new Headers({'Accept': 'application/json','content-type': 'application/json'})
+            })
+            .then( response => {
+               if (response.status == 200) { 
+                  response.json().then( (resp) => {
+                     console.log("Se guardo la categoria");
+                     return resolve(resp)
+                  })
+                  
+               }else{
+                  response.json().then( (errorHandled) => {
+                      console.log("Error contralado en el guardado");
+                      return reject(errorHandled)
+                   })
+               }
+
+            })
+            .catch(error => {
+              return reject ({code : 'code01', description:error})
+            });
+
+        });  
+
+}
+
+
 

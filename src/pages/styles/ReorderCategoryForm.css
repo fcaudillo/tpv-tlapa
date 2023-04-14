@@ -1,0 +1,18 @@
+
+
+.container_subcategorias {
+    height: 350px;
+    overflow-y: scroll;
+}
+
+.container_subcategorias  table {
+    padding: 3px;
+}
+
+.container_subcategorias  table tr th {
+    background: #E8E8E8;
+}
+
+.btnAbajo {
+    margin-left: 10px;
+}

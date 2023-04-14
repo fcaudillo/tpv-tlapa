@@ -17,6 +17,13 @@ export const VENTA_DIARIA_URL = URL_LOCALHOST + "/upload/reportes/ventaproductos
 
 export const SEARCH_PRODUCTS = URL_LOCALHOST + "/upload/findProducts"
 
+//export const FIND_ALL_PRODUCTS_URL = URL_LOCALHOST + "/upload/findAll"
+
+export const FIND_ALL_PRODUCTS_URL = URL_LOCALHOST + "/upload/findAll"
+
+export const FIND_ALL_CATEGORIES_URL = URL_LOCALHOST + "/graph/category/findAllWithProducts"
+
+
 export const SEARCH_AUTOCOMPLETE = URL_LOCALHOST + "/upload/product/search/autocomplete"
 
 export const URL_FIND_CAMBIO_PRECIOS = URL_LOCALHOST + "/upload/findcambioprecios"
@@ -35,5 +42,7 @@ export const URL_GRAPH_URL = URL_LOCALHOST + "/graph"
 export const URL_FIND_CATEGORIES = URL_GRAPH_URL + "/category";
 export const URL_UPLOAD_URL = URL_LOCALHOST + "/upload";
 
-export const ADD_CATEGORY_TO_CATEGORY_URL = "http://localhost:8080/graph";
-export const SUBCATEGORIES_OF_CATEGORIA_URL = "http://localhost:8080/graph/category/findSubcategories";
+export const ADD_CATEGORY_TO_CATEGORY_URL = URL_LOCALHOST + "/graph";
+export const SUBCATEGORIES_OF_CATEGORIA_URL = URL_LOCALHOST + "/graph/category/findSubcategories";
+
+export const DELETE_SUBCATEGORY_URL = URL_LOCALHOST + "/graph";

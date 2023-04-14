@@ -8,12 +8,13 @@ export const AccordionHeader = (props) => {
     const [active, setActive] = React.useState(false)
 
     React.useEffect(() => {
+        console.log("Header = " + props.title + " open = " +  props.open)
         setOpen(props.open);
      }, [props.open])
 
     React.useEffect(() =>{
         setActive(props.active)
-        console.log("activo accordioheader = " + active)
+        
     }, [props.active])
 
     return (

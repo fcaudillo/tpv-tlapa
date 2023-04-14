@@ -6,6 +6,7 @@ import { Form } from 'antd'
 import { UpdateProductAction } from '../bussiness/actions/UpdateProductAction'
 import { SaveProductAction } from '../bussiness/actions/SaveProductAction';
 import { LoadProductHistoryAction } from '../bussiness/actions/LoadProductHistoryAction'
+import { UpdateGlobalProductAction } from '../bussiness/actions/UpdateGlobalProductAction';
 import { useFormik } from 'formik'
 import Select from '../ComponentsHtml/Select'
 import TextInput from '../ComponentsHtml/TextInput'
@@ -32,6 +33,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
   const dispatch = useDispatch()
   const historyProduct = useSelector(store => store.historyProduct)
   const saveProduct = useSelector(store => store.saveProduct)
+  const [dataProuduct,setDataProduct] = React.useState({});
 
   const formik = useFormik({
     initialValues : initialValues(),
@@ -41,6 +43,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
        console.log(formData)
        if (mode == "Editar"){
           dispatch(UpdateProductAction(formData))
+          setDataProduct(formData);
        }else{
           dispatch(SaveProductAction(formData))
        }

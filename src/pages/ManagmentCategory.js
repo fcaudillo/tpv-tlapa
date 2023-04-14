@@ -368,6 +368,10 @@ const ManagmentCategory = (props) => {
                                 }
                               }
                           }}>Editar</Button>
+                    <Button onClick={() => { 
+                             	dispatch(actions.modifyGlobalCodebar({"barcode": '1414', "qty": 1,"addToTicket": 0, "date": new Date()}));
+
+                          }}>Test</Button>
 
            </Grid>
            <Grid container item xs={5} spacing={1}>

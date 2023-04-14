@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie'
+import { UpdateGlobalProductAction } from './UpdateGlobalProductAction';
 
 import { UPDATE_PRODUCT_URL } from '../endpoints';
 import {
@@ -31,6 +31,7 @@ export const UpdateProductAction = (data) => {
             console.log("Actualizo con exito")
             if (resp.status == 200){
               dispatch({ type: UPDATE_PRODUCT_SUCCESS, payload: { statusCode: 200, isOk: true}  })
+              dispatch(UpdateGlobalProductAction(data));
             }else {
               dispatch({ type: UPDATE_PRODUCT_ERROR, payload: {errorCode : resp.status, isOk : false} })
             }

@@ -5,11 +5,11 @@ import { AccordionBody } from './AccordionBody'
 export const AccordionItem = (props) => {
 
     return (
-      <a  onClick={props.toogle}>
+      <div  onClick={props.toogle}>
          
                  {props.children}
       
-      </a>
+      </div>
        
 
     );
