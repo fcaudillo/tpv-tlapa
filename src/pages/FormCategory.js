@@ -3,8 +3,9 @@ import { ApplicationContext } from '../Context';
 import * as yup from "yup";
 import { useSelector, useDispatch } from 'react-redux'
 import { Form } from 'antd'
-import { useFormik } from 'formik'
+import { useFormik, yupToFormErrors } from 'formik'
 import TextInput from '../ComponentsHtml/TextInput'
+import TextArea from '../ComponentsHtml/TextArea';
 import * as funcs from '../bussiness'
 
 const FormCategory = ({formInstance, goNewCategory, hideModal, mode = "Nuevo", category})  => {
@@ -94,7 +95,35 @@ const FormCategory = ({formInstance, goNewCategory, hideModal, mode = "Nuevo", c
                         error = {formik.errors.title}
                         onChange={(evt) => formik.setFieldValue("title", evt.target.value)} />
             </div>
-         </div>             
+         </div> 
+         <div className="row">
+           <div className="col-md-12">
+                  <TextInput 
+                        label = "Imagen"
+                        value = {formik.values.urlImage}
+                        error = {formik.errors.urlImage}
+                        onChange={(evt) => formik.setFieldValue("urlImage", evt.target.value)} />
+            </div>
+         </div>    
+
+         <div className="row">
+           <div className="col-md-6">
+                  
+                  <TextArea 
+                        label = "Encabezados"
+                        value = {formik.values.headers}
+                        error = {formik.errors.headers}
+                        onChange={(evt) => formik.setFieldValue("headers", evt.target.value)} />
+            </div>
+            <div className="col-md-6">
+                  <TextArea 
+                        label = "Cuerpo"
+                        value = {formik.values.body}
+                        error = {formik.errors.body}
+                        onChange={(evt) => formik.setFieldValue("body", evt.target.value)} />
+            </div>
+            
+         </div>          
        
 
 
@@ -110,14 +139,20 @@ function initialValues() {
   return {
     key: "",
     name: "",
-    title: ""
+    title: "",
+    headers: "",
+    body: "",
+    urlImage: ""
   }
 }
 function validationSchema() {
   return {
     key: yup.string().required(),
     name: yup.string().required(),
-    title: yup.string().required()
+    title: yup.string().required(),
+    headers: yup.string(),
+    body: yup.string(),
+    urlImage: yup.string()
   }
 }
 

@@ -1,9 +1,9 @@
 export const URL_SERVER='https://tlapape.elverde.mx';
 //export const URL_LOCALHOST= 'https://upload.elverde.mx'
 //export const URL_LOCALHOST= 'http://51.222.156.10:8080'
-//export const URL_LOCALHOST= 'http://localhost:8080'
+export const URL_LOCALHOST= 'http://localhost:8080'
 //export const URL_SERVER='http://192.168.100.13:1414';
-export const URL_LOCALHOST= 'https://api.elverde.mx';
+//export const URL_LOCALHOST= 'https://api.elverde.mx';
 
 
 export const FIND_CODIGO_INTERNO= URL_LOCALHOST+'/upload/findByCodigoInterno'

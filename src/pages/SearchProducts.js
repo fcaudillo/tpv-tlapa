@@ -45,6 +45,8 @@ const SearchProducts = (props) => {
   const subcategoriesSearch = useSelector(store => store.subcategoriesSearch);
   const [categoriesNivel1, setCategoriesNivel1] = React.useState([]);
   const [ dataAccordion, setDataAccordion ] = React.useState([]);
+  const [ activeCategory, setActiveCategory] = React.useState({});
+  const [ metadataBody, setMetadataBody] = React.useState([]);
 
   const [activeKeys, setActiveKeys] = React.useState([]);
   const handleSelect = (eventKey) => setActiveKeys(eventKey);
@@ -133,8 +135,82 @@ const SearchProducts = (props) => {
 
   const changeSubcategoty = (cat) => {
     dispatch(actions.modifyGlobalCodebar({"barcode": cat.key, "qty": 1, "date": new Date()}));
+    if (cat.key == "146"){
+      alert(cat.body)
+    }
+    if (cat.body && cat.body != "") {
+       setMetadataBody( JSON.parse(cat.body) );
+    }
+    setActiveCategory(cat);
       
   }
+
+  /** Temporal */
+
+
+  const headers = [
+    [
+       { 
+            title : "Imagen",
+            colspan: 1,
+            rowspan: 2,
+            render: (text, idx ) => <p>Imagen</p>          
+       },          
+       { 
+          title : "Tubo de cobre",
+          colspan: 4,
+          render: (text, idx ) => <p className='text-center fw-bold fs-4'>{text}</p>          
+       }
+    ],
+    [
+        { 
+            title : "Cobrecel",
+            colspan: 2,
+            render: (text, idx ) => <p className='text-center'>{text}</p>          
+         },
+         { 
+            title : "Nacobre",
+            colspan: 2,
+            render: (text, idx ) => <p className='text-center'>{text}</p>          
+         }
+
+    ]
+    ,
+    [
+        {
+            title: 'Medidas',
+            render: (text, idx ) => <p className='text-left'>{text}</p> 
+        },
+        { 
+            title : "Metro",
+            render: (text, idx ) => <p className='text-center'>{text}</p>          
+         },
+         { 
+            title : "Tubo 6 mts",
+            render: (text, idx ) => <p className='text-center'>{text}</p>          
+         }
+         ,
+        { 
+            title : "Metro",
+            render: (text, idx ) => <p className='text-center'>{text}</p>          
+         },
+         { 
+            title : "Tubo 6 mts",
+            render: (text, idx ) => <p className='text-center'>{text}</p>          
+         }
+
+    ]
+]
+
+/*
+const metadataBody = [
+    ["1/2\" (13 mm)", "1957","2582","2917","2916"],
+    ["3/4\" (19 mm)", "1958","2583","2919","2918"],
+    ["1\" (25 mm)"  , "1959","2584","2921","2920"]
+]*/
+
+
+  /** /Temporal */
 
   return (
     <div>
@@ -152,9 +228,7 @@ const SearchProducts = (props) => {
 
            </Grid>
            */}
-           <Grid item xs={12}>
-              <TablePrice/>
-           </Grid>
+
            <Grid item xs={12}>
 
               <nav id="navCategories">
@@ -207,8 +281,13 @@ const SearchProducts = (props) => {
            <Grid item xs={9}>
                <div className={classes.divSearchProducts}>
                    {
-                      products.map( (prod) => <ProductoSearch  key={prod.codigoInterno} data={prod} edit={editarProducto} editProductMissing={editarProductoMissing} />)
-                   }
+                      activeCategory && 'key' in activeCategory && activeCategory.key == "146" ?
+                          <TablePrice  headersProps={headers} dataProps={products} metadataBodyProps={metadataBody}  />
+                       :
+                          products.map( (prod) => <ProductoSearch  key={prod.codigoInterno} data={prod} edit={editarProducto} editProductMissing={editarProductoMissing} />)
+
+                       
+                  }
                   <p></p>
                </div>
            </Grid>
