@@ -52,6 +52,19 @@ function DialogPagarTicket(props) {
      onClose();
   }
 
+  const getFormatDate = (fecha) => {
+      const dia = fecha.getDate().toString().padStart(2, '0');
+      const mes = (fecha.getMonth() + 1).toString().padStart(2, '0');
+      const anio = fecha.getFullYear().toString();
+      const horas = fecha.getHours().toString().padStart(2, '0');
+      const minutos = fecha.getMinutes().toString().padStart(2, '0');
+      const segundos = fecha.getSeconds().toString().padStart(2, '0');
+      
+      const formatoFecha = `${dia}-${mes}-${anio} ${horas}:${minutos}:${segundos}`;
+      return formatoFecha;
+ 
+  }
+
   const createTemplate = () => {
    const adicionalEncabezado = parametros["TICKET_ADICIONAL"];
    const adicionalPie = parametros["TICKET_PIE"];
@@ -59,7 +72,7 @@ function DialogPagarTicket(props) {
      "encabezado": {
         "giro": parametros["CLIENTE_GIRO"],
         "negocio": parametros["CLIENTE_NOMBRE"],
-        "fecha": "27/08/2020 03:14",
+        "fecha": getFormatDate(new Date()),
         "adicional": adicionalEncabezado.split("|"),
      },
      "productos": [...listaTicket],

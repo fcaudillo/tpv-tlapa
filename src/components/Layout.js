@@ -19,6 +19,7 @@ import SearchProducts from '../pages/SearchProducts';
 import ListProductMissing from '../pages/ListProductMissing'
 import ManagmentCategory from '../pages/ManagmentCategory'
 import HierarchyCategory from '../pages/HierarchyCategory'
+import Configuracion from '../pages/Configuracion';
 import { SEARCH_AUTOCOMPLETE } from '../bussiness/endpoints'
 import { Subject, BehaviorSubject, fromEvent, debounceTime, filter, map, mergeMap, toArray } from 'rxjs'
 import { ajax } from 'rxjs/ajax'
@@ -37,7 +38,6 @@ function Layout(props) {
   const dispatch = useDispatch()
   const [ form ] = Form.useForm()
   const [ load, setLoad ] = React.useState(true)
-  const [ searchText, setSearchText] = React.useState("")
   const [ loadings, setLoadings ] = React.useState([])
   const [visibleCrearProducto, setVisibleCrearProducto] = React.useState(false)
   const textSearch = React.useRef(new BehaviorSubject(""));
@@ -90,11 +90,12 @@ function Layout(props) {
 
         if ( globalCodebar.barcode in categoriesNormalize ){
           var cat = allCategories[categoriesNormalize[globalCodebar.barcode]];
+          var xpr = allProducts[productsNormalize["1044"]]
           var products = cat.products.map ( pr => 
               allProducts[productsNormalize[pr.sku]]
           );
           if (products && products.length > 0){
-             dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: products});
+             dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: products, category: cat});
              setTabActive("busqueda");
           }
           
@@ -341,6 +342,10 @@ function Layout(props) {
                     </TabPane>
                     <TabPane tab="Jerarquia" key="hierarchy">
                       <HierarchyCategory />
+                    </TabPane>
+
+                    <TabPane tab="Configuraciones" key="configuraciones">
+                      <Configuracion />
                     </TabPane>
                     
                  </Tabs>

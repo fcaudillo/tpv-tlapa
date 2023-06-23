@@ -7,5 +7,6 @@ export const Configuraciones = {
    "CLIENTE_NOMBRE":"Cosmos",
    "MOVIMIENTO_VENTA": 4,
    "DESCRIPCION_VENTA_PUBLICO": "Venta a publico",
-   "URL_API_BASE":"https://tlapape.elverde.mx"
+   "URL_API_BASE":"https://tlapape.elverde.mx",
+   "TABLE_PRICE_BUTTONS": "false"
 }    

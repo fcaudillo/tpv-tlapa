@@ -19,8 +19,12 @@
             var mapProducts = {}
             action.payload.data.forEach( (value, idx) => {
                 mapProducts[value.codigoInterno] = idx;
-                if (value.codigoBarras != null && value.codigoBarras != ""){
-                   mapProducts[value.codigoBarras] = idx;
+
+                if (value.codigoBarras != null && value.codigoBarras != "" && value.codigoBarras.length > 4 ){ //No incluir codigos internos menores que 5
+                   
+                       mapProducts[value.codigoBarras] = idx;
+                  
+                      
                 }
                 
             });

@@ -19,6 +19,7 @@ const Provider = ({ children } ) => {
    const value = {
      parametros,
      proveedores,
+     setParametros : (params) => {},
      findProveedores: () => {
 
      }

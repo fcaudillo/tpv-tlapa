@@ -1,0 +1,13 @@
+
+
+.header {
+    position: sticky;
+    background: blue;
+    top:0;
+}
+
+  .scrollablediv {
+    white-space: nowrap; /* Evita que el contenido se rompa en varias líneas */
+    overflow: hidden; /* Oculta el contenido que desborda */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos cuando el contenido desborda */
+  }

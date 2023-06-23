@@ -55,6 +55,9 @@ const FormCategory = ({formInstance, goNewCategory, hideModal, mode = "Nuevo", c
         await  formik.setFieldValue("key",data.key);
         await  formik.setFieldValue("name",data.name);  
         await  formik.setFieldValue("title", data.title);
+        await  formik.setFieldValue("headers",data.headers);
+        await  formik.setFieldValue("body", data.body);
+        await  formik.setFieldValue("urlImage",data.urlImage);
      }else{
        formik.resetForm()
       setAdd(true)

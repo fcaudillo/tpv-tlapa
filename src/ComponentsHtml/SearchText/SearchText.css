@@ -1,0 +1,28 @@
+.custom-combobox {
+    position: relative;
+    display: inline-block;
+    color: blue;
+}
+
+.custom-combobox-input {
+    padding: 5px;
+}
+
+.custom-combobox-options {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.custom-combobox-option {
+    padding: 5px;
+    cursor: pointer;
+    
+}
+
+.custom-combobox-option:hover {
+      background-color: #e0e0e0;
+}

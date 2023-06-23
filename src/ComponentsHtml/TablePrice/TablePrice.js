@@ -1,9 +1,12 @@
 
-import React,{ useEffect, useState }  from 'react'
+import React,{ useEffect, useState , useContext}  from 'react'
 
 import './TablePrice'
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from  '../../actions'
+import { IMAGES_PATH } from '../../bussiness/endpoints'
+import editIcon from '../../images/edit.svg'
+import { ApplicationContext }  from '../../Context'
 
 export const TablePrice = ( props ) => {
     const dispatch = useDispatch();
@@ -12,6 +15,9 @@ export const TablePrice = ( props ) => {
     const [data,setData] = useState(props.dataProps)
     const [categoryNormalize,setCategoryNormalize]  = useState({})
     const [active, setActive] = useState(false)
+    const { edit, editProductMissing } = props
+    const value = useContext(ApplicationContext);
+    const { parametros } = value;
 
     useEffect ( () => {
        setHeaders(props.headersProps);
@@ -30,64 +36,60 @@ export const TablePrice = ( props ) => {
      },[])
 
     
-    // React.useEffect(() => {
-
-
-    //      setHeaders(headersProps);
-    //      setMetadataBody(metadataBodyProps);
-    //      setData(dataProps);
-
-         
-    //      var normalize = {};
-    //      data.forEach ( pr => {
-    //         normalize[pr.codigoInterno] = pr;
-    //      });
-          
-    //      setCategoryNormalize(normalize);
-         
-    //      setMetadataBody([...metadataBodyProps]);
-    //      console.log ("normalize1")
-    //      console.log (data)
-    //      console.log (normalize)
-    //      console.log(categoryNormalize);
-
-    //  }, [headersProps, metadataBodyProps, dataProps])
-
     const addTicketProduct = (sku) => {
         dispatch(actions.modifyGlobalCodebar({"barcode": sku, "qty": 1,"addToTicket": 1, "addLector": false,  "date": new Date()}));
    }
+
+    const renderColumn = (column, idx) => {
+
+        if (column.typeRender == 1){
+            return <p className={column.className}>{column.title}</p>
+        }
+
+        return <p>{column.title}</p>
+    }
+
+    const handleAction = (action, key) => {
+        if (action == "editar"){
+           edit(key)
+        }else if (action == "solicitar"){
+           editProductMissing(key);
+        }
+
+     }
 
     const createHeaders = (headers) => {
 
       return (
         <>
          {
-            headers ?
+            headers ? 
               headers.map (row => 
-                <tr>
-                    {
-                        row.map ( (column,columnIdx) => 
+                
+                    <tr>
+                        {
+                            row.map ( (column,columnIdx) => 
                             
-                                <th className='border' rowSpan={column.rowspan ? column.rowspan : 1} colSpan={column.colspan ? column.colspan : 1}>
-                                    { 
-                                    column.render ? 
-                                        column.render(column.title, columnIdx)
-                                    :
-                                        <div> 
-                                            {column.title}
-                                        </div> 
-                                    
-                                    
-                                    }
+                                    <th className='border header' scope="col" rowSpan={column.rowspan ? column.rowspan : 1} colSpan={column.colspan ? column.colspan : 1}>
+                                        { 
+                                        'typeRender' in column ? 
+                                            renderColumn(column, columnIdx)
+                                        :
+                                            <p> 
+                                                {column.title}
+                                            </p> 
+                                        
+                                        
+                                        }
 
-                                </th>
+                                    </th>
 
-                            )
-                       
-                    }
-                </tr>
-             
-            )
+                                )
+                        
+                        }
+                    </tr>
+               
+             )
             :
             <tr></tr>
           }
@@ -113,8 +115,8 @@ export const TablePrice = ( props ) => {
 
     }
 
-    const  getPriceSell = (sku) => {
-       var res =  data.filter(pr => pr.codigoInterno == sku)
+    const  getPriceSell = (cell) => {
+       var res =  data.filter(pr => pr.codigoInterno == cell.sku)
 
        if (res && res.length > 0) {
            var  x = res[0]
@@ -126,8 +128,9 @@ export const TablePrice = ( props ) => {
   
 
     return (
+        
        <table class="table table-sm table-striped">
-         <thead>
+         <thead  className="thead-light">
              { createHeaders(headers)}
          </thead>
          <tbody>
@@ -139,25 +142,43 @@ export const TablePrice = ( props ) => {
                
                   <tr>
                       {
-                          metarow.map ( (text,columnIdx) => 
+                          metarow.map ( (data,columnIdx) => 
                               
-                                  <th className='border'>
+                                  <td className='border'>
                                       { 
-                                          <div> 
-                                               {
-                                                 columnIdx == 0 
+                                           
+                                               
+                                                "title" in data 
                                                     ?
-                                                    <span> {text}</span>  
-                                                 :
-                                                   <a> {getPriceSell(text)} </a>
-                                               }
-                                              
-                                          </div> 
-                                      
-                                      
+                                                    <div>
+                                                    <span className={ "className" in data ? data.className : ""}> {data.title}</span>  
+                                                    </div>
+                                                :
+                                                  "TABLE_PRICE_BUTTONS" in parametros && parametros["TABLE_PRICE_BUTTONS"] == "false" ?
+
+                                                        <button className='w-100 btn text-primary' onClick={ () => addTicketProduct(data.sku)}   > 
+                                                            {getPriceSell(data)}
+                                                        </button>
+                                                    : 
+                                                    <div className="row ">
+                                                        <div className="col" onClick={ () => addTicketProduct(data.sku)}>
+                                                            <button className='btn'   > 
+                                                                {getPriceSell(data)}
+                                                            </button>
+                                                        </div>
+
+                                                        <div className="col-auto">
+                                                            <button style={{marginTop: '5px'}} onClick={ (e) => {e.preventDefault(); handleAction("editar", data.sku)} }>
+                                                                <img src={editIcon}/>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                 
+          
                                       }
   
-                                  </th>
+                                  </td>
   
                               )
                          
@@ -170,6 +191,7 @@ export const TablePrice = ( props ) => {
            }
          </tbody>   
        </table>
+     
     );
 
 }
