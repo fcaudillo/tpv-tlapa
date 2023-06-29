@@ -1,7 +1,13 @@
 .custom-combobox {
+    width: 98%;
+    height: 32px;
+    margin: 10px auto;
     position: relative;
     display: inline-block;
-    color: blue;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    box-shadow: 2px 2px 4px #ccc inset;
 }
 
 .custom-combobox-input {
@@ -14,6 +20,7 @@
     background-color: #f9f9f9;
     border: 1px solid #ccc;
     max-height: 200px;
+    width: 100%;
     overflow-y: auto;
 }
 
@@ -25,4 +32,29 @@
 
 .custom-combobox-option:hover {
       background-color: #e0e0e0;
+}
+
+input[type=text] {
+    margin: 3px auto;
+    border-color: red;
+    border: none;
+    width: 100%;
+    font-size: 14px;
+}
+
+input[type=text]:focus {
+    border: none;
+    outline: none;
+}
+
+.containerSearch {
+    display: flex;
+}
+  
+.left, .right {
+    width: 25px; /* Tamaño fijo del componente izquierdo y derecho */
+}
+
+.center {
+    flex-grow: 1; /* El componente central ocupará todo el espacio restante */
 }
