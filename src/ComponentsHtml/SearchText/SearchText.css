@@ -17,9 +17,12 @@
 .custom-combobox-options {
     display: none;
     position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1;
     background-color: #f9f9f9;
     border: 1px solid #ccc;
-    max-height: 200px;
+    max-height: 400px;
     width: 100%;
     overflow-y: auto;
 }
@@ -27,11 +30,23 @@
 .custom-combobox-option {
     padding: 5px;
     cursor: pointer;
-    
+    mix-blend-mode: multiply;
+}
+
+.title-search {
+   
+    font-weight: bold;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    color: #2b7d46;
+    width: 100%;
+    background-color: rgb(211, 221, 221);
+    padding-left: 5px;
+    vertical-align: middle;
 }
 
 .custom-combobox-option:hover {
-      background-color: #e0e0e0;
+      background-color: #f9f5f5f0;
+      mix-blend-mode: multiply;
 }
 
 input[type=text] {
@@ -47,14 +62,48 @@ input[type=text]:focus {
     outline: none;
 }
 
-.containerSearch {
+.containerSearch, .card-product, .title-products {
     display: flex;
 }
-  
+
 .left, .right {
     width: 25px; /* Tamaño fijo del componente izquierdo y derecho */
 }
 
-.center {
+.center, .description-product {
     flex-grow: 1; /* El componente central ocupará todo el espacio restante */
+}
+
+.description-product {
+    flex-grow: 1; /* El componente central ocupará todo el espacio restante */
+    padding: 3px 8px;
+}
+
+.description-product p {
+    margin: 0px;
+}
+
+.image-product {
+    width: 32px;
+}
+
+.left-title-products {
+    width: 50px;
+}
+
+.right-title-products {
+    flex-grow: 1;
+    padding: 0 10px;
+    text-align: right;
+}
+
+.right-title-products a:hover p {
+    color: #4a50d8 !important;
+}
+
+.sku-barcode {
+    font-size: 12px;
+    color: black;
+    font-style: italic;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif ;
 }

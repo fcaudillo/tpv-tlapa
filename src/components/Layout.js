@@ -251,7 +251,7 @@ function Layout(props) {
           page: 1,
           sizePage: 200
         },
-        "autocomplete"
+        "ScreenSearchProducts"
       ))
   };
 

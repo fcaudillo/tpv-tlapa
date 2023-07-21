@@ -17,6 +17,8 @@ export const VENTA_DIARIA_URL = URL_LOCALHOST + "/upload/reportes/ventaproductos
 
 export const SEARCH_PRODUCTS = URL_LOCALHOST + "/upload/findProducts"
 
+export const SEARCH_CATEGORY = URL_LOCALHOST + "/upload/category/findByTitle"
+
 //export const FIND_ALL_PRODUCTS_URL = URL_LOCALHOST + "/upload/findAll"
 
 export const FIND_ALL_PRODUCTS_URL = URL_LOCALHOST + "/upload/findAll"

@@ -50,7 +50,8 @@ const SearchProducts = (props) => {
   const [ activeCategory, setActiveCategory] = React.useState({});
   const [ metadataBody, setMetadataBody] = React.useState([]); 
   const [ headers, setHeaders] = React.useState([]);
-
+  const sourceScreen = "ScreenSearchProducts";
+  const [queryProducts , setQueryProducts] = React.useState([]);
   const [activeKeys, setActiveKeys] = React.useState([]);
   const handleSelect = (eventKey) => setActiveKeys(eventKey);
   const handleToggleClick = () => {
@@ -88,23 +89,32 @@ const SearchProducts = (props) => {
   
   React.useEffect( () => {
      console.log(products); 
-     if (source && source == "autocomplete") {
+     if (source && source === sourceScreen) {
         setActiveKeys([]);      
      }
-     if (category != null) {
-        if (category.body && category.body != "") {
-            setMetadataBody( JSON.parse(category.body) );
-        }
-    
-        if (category.headers && category.headers != "") {
-            setHeaders(JSON.parse(category.headers))
-        }
-
-        setActiveCategory(category);
-
+     if (products != null && source === sourceScreen) {
+        setActiveCategory(null);
+        setQueryProducts(products);
      }
 
-  },[products,source, category])
+
+  },[products,source])
+
+  React.useEffect( () => {
+    if (category != null) {
+       if (category.body && category.body != "") {
+           setMetadataBody( JSON.parse(category.body) );
+       }
+   
+       if (category.headers && category.headers != "") {
+           setHeaders(JSON.parse(category.headers))
+       }
+
+       setActiveCategory(category);
+
+    }
+
+ },[category])
 
   React.useEffect( () => {
     if (resultUdateProduct && 'resultUpdate' in resultUdateProduct && resultUdateProduct.resultUpdate.isOk === true) {
@@ -250,7 +260,7 @@ const SearchProducts = (props) => {
                       activeCategory && activeCategory.body != null && activeCategory.body != ""  ?
                           <TablePrice  headersProps={headers} dataProps={products} metadataBodyProps={metadataBody} edit={editarProducto} editProductMissing={editarProductoMissing}  />
                        :
-                          products.map( (prod) => <ProductoSearch  key={prod.codigoInterno} data={prod} edit={editarProducto} editProductMissing={editarProductoMissing} />)
+                          queryProducts.map( (prod) => <ProductoSearch  key={prod.codigoInterno} data={prod} edit={editarProducto} editProductMissing={editarProductoMissing} />)
 
                        
                   }

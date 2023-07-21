@@ -21,6 +21,7 @@ import SubcategoriesSearchReducer from './reducers/SubcategoriesSearchReducer'
 import FindAllProductReducer from './reducers/FindAllProductsReducer'
 import FindAllCategoriesReducer from './reducers/FindAllCategoriesReducer'
 import UpdateGlobalProductReducer from './reducers/UpdateGlobalProductReducer'
+import SearchCategoryReducer from './reducers/SearchCategoryReducer'
 
 const epicMiddleware = createEpicMiddleware();
 
@@ -76,7 +77,8 @@ const rootReducer = combineReducers({
     subcategoriesSearch: SubcategoriesSearchReducer,
     findAllProduct: FindAllProductReducer,   
     findAllCategories: FindAllCategoriesReducer,  
-    updateGlobalProduct: UpdateGlobalProductReducer,         
+    updateGlobalProduct: UpdateGlobalProductReducer,   
+    searchCategory: SearchCategoryReducer,      
 });
 
 /** ,epicMilddleware */
