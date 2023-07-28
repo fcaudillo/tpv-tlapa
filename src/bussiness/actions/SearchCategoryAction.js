@@ -9,7 +9,7 @@ import {
     SEARCH_CATEGORY_PURGE
 } from '../types'
 
-export const SearchCategoryAction = (data) => {
+export const SearchCategoryAction = (data,sourceCategories="") => {
      return (dispatch) => {
         console.log("SearchProductAction");
         if (data === 'PURGE') {
@@ -29,7 +29,7 @@ export const SearchCategoryAction = (data) => {
             )
             .subscribe (categories => {
                console.log('data from Action = ' + categories);
-               dispatch({ type: SEARCH_CATEGORY_SUCCESS, payload: categories})
+               dispatch({ type: SEARCH_CATEGORY_SUCCESS, payload: categories, sourceCategories: sourceCategories})
              });
 
         }

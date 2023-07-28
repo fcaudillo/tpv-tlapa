@@ -4,6 +4,12 @@
    float: left;
    height: 50px;
    background: transparent;
+   padding-left: 20px;
+}
+
+
+#navCategories ul {
+    padding-left: 0px;
 }
 
 #navCategories ul li {

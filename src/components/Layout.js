@@ -25,6 +25,7 @@ import { Subject, BehaviorSubject, fromEvent, debounceTime, filter, map, mergeMa
 import { ajax } from 'rxjs/ajax'
 import { SearchProductAction  } from '../bussiness/actions/SearchProductAction';
 import { SearchProductCategoryAction } from '../bussiness/actions/SearchProductCategoryAction';
+import { SearchCategoryAction } from '../bussiness/actions/SearchCategoryAction';
 import 'antd/dist/antd.css';
 import * as actions from '../actions'
 import { changeTabAction } from '../bussiness/actions/ChangeTabAction'
@@ -32,6 +33,8 @@ import { findAllProductsAction } from '../bussiness/actions/FindAllProductAction
 import { findAllCategoriesAction } from '../bussiness/actions/FindAllCategoriesAction';
 import { SEARCH_PRODUCT_SUCCESS } from '../bussiness/types';
 import * as funcs from '../bussiness'
+import  { SearchText } from '../ComponentsHtml/SearchText/SearchText';
+
 
 function Layout(props) {
   const LOADING_CREAR_PRODUCTO = 0
@@ -53,6 +56,22 @@ function Layout(props) {
   const listaTicketNormalizado = useSelector(store => store.reducer.listaTicketNormalizado);
   const updateGlobalProduct = useSelector(store => store.updateGlobalProduct);
 
+  
+  const searchProduct = useSelector(store => store.searchProduct);
+  const searchCategory = useSelector(store => store.searchCategory);
+
+  const {products, source, category}  = searchProduct
+  const [productsSearch, setProductsSearch] = useState([]);
+  const { categoriesSearch, sourceCategories } = searchCategory
+  const [categoriesSearchLayout, setCategoriesSearchLayout]  = useState([]);
+  const sourceScreen = "ScreenLayout";
+
+  React.useEffect( () => {
+     if (categoriesSearch != null && sourceCategories == sourceScreen) {
+        setCategoriesSearchLayout(categoriesSearch);
+     }
+  },[categoriesSearch] )
+
   React.useEffect(() => {
 
     dispatch(findAllProductsAction());
@@ -65,19 +84,23 @@ function Layout(props) {
             filter( data => data.length > 3)
           ).subscribe( text => {
             
-            ajax.post(SEARCH_AUTOCOMPLETE,
-                       {textSearch: text, maxOccurrences: 200},
-                       { 'Content-Type': 'application/json' })
-                       .pipe(
-                          map(r  => r.response.aggregations.autocomplete),
-                          mergeMap( m => m.buckets),
-                          map( e => ({value: e.key}) ),
-                          toArray()
-                       )
-                       .subscribe (data => {
-                          setOptions(data);
-                          console.log('data = ' + data);
-                       });
+              console.log("Buscando en base de datos : " + text);
+              dispatch(SearchProductAction(
+                {
+                  type: "DESCRIPTION",
+                  description: text,
+                  page: 1,
+                  sizePage: 20
+                },sourceScreen
+              ))
+
+              dispatch(SearchCategoryAction(
+                {
+                  textSearch: text,
+                  page: 1,
+                  sizePage: 20
+                }, sourceScreen
+              ))
          });
 
   },[])
@@ -170,6 +193,13 @@ function Layout(props) {
 
   },[findAllProduct])
 
+  React.useEffect(() => {
+    if (products != null && source === sourceScreen) {
+        setProductsSearch(products);
+    }
+
+  },[products])
+
   React.useEffect(  () => {
 
     if (updateGlobalProduct && 'resultUpdate' in updateGlobalProduct
@@ -233,7 +263,7 @@ function Layout(props) {
     dispatch(changeTabAction( key));
   };
 
-  const onSearch = (dataSearch) => {
+  const onChangeTextSearch = (dataSearch) => {
     
     textSearch.current.next(dataSearch);
     console.log('on search ' + dataSearch);
@@ -241,30 +271,47 @@ function Layout(props) {
     
   };
 
-  const onSelect = (data) => {
-    console.log('onSelect', data);
+ 
+  const onSelectSearch = (data) => {
     setTabActive("busqueda");
-    dispatch(SearchProductAction(
-        {
-          type: "DESCRIPTION",
-          description: data,
-          page: 1,
-          sizePage: 200
-        },
-        "ScreenSearchProducts"
-      ))
-  };
+    if ('category' in data) {
+        console.log ("Categoria seleccionada ")
+        dispatch(actions.modifyGlobalCodebar({"barcode": data.category.key, "qty": 1, "date": new Date()}));
 
-  const onChange = (data) => {
-    setValue(data);
-  };
+    }else if ('products' in data ) {
+        console.log("Productos seleccionados")
+        console.log(data.products)
+        dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: data.products, source : "ScreenSearchProducts", category: null});
 
-  const enviaTest = () => {
-    dispatch(actions.modifyGlobalCodebar({"barcode": '1414', "date": new Date()}));
-  }
+    }else if ('sku' in data) {
+       allProducts[productsNormalize[data.sku]]
+       var products = [ allProducts[productsNormalize[data.sku]] ]
+       dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: products, source : "ScreenSearchProducts", category: null});
+           
+    }else if ('barcode' in data) {
+       allProducts[productsNormalize[data.sku]]
+       var products = [ allProducts[productsNormalize[data.barcode]] ]
+       dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: products, source : "ScreenSearchProducts", category: null});
 
-  const [value, setValue] = useState('');
-  const [options, setOptions] = useState([]);
+    }else if ('description' in data && data.description != "" && 'type' in data && data.type == "MANUAL"){
+        const palabras = data.description.toUpperCase().split(' ');
+        var products = allProducts.filter( pr => {
+             var coincidencias = 0;
+             for (var i = 0; i < palabras.length; i++){
+                if (pr.descripcion.indexOf(palabras[i]) !== -1) {
+                  coincidencias++;
+                }else{
+                  break;
+                }
+             }
+
+             return coincidencias === palabras.length;
+        })
+        dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: products, source : "ScreenSearchProducts", category: null});
+
+    }
+
+}
 
   function guid() {
     function _p8(s) {
@@ -294,32 +341,12 @@ function Layout(props) {
                   <button type="button" onClick = {() => showCrearProducto() }  class="btn btn-primary dropdown-toggle" >
                     Crear Producto
                   </button>
-                  {/*  
-                  <button type="button" onClick = {() => enviaTest() }  class="btn btn-primary dropdown-toggle" >
-                     Test codigo producto.
-                  </button>
-                 */}
               </div>
               </Grid>
-              <Grid item xs={3}>
-               <span>
-
-                <AutoComplete
-                  value={value}
-                  options={options}
-                  style={{
-                    width: 200,
-                  }}
-                  onSelect={onSelect}
-                  onSearch={onSearch}
-                  onChange={onChange}
-                >
-                  <Input.Search size="large" placeholder="Buscar productos..." enterButton />
-                </AutoComplete>
-               </span>
-              
-
+              <Grid item xs={6}>
+                 <SearchText products={productsSearch} categories={categoriesSearchLayout} onChange={onChangeTextSearch} onSelect={onSelectSearch} />
               </Grid>
+              <Grid item xs={3}></Grid>
               <Grid item xs={12}>
                   <Tabs activeKey={ tabActive } onChange={onChangePanel}>
                     <TabPane tab="Lector" key="lector">

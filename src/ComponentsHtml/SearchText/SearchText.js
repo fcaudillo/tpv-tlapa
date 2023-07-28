@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useLayoutEffect } from 'react'
 
 import './SearchText.css'
 import lupaIcon from '../../images/lupa.svg'
@@ -6,17 +6,17 @@ import closeIcon from '../../images/close.svg'
 import { orange } from '@mui/material/colors'
 
 
-export const SearchText = ({ name, products, categories, onChange, onSelect,  valueInput = "", placeholder = "vacio", max_categories = 10, max_products = 15 }) => {
+export const SearchText = ({ name, products, categories, onChange, onSelect,  valueInput = "", placeholder = "Buscar productos por descripcion, sku y codigo barras ...", max_categories = 10, max_products = 15 }) => {
 
     const [display, setDisplay] = React.useState("none");
     const miDivRef = useRef(null);
-    const inputRef = useRef();
-    const divSearchRef = useRef();
+    const inputRef = useRef(null);
+    const divSearchRef = useRef(null);
     const [value, setValue] = useState(valueInput)
     const [isFocus, setIsFocus] = useState(false);
     var miTimeout = null;
 
-    React.useEffect(async () => {
+    React.useEffect(() => {
         const newDiv = document.createElement('div');
         newDiv.style.position = 'absolute';
         newDiv.style.top = '0px';
@@ -25,7 +25,7 @@ export const SearchText = ({ name, products, categories, onChange, onSelect,  va
         newDiv.style.visibility = 'hidden'
         document.body.appendChild(newDiv);
         miDivRef.current = newDiv;
-
+        calcularPosicionDivOpt();
         return () => {
             document.body.removeChild(newDiv);
         };
@@ -40,21 +40,25 @@ export const SearchText = ({ name, products, categories, onChange, onSelect,  va
 
     }, products, categories)
 
-
     const handleClick = () => {
-        //setDisplay("block");
         setIsFocus(true);
-        const { top, left, width, height } = divSearchRef.current.getBoundingClientRect();
-
-
-        //alert("alerta maxima")
-        miDivRef.current.style.top = (top + height) + "px";
-        miDivRef.current.style.left = (left) + "px";
-        //miDivRef.current.sytle.left = left + "px";
-        miDivRef.current.style.width = (width) + "px";
+        calcularPosicionDivOpt();
         miDivRef.current.style.visibility = "visible";
         setDisplay("block");
     }
+
+    const calcularPosicionDivOpt = () => {
+        const { top, left, width, height } = divSearchRef.current.getBoundingClientRect();
+        if (miDivRef.current){
+            miDivRef.current.style.top = (top + height) + "px";
+            miDivRef.current.style.left = (left) + "px";
+            miDivRef.current.style.width = (width) + "px";   
+        }
+
+
+    }
+
+
 
     const selectOption = (id) => {
         console.log("Se selecciono id = " + id)
@@ -211,7 +215,8 @@ export const SearchText = ({ name, products, categories, onChange, onSelect,  va
              }else if (inputText.length > 4) {
                 onSelect({ barcode : inputText }) 
              }
-             
+             setDisplay("none");
+             miDivRef.current.style.visibility = "hidden";
           }else {
             onChange(inputText);
           }
@@ -233,7 +238,10 @@ export const SearchText = ({ name, products, categories, onChange, onSelect,  va
             }else if (inputText.length > 4) {
                onSelect({ barcode : inputText }) 
             }
-            
+            setDisplay("none");
+            miDivRef.current.style.visibility = "hidden";
+         }else {
+            onSelect({ description : inputText, type : "MANUAL" }) 
          }
     }
       
@@ -251,7 +259,7 @@ export const SearchText = ({ name, products, categories, onChange, onSelect,  va
                       <img style={{"width": "20px", "margin-top":"6px", "height": "20px", "display":"inline-block", "cursor":"pointer"}} src={closeIcon} onClick={() => clearInput()}  />
                     </div>
                     <div className='center'>
-                       <input type="text"  ref={inputRef} onKeyUp={handleKeyUp} placeholder="codigo2" name={name} className="inputSearch" onClick={() => handleClick()} onBlur={() => initTimeOut()}  minLength="1" />
+                       <input type="text"  ref={inputRef} onKeyUp={handleKeyUp} placeholder={placeholder} name={name} className="inputSearch" onClick={() => handleClick()} onBlur={() => initTimeOut()}  minLength="1" />
                     
                     </div>
                     <div className='right' style={{marginLeft:"5px", marginRight: "3px"}}>

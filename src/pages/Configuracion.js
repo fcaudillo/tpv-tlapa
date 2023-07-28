@@ -33,8 +33,8 @@ const Configuracion = (props) => {
 
   const {products, source, category}  = searchProduct
   const [productsSearch, setProductsSearch] = useState([]);
-  const { categoriesSearch } = searchCategory
-
+  const { categoriesSearch, sourceCategories } = searchCategory
+  const [categoriesSearchText, setCategoriesSearchText] = useState([])
   const dispatch = useDispatch();
   const textSearch = React.useRef(new BehaviorSubject(""));
   const sourceScreen = "ScreenConfiguracion";
@@ -64,7 +64,7 @@ const Configuracion = (props) => {
                 textSearch: text,
                 page: 1,
                 sizePage: 20
-              }
+              },sourceScreen
             ))
           /*
           ajax.post(SEARCH_AUTOCOMPLETE,
@@ -102,6 +102,13 @@ const Configuracion = (props) => {
     }
 
   },[products])
+
+  React.useEffect( () => {
+    if (categoriesSearch != null && sourceCategories === sourceScreen){
+      setCategoriesSearchText(categoriesSearch);
+    }
+
+  },[categoriesSearch])
 
   const changeParameter = () => {
         console.log("cambiando el parametro  TABLE_PRICE_BUTTONS : " + parametros["TABLE_PRICE_BUTTONS"])
@@ -147,23 +154,12 @@ const Configuracion = (props) => {
 
   }
 
-  const testbuscar = () => {
-
-     //dispatch(actions.modifyGlobalCodebar({"barcode": "198", "qty": 1, "date": new Date()}));
-
-  }
-
   return (
     <div style={{height: "500px"}}>
       <div >
-              <SearchText products={productsSearch} categories={categoriesSearch} onChange={onChangeTextSearch} onSelect={onSelectSearch} />
+              <SearchText products={productsSearch} categories={categoriesSearchText} onChange={onChangeTextSearch} onSelect={onSelectSearch} />
       </div>
       <div class="container mt-4 row">
-
-          <div class="col-12">
-              <button onClick={() => testbuscar()}> buscar </button>
-
-          </div>
           <div class="col-4">
               <label>Habilitar/deshabilitar botones priceTable</label>
           </div>

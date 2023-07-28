@@ -20,6 +20,7 @@ import { Accordion } from 'react-bootstrap';
 import { data } from 'jquery';
 import { SEARCH_PRODUCT_SUCCESS } from '../bussiness/types';
 import { TablePrice } from '../ComponentsHtml/TablePrice/TablePrice';
+import { MenuCategory } from '../ComponentsHtml/MenuCategory/MenuCategory';
 import { AirlineSeatReclineExtra } from '@mui/icons-material';
 
 const useStyles = makeStyles({
@@ -54,6 +55,10 @@ const SearchProducts = (props) => {
   const [queryProducts , setQueryProducts] = React.useState([]);
   const [activeKeys, setActiveKeys] = React.useState([]);
   const handleSelect = (eventKey) => setActiveKeys(eventKey);
+  const [ categorySelected, setCategorySelected ] = React.useState({});
+  const [ showCategories, setShowCategories] = React.useState(false);
+  const [ offsetLeft, setOffsetLeft] = React.useState(0);
+
   const handleToggleClick = () => {
      const index = activeKeys.indexOf(dataAccordion[0].id);
     if (index > -1) {
@@ -154,7 +159,23 @@ const SearchProducts = (props) => {
 
   }
 
+  const changeNavNew = (cat) => {
+      setCategorySelected(cat);
+      setShowCategories(true);
+      var divNav = document.getElementById("navCategories");
+      var element = document.getElementById('idNav'+cat.id);
+      
+      if (element){
+            const { top, left, width, height } = element.getBoundingClientRect();
+            const rect = divNav.getBoundingClientRect();
+            console.log("Offset: " + left);
+            setOffsetLeft(left - rect['left']);
+      }
+  }
+
   const changeNav = (cat) => {
+    setCategorySelected(cat);
+    setShowCategories(true);
     setDataAccordion(cat.categories);
     dispatch({ type: SEARCH_PRODUCT_SUCCESS, payload: []});
     setActiveKeys([]);
@@ -203,26 +224,24 @@ const SearchProducts = (props) => {
 
   return (
     <div>
+          <div  style={{position: 'relative'}}>
+                 <div id="navCategories">
+                    <ul>
+                        
+                        {
+                          categoriesNivel1.map ((cat) => <li> <a  onClick={() => changeNavNew(cat)} id={'idNav'+cat.id} key="{cat.id}" href='#'> {cat.name} </a></li> )
+                        
+                        }                    
+
+
+                    </ul>
+                </div>
+                
+                 <MenuCategory category={categorySelected} openModal={showCategories} setOpenModal={setShowCategories} offsetLeft={offsetLeft} height={50} />
+
+         </div> 
          <Grid container spacing={1}>
 
-           <Grid item xs={12}>
-
-              <nav id="navCategories">
-                 <ul>
-                    
-                    {
-                      categoriesNivel1.map ((cat) => <li> <a  onClick={() => changeNav(cat)} key="{cat.id}" href='#'> {cat.name} </a></li> )
-                    
-                    }                    
-
-
-                 </ul>
-                
-                
-              </nav> 
-  
-
-           </Grid>
            <Grid item xs={3}>
  
               <div className="flex" style={{ minWidth: "40%" }}>

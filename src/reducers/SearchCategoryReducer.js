@@ -15,9 +15,9 @@ import {
       
       switch (action.type){
         case SEARCH_CATEGORY_SUCCESS:
-          return {...state, categoriesSearch: action.payload};
+          return {...state, categoriesSearch: action.payload, sourceCategories: action.sourceCategories};
         case SEARCH_CATEGORY_ERROR:
-          return {...state, categoriesSearchError: action.payload};
+          return {...state, categoriesSearchError: action.payload, sourceCategories: action.sourceCategories};
         case SEARCH_CATEGORY_PURGE:
           return { ...initialState};
       }
