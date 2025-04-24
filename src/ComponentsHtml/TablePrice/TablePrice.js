@@ -5,10 +5,11 @@ import './TablePrice'
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from  '../../actions'
 import { IMAGES_PATH } from '../../bussiness/endpoints'
-import editIcon from '../../images/edit.svg'
+
 import { ApplicationContext }  from '../../Context'
 
 export const TablePrice = ( props ) => {
+    const editIcon = '/images/edit.svg';
     const dispatch = useDispatch();
     const [headers,setHeaders] = useState(props.headersProps)
     const [metadataBody,setMetadataBody] = useState(props.metadataBodyProps)

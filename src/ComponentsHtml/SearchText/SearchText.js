@@ -1,13 +1,13 @@
 import React, { useRef, useState, useLayoutEffect } from 'react'
 
 import './SearchText.css'
-import lupaIcon from '../../images/lupa.svg'
-import closeIcon from '../../images/close.svg'
 import { orange } from '@mui/material/colors'
 
 
 export const SearchText = ({ name, products, categories, onChange, onSelect,  valueInput = "", placeholder = "Buscar productos por descripcion, sku y codigo barras ...", max_categories = 10, max_products = 15 }) => {
-
+    const lupaIcon = '/images/lupa.svg';
+    const closeIcon = '/images/close.svg';
+    
     const [display, setDisplay] = React.useState("none");
     const miDivRef = useRef(null);
     const inputRef = useRef(null);

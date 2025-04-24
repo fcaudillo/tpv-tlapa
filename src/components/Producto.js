@@ -39,6 +39,8 @@ const Producto = (props) => {
         const [anchorEl, setAnchorEl] = React.useState(null);
         const open = Boolean(anchorEl);
         const history = useHistory();
+
+    
         const { edit, editProductMissing } = props
 
  

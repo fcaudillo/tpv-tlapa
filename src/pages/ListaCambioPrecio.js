@@ -1,7 +1,6 @@
-import React, { Component, useRef, useContext } from 'react';
+import React, { useRef, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ApplicationContext } from '../Context';
-import Cookies from 'js-cookie'
 import { TextField, Grid, Icon, FormControl, Input, FormHelperText } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import icons from '@ant-design/icons'

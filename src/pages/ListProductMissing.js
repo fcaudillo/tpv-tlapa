@@ -1,4 +1,4 @@
-import React, { Component, useRef, useContext } from 'react';
+import React, { useRef, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ApplicationContext } from '../Context';
 import Cookies from 'js-cookie'
