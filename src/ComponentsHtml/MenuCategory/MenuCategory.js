@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import './MenuCategory.css'
 import { useDispatch } from 'react-redux'
 import * as actions from '../../actions'
+import * as funcs from '../../bussiness'
 
 export const MenuCategory = ({ category, openModal, setOpenModal, offsetLeft, height }) => {
     const [open, setOpen ] = React.useState(false);
@@ -43,14 +44,21 @@ export const MenuCategory = ({ category, openModal, setOpenModal, offsetLeft, he
     },[openModal])
 
     const changeSubcategoty = (cat) => {
+        openCategorySubcategory(cat,subcategory);
+   }
+
+   const openCategorySubcategory = (cat, subcategory) => {
+        if (subcategory != null ){
+            dispatch(funcs.showSubcategories(subcategory.categories,cat, 'subcategoriesBusqueda'));   
+        }
         console.log("Buscar category : " + cat.name + " key: " + cat.key)
         dispatch(actions.modifyGlobalCodebar({"barcode": cat.key, "qty": 1, "date": new Date()}));
         setOpenModal(false);
         setIdCatSelected('id0');
         setSubcategory(null);
-    }
+   }
 
-    const  showSubcategory = (subcat) => {
+    const  showSubcategory = (subcat, sourceEvent) => {
        console.log("Subcategory : " + subcat.name);
        var id = 'id'+subcat.id;
        if (idCatSelected != id) {
@@ -71,8 +79,15 @@ export const MenuCategory = ({ category, openModal, setOpenModal, offsetLeft, he
           setIdCatSelected(id);
        }
        
+       if ('categories' in subcat && subcat.categories.length == 0 && sourceEvent == 'onClick') {
+           openCategorySubcategory(subcat,category);
+           return;
+       }
 
-       setSubcategory(subcat)
+       if (sourceEvent == 'onMouseOver') {
+          setSubcategory(subcat)
+       }
+       
     }
 
     const hideModal = () => {
@@ -89,12 +104,13 @@ export const MenuCategory = ({ category, openModal, setOpenModal, offsetLeft, he
         <>
             { open && category != null  ? 
                 <div ref={divMain} id="menuContainer" style={{top: height, left: offsetLeft}} onBlur={() => hideModal() } tabIndex="0">
+                    
                     <div className='category'>
                         <p style={{fontSize:'14px', padding:'8px', fontWeight:'bold'}}> {category.name}</p>
                         <ul> 
                             {
                                 category.categories.map( (subcat) => 
-                                  <li onMouseOver={() => showSubcategory(subcat)} onClick={() => showSubcategory(subcat)}  key={'cat' + subcat.id} id={'id' + subcat.id}> 
+                                  <li onMouseOver={() => showSubcategory(subcat,'onMouseOver')} onClick={() => showSubcategory(subcat,'onClick')}  key={'cat' + subcat.id} id={'id' + subcat.id}> 
                                      <span> {subcat.name} </span>
                                   </li>
 

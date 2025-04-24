@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import socketIOClient from "socket.io-client";
 import { useSelector, useDispatch } from 'react-redux'
 import * as actions from '../actions'
+import * as funcs from '../bussiness'
 
 const SOCKET_SERVER_URL = "https://192.168.100.9:5000";
 const SEARCH_PRODUCT_BARCODE = "message"
@@ -13,6 +14,7 @@ const LectorCodigoBarras = (negocioId) => {
    const listaTicketNormalizado = useSelector(store => store.reducer.listaTicketNormalizado);
    const dispatch = useDispatch();
    const socketRef = useRef();
+
 
    useEffect(() => {
        socketRef.current = socketIOClient(SOCKET_SERVER_URL);

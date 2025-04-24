@@ -1,36 +1,21 @@
 
 
-#navCategories {
-   float: left;
-   height: 50px;
-   background: transparent;
-   padding-left: 20px;
-}
-
-
-#navCategories ul {
+#subcategorias ul {
+    list-style: none;
+    margin-left: 0px;
     padding-left: 0px;
 }
-
-#navCategories ul li {
-    font-size: 16px;
-    display: inline-block;
-    margin: 0px 20px 0px 0px;
-    letter-spacing: 1px;
-    line-height: 32px;
+ 
+#subcategorias ul li {
+    text-decoration: none;
+    line-height: 40px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
-#navCategories ul li a {
-  color: black;
-  display: block;
-  text-decoration: none;
-  transition: all 200ms;
 
-}
-
-#navCategories ul li a:hover {
-    color:rgb(80, 100, 255);
-    transform: scale(1.2,1.2)
+#subcategorias ul li:hover {
+   cursor: pointer;
 }
 
 .subcategory {

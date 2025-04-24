@@ -1,0 +1,36 @@
+
+
+#navCategories {
+    float: left;
+    height: 50px;
+    background: transparent;
+    padding-left: 20px;
+ }
+ 
+ 
+ #navCategories ul {
+     padding-left: 0px;
+ }
+ 
+ #navCategories ul li {
+     text-align: left;
+     font-size: 16px;
+     display: inline-block;
+     margin: 0px 20px 0px 0px;
+     letter-spacing: 1px;
+     line-height: 32px;
+ }
+ 
+ #navCategories ul li a {
+   color: black;
+   display: block;
+   text-decoration: none;
+   transition: all 200ms;
+ 
+ }
+ 
+ #navCategories ul li a:hover {
+     color:rgb(80, 100, 255);
+     transform: scale(1.2,1.2)
+ }
+ 

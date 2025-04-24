@@ -13,15 +13,12 @@ import { loadProductMissing } from '../bussiness/actions/loadProductMissingActio
 import ProductoSearch from '../components/ProductoSearch'
 import ProductMissing from './ProductMissing';
 import * as funcs from '../bussiness'
-import { SearchProductCategoryAction } from '../bussiness/actions/SearchProductCategoryAction'
 import * as actions from '../actions'
 import './styles/SearchProducts.css'
 import { Accordion } from 'react-bootstrap';
 import { data } from 'jquery';
 import { SEARCH_PRODUCT_SUCCESS } from '../bussiness/types';
 import { TablePrice } from '../ComponentsHtml/TablePrice/TablePrice';
-import { MenuCategory } from '../ComponentsHtml/MenuCategory/MenuCategory';
-import { AirlineSeatReclineExtra } from '@mui/icons-material';
 
 const useStyles = makeStyles({
   divSearchProducts: {
@@ -43,8 +40,6 @@ const SearchProducts = (props) => {
   const INSTANCE_PRODUCT_MISSING = 'instanceSearchProduct';
   const [categories, setCategories] = React.useState([]);
   const categoryRef = useRef();
-  const [arbol, setArbol] = React.useState([]);
-  const subcategoriesSearch = useSelector(store => store.subcategoriesSearch);
   const updateGlobalProduct = useSelector(store => store.updateGlobalProduct);
   const [categoriesNivel1, setCategoriesNivel1] = React.useState([]);
   const [ dataAccordion, setDataAccordion ] = React.useState([]);
@@ -55,9 +50,9 @@ const SearchProducts = (props) => {
   const [queryProducts , setQueryProducts] = React.useState([]);
   const [activeKeys, setActiveKeys] = React.useState([]);
   const handleSelect = (eventKey) => setActiveKeys(eventKey);
-  const [ categorySelected, setCategorySelected ] = React.useState({});
-  const [ showCategories, setShowCategories] = React.useState(false);
-  const [ offsetLeft, setOffsetLeft] = React.useState(0);
+  const subcategoriesBusqueda = useSelector(store => store.showSubcategories.subcategoriesBusqueda);
+  const subcategoriesBusquedaOrigin = useSelector(store => store.showSubcategories.subcategoriesBusquedaOrigin);
+  const [idSubcategorySelected, setIdSubcategorySelected] = React.useState('idsub0');
 
   const handleToggleClick = () => {
      const index = activeKeys.indexOf(dataAccordion[0].id);
@@ -77,20 +72,23 @@ const SearchProducts = (props) => {
     setCategories(categories);
   },[])
 
-  React.useEffect(() => {
+  React.useEffect( () => {
+     console.log("efecto subcategoriesBusqueda")
+     subcategoriesBusqueda.forEach ( sub => {
+        var elementClear = document.getElementById('idsub' + sub.id);
+        if (elementClear != null) {
+            elementClear.style.backgroundColor = 'white';
+            elementClear.style.borderLeft = '0px';
+            elementClear.style.fontWeight = 'normal'
+        }
 
-    if (subcategoriesSearch && 'resultSubcategories' in subcategoriesSearch
-                            && 'data' in subcategoriesSearch.resultSubcategories
-                            && subcategoriesSearch.resultSubcategories.isOk == true) {
-      var root = subcategoriesSearch.resultSubcategories.data;
-      //setParents(root[0]);
-      setArbol(root)
-      setCategoriesNivel1(root ? root[0].categories: []);
-      
-    }
- 
- 
-  },[subcategoriesSearch])
+     });
+
+     setIdSubcategorySelected('idsub0');
+     if (subcategoriesBusqueda != null && subcategoriesBusquedaOrigin != null){
+        hoverSubcategory(subcategoriesBusquedaOrigin);
+     }
+  },[subcategoriesBusqueda, subcategoriesBusquedaOrigin])
   
   React.useEffect( () => {
      console.log(products); 
@@ -159,20 +157,6 @@ const SearchProducts = (props) => {
 
   }
 
-  const changeNavNew = (cat) => {
-      setCategorySelected(cat);
-      setShowCategories(true);
-      var divNav = document.getElementById("navCategories");
-      var element = document.getElementById('idNav'+cat.id);
-      
-      if (element){
-            const { top, left, width, height } = element.getBoundingClientRect();
-            const rect = divNav.getBoundingClientRect();
-            console.log("Offset: " + left);
-            setOffsetLeft(left - rect['left']);
-      }
-  }
-
   const changeNav = (cat) => {
     setCategorySelected(cat);
     setShowCategories(true);
@@ -222,29 +206,53 @@ const SearchProducts = (props) => {
   /** Temporal */
 
 
+  const  hoverSubcategory = (subcat) => {
+    console.log("Subcategory : " + subcat.name);
+    var id = 'idsub'+subcat.id;
+    if (idSubcategorySelected != id) {
+         var elementClear = document.getElementById(idSubcategorySelected);
+         if (elementClear != null) {
+             elementClear.style.backgroundColor = 'white';
+             elementClear.style.borderLeft = '0px';
+             elementClear.style.fontWeight = 'normal'
+         }
+
+    }
+
+    var element = document.getElementById(id);
+    if (element != null) {
+       element.style.backgroundColor = 'hsl(210, 79%, 95%)';
+       element.style.borderLeft = '4px solid #0071dc';
+       element.style.fontWeight = 'bold';
+       setIdSubcategorySelected(id);
+    }
+
+    changeSubcategoty(subcat);
+ }
+
   return (
     <div>
-          <div  style={{position: 'relative'}}>
-                 <div id="navCategories">
-                    <ul>
-                        
-                        {
-                          categoriesNivel1.map ((cat) => <li> <a  onClick={() => changeNavNew(cat)} id={'idNav'+cat.id} key="{cat.id}" href='#'> {cat.name} </a></li> )
-                        
-                        }                    
-
-
-                    </ul>
-                </div>
-                
-                 <MenuCategory category={categorySelected} openModal={showCategories} setOpenModal={setShowCategories} offsetLeft={offsetLeft} height={50} />
-
-         </div> 
          <Grid container spacing={1}>
 
-           <Grid item xs={3}>
+                  {
+                     subcategoriesBusqueda != null && subcategoriesBusqueda.length > 0 ?
+                     <Grid item xs={3}>
  
-              <div className="flex" style={{ minWidth: "40%" }}>
+                       <div className="flex" style={{ minWidth: "40%" }}>
+                          <div id="subcategorias">
+                            <ul>
+                              {
+                                subcategoriesBusqueda.map ( (sub) => 
+                                  <li id={'idsub' + sub.id} onClick={ () => hoverSubcategory(sub) } >{sub.name}</li>
+                                )
+                              } 
+                            </ul>
+                          </div>
+                        </div >
+                     </Grid>
+                      : null
+                  }
+                  {/* 
                   <Accordion alwaysOpen activeKey={activeKeys} onSelect={handleSelect}>
                     {
                           dataAccordion.map (
@@ -265,14 +273,12 @@ const SearchProducts = (props) => {
                           )
                     }
                   </Accordion>
-                  {/* 
+                  
                   <div className="mt-5 d-flex justify-content-between">
                     <Button onClick={handleToggleClick} >Toggle First</Button>
                     <Button onClick={handleCollapseClick}>Collapse All</Button>
                   </div> */}
-                </div >        
-
-           </Grid>
+                
            <Grid item xs={9}>
                <div className={classes.divSearchProducts}>
                    {

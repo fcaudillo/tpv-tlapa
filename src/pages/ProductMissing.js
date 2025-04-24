@@ -130,6 +130,7 @@ function ProductMissing ( props ) {
                         label = "Cantidad solicitada"
                         value = {formik.values.cantidadSolicitada}
                         error = {formik.errors.cantidadSolicitada}
+                        type = "number"
                         onChange={(evt) => formik.setFieldValue("cantidadSolicitada", evt.target.value)} />
                     </div>
                     <div className="col-md-2" />
@@ -138,6 +139,7 @@ function ProductMissing ( props ) {
                         label = "Cantidad existencia"
                         value = {formik.values.cantidadExistencia}
                         error = {formik.errors.cantidadExistencia}
+                        type = "number"
                         onChange={(evt) => formik.setFieldValue("cantidadExistencia", evt.target.value)} />
                     </div>
             </div>

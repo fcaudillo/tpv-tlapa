@@ -34,7 +34,8 @@ import { findAllCategoriesAction } from '../bussiness/actions/FindAllCategoriesA
 import { SEARCH_PRODUCT_SUCCESS } from '../bussiness/types';
 import * as funcs from '../bussiness'
 import  { SearchText } from '../ComponentsHtml/SearchText/SearchText';
-
+import './styles/Layout.css';
+import { MenuCategory } from '../ComponentsHtml/MenuCategory/MenuCategory';
 
 function Layout(props) {
   const LOADING_CREAR_PRODUCTO = 0
@@ -55,8 +56,9 @@ function Layout(props) {
   const listaTicket = useSelector(store => store.reducer.listaTicket);
   const listaTicketNormalizado = useSelector(store => store.reducer.listaTicketNormalizado);
   const updateGlobalProduct = useSelector(store => store.updateGlobalProduct);
+  const [categoriesNivel1, setCategoriesNivel1] = React.useState([]);
 
-  
+  const subcategoriesSearch = useSelector(store => store.subcategoriesSearch);
   const searchProduct = useSelector(store => store.searchProduct);
   const searchCategory = useSelector(store => store.searchCategory);
 
@@ -65,7 +67,13 @@ function Layout(props) {
   const { categoriesSearch, sourceCategories } = searchCategory
   const [categoriesSearchLayout, setCategoriesSearchLayout]  = useState([]);
   const sourceScreen = "ScreenLayout";
-
+  const [ categorySelected, setCategorySelected ] = React.useState({});
+  const [ showCategories, setShowCategories] = React.useState(false);
+  const [ offsetLeft, setOffsetLeft] = React.useState(0);
+  const [arbol, setArbol] = React.useState([]);
+  const [hashCategories, setHashCategories] = React.useState([])
+  
+   
   React.useEffect( () => {
      if (categoriesSearch != null && sourceCategories == sourceScreen) {
         setCategoriesSearchLayout(categoriesSearch);
@@ -241,6 +249,47 @@ function Layout(props) {
 
   },[findAllCategories])
 
+  const setParents =  (parentCategory) => {
+    if (parentCategory == null){
+     return;
+    }
+
+    var i = 0;
+    for (i= 0; parentCategory.categories != null && i < parentCategory.categories.length; i++) {
+       parentCategory.categories[i].parent = parentCategory;
+       setParents(parentCategory.categories[i])
+    }
+  }
+
+  const createHashCategories = (category, map) => {
+    if (category) {
+       map[category.key] = category;
+       if ('categories' in category && category.categories.length > 0){
+          category.categories.forEach(element => {
+              createHashCategories(element, map);
+          })
+       }
+
+
+    }
+
+  }
+
+  React.useEffect(() => {
+    if (subcategoriesSearch && 'resultSubcategories' in subcategoriesSearch
+                            && 'data' in subcategoriesSearch.resultSubcategories
+                            && subcategoriesSearch.resultSubcategories.isOk == true) {
+      var root = subcategoriesSearch.resultSubcategories.data;
+       setParents(root[0]);
+       setArbol(root)
+       var map = {};
+       createHashCategories(root[0],map);
+       setHashCategories(map);
+       setCategoriesNivel1(root ? root[0].categories: []); 
+    }
+
+  },[subcategoriesSearch])
+
   const enterLoading = (index, status) => {
     const newLoadings = [...loadings]
     newLoadings[index] = status
@@ -277,6 +326,10 @@ function Layout(props) {
     if ('category' in data) {
         console.log ("Categoria seleccionada ")
         dispatch(actions.modifyGlobalCodebar({"barcode": data.category.key, "qty": 1, "date": new Date()}));
+        if (data.category.key in hashCategories) {
+          dispatch(funcs.showSubcategories(hashCategories[data.category.key].parent.categories,hashCategories[data.category.key], 'subcategoriesBusqueda'));
+        }
+
 
     }else if ('products' in data ) {
         console.log("Productos seleccionados")
@@ -321,6 +374,21 @@ function Layout(props) {
     return _p8() + _p8(true) + _p8(true) + _p8();
   }
 
+  const changeNavNew = (cat) => {
+    setCategorySelected(cat);
+    setShowCategories(true);
+    var divNav = document.getElementById("navCategories");
+    var element = document.getElementById('idNav'+cat.id);
+    
+    if (element){
+          const { top, left, width, height } = element.getBoundingClientRect();
+          const rect = divNav.getBoundingClientRect();
+          console.log("Offset: " + left);
+          setOffsetLeft(left - rect['left']);
+    }
+    
+}
+
   return ( 
     <React.Fragment>
 
@@ -345,6 +413,25 @@ function Layout(props) {
               </Grid>
               <Grid item xs={6}>
                  <SearchText products={productsSearch} categories={categoriesSearchLayout} onChange={onChangeTextSearch} onSelect={onSelectSearch} />
+              </Grid>
+              <Grid item xs={12}>
+              <div  style={{position: 'relative'}}>
+                  <div id="navCategories">
+                      <ul>
+                          
+                          {
+                            categoriesNivel1.map ((cat) => <li> <a  onClick={() => changeNavNew(cat)} id={'idNav'+cat.id} key="{cat.id}" href='#'> {cat.name} </a></li> )
+                          
+                          }                    
+
+
+                      </ul>
+                  </div>
+                                 
+                  <MenuCategory category={categorySelected} openModal={showCategories} setOpenModal={setShowCategories} offsetLeft={offsetLeft} height={50} />
+
+       
+                </div> 
               </Grid>
               <Grid item xs={3}></Grid>
               <Grid item xs={12}>

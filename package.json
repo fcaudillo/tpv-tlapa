@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "server": "json-server --port 3001 --watch server/db.json --static ./dist",
-    "build:dev": "webpack-cli serve --host 0.0.0.0 --mode development --config ./webpack.dev.config.js",
-    "build:dll": "webpack --config ./webpack.dll.config.js --mode production",
-    "build": "webpack --config ./webpack.config.js --mode production"
+    "build:dev": "set NODE_OPTIONS=--openssl-legacy-provider && webpack-cli serve --host 0.0.0.0 --mode development --config ./webpack.dev.config.js",
+    "build:dll": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --config ./webpack.dll.config.js --mode production",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --config ./webpack.config.js --mode production"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",

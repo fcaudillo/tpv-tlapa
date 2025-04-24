@@ -11,6 +11,7 @@ import { findCategories,
          reorderSubcategoriesGraph } from '../bussiness/actions/CategoryAction'
 import { findSubcategoriesAction } from './actions/SubcategoriesSearchAction';
 import { deleteSubcategoryAction } from './actions/DeleteSubcategoryAction';
+import { ShowSubcategoresAction } from './actions/ShowSubcategoriesAction';
 
 
 export const findByCategories = findCategories;
@@ -26,5 +27,6 @@ export const addCategoryToCategory = addCategoryToCategoryAction;
 export const findSubcategories = findSubcategoriesAction;
 export const deleteSubcategory = deleteSubcategoryAction;
 export const reorderSubcategories = reorderSubcategoriesGraph;
+export const showSubcategories = ShowSubcategoresAction;
 
 

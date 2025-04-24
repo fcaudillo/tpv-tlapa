@@ -250,6 +250,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
                         label = "Precio compra"
                         value = {formik.values.precioCompra}
                         error = {formik.errors.precioCompra}
+                        type = "number"
                         onChange={(evt) => formik.setFieldValue("precioCompra", evt.target.value)} />
                   {precioCompraHistorico != "" && <div> <a onClick={() =>changePrice() }>{precioCompraHistorico}</a> </div>}
            </div>
@@ -261,6 +262,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
                         label = "Precio venta"
                         value = {formik.values.precioVenta}
                         error = {formik.errors.precioVenta}
+                        type = "number"
                         onChange={(evt) => formik.setFieldValue("precioVenta", evt.target.value)} />
                   {precioVentaHistorico != "" && <div> <p>{precioVentaHistorico}</p> </div>}
            </div>
@@ -283,6 +285,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
                         label = "Existencia"
                         value = {formik.values.existencia}
                         error = {formik.errors.existencia}
+                         type = "number"
                         onChange={(evt) => formik.setFieldValue("existencia", evt.target.value)} />
            </div>
            <div className="col-md-1">
@@ -293,6 +296,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
                         label = "Minimo existencia"
                         value = {formik.values.minimoExistencia}
                         error = {formik.errors.minimoExistencia}
+                         type = "number"
                         onChange={(evt) => formik.setFieldValue("minimoExistencia", evt.target.value)} />
            </div>
            <div className="col-md-1">
@@ -303,6 +307,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
                         label = "Maximo existencia"
                         value = {formik.values.maximoExistencia}
                         error = {formik.errors.maximoExistencia}
+                        type = "number"
                         onChange={(evt) => formik.setFieldValue("maximoExistencia", evt.target.value)} />
            </div>
 

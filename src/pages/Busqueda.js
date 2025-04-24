@@ -160,7 +160,7 @@ const Busqueda = (props) => {
             </Grid>
            
             <Grid item xs={6}>
-               <Button variant="contained"  variant="contained" onClick={handleSearch} disabled={false} color="primary" >
+               <Button variant="contained"  onClick={handleSearch} disabled={false} color="primary" >
                   <Icon>search</Icon>
                </Button>
            </Grid>

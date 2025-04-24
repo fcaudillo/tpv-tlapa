@@ -10,12 +10,14 @@
     resultSubcategoriesError: {isOk : false},
     resultSubcategoriesPurge: {isOk : false},
   }
+
   
  const SubcategoriesSearchReducer = ( state = initialState, action ) => {
     
     switch (action.type){
       case SEARCH_SUBCATEGORIES_SUCCESS:
         return { ...state, resultSubcategories: action.payload , resultSubcategoriesError: {isOk : false}};
+        
       case SEARCH_SUBCATEGORIES_ERROR:
         return { ...state, resultSubcategoriesError: action.payload };
       case SEARCH_SUBCATEGORIES_PURGE:

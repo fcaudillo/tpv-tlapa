@@ -15,6 +15,8 @@ export const SAVE_PRODUCT_URL = URL_LOCALHOST + "/upload/product"
 
 export const VENTA_DIARIA_URL = URL_LOCALHOST + "/upload/reportes/ventaproductos"
 
+export const DEVOLUCION_PRODUCTO = URL_LOCALHOST + "/upload/product/devolucion"
+
 export const SEARCH_PRODUCTS = URL_LOCALHOST + "/upload/findProducts"
 
 export const SEARCH_CATEGORY = URL_LOCALHOST + "/upload/category/findByTitle"

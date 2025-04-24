@@ -33,9 +33,12 @@ export const SearchText = ({ name, products, categories, onChange, onSelect,  va
 
     React.useEffect( () => {
 
-        if ( isFocus && (products && products.length > 0) || (categories && categories.length > 0) ){
+        if ( isFocus && (products && products.length == 0) && (categories && categories.length == 0) ){
             setDisplay("none");
             miDivRef.current.style.visibility = "hidden";
+        }else{
+            miDivRef.current.style.visibility = "visible";
+            setDisplay("block"); 
         }
 
     }, products, categories)
@@ -208,7 +211,7 @@ export const SearchText = ({ name, products, categories, onChange, onSelect,  va
         if (event.keyCode === 13) {
  
           if (sonTodosNumeros(inputText)  ) {
-             if (inputText.length == 3) {
+             if (inputText.length == 2 || inputText.length == 3) {
                 onSelect({ category : { key : inputText} })  
              }else if (inputText.length == 4) {
                 onSelect({ sku : inputText }) 

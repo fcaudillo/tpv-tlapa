@@ -7,7 +7,7 @@ import icons from '@ant-design/icons'
 import { Modal, Button, Form } from 'antd';
 import { Table, DatePicker, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux'
-import { VENTA_DIARIA_URL, URL_PRINT_TICKET, FIND_TICKET_URL } from '../bussiness/endpoints'
+import { VENTA_DIARIA_URL, URL_PRINT_TICKET, FIND_TICKET_URL, DEVOLUCION_PRODUCTO } from '../bussiness/endpoints'
 
 const VentaDiaria = (props) => {
   const value = useContext(ApplicationContext);
@@ -59,9 +59,28 @@ const VentaDiaria = (props) => {
   ]
  
  
-  const devolucionProducto = (id) => {
+  const devolucionProducto = async (id) => {
     console.log("Devolucion producto: " + id)
-     
+    var url = DEVOLUCION_PRODUCTO + "/" + id;
+    console.log("get devolucion" + url);
+ 
+    const response = await fetch(url,
+                    {
+                        headers: {
+                          'Accept': 'application/json',
+                          'Content-Type': 'application/json'
+                        },
+                        method: "GET"
+                    });
+    if (response.status == 200){
+      console.log("devlucion exitosa--")
+      alert("devolucion exitosa")
+      const result = await response.json()
+      handleSearch (none);     
+    }else{
+      alert("Error en en la devolucion")
+    }
+  
   }
 
   const handleSearch = async (event) => {

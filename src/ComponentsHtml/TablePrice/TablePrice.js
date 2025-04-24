@@ -14,6 +14,8 @@ export const TablePrice = ( props ) => {
     const [metadataBody,setMetadataBody] = useState(props.metadataBodyProps)
     const [data,setData] = useState(props.dataProps)
     const [categoryNormalize,setCategoryNormalize]  = useState({})
+    const opciones = ['Vender', 'Editar', 'Solicitar', 'Claves'];
+    const [typeAction, setTypeAction] = useState(0)
     const [active, setActive] = useState(false)
     const { edit, editProductMissing } = props
     const value = useContext(ApplicationContext);
@@ -36,9 +38,16 @@ export const TablePrice = ( props ) => {
      },[])
 
     
-    const addTicketProduct = (sku) => {
-        dispatch(actions.modifyGlobalCodebar({"barcode": sku, "qty": 1,"addToTicket": 1, "addLector": false,  "date": new Date()}));
-   }
+    const executeAction = (data) => {
+        if (typeAction == 0) {
+             dispatch(actions.modifyGlobalCodebar({"barcode": data.sku, "qty": 1,"addToTicket": 1, "addLector": false,  "date": new Date()}));
+        }else if (typeAction == 1) {
+             edit(data.sku)
+        }else if (typeAction == 2){
+             editProductMissing(data.sku);
+        }
+
+     }
 
     const renderColumn = (column, idx) => {
 
@@ -99,38 +108,37 @@ export const TablePrice = ( props ) => {
 
     }
 
-    const  renderCell = (row, col, text) => {
-
-        if (col == 0) {
-            return (<> <span> {text }</span> </>)
-        }
-
-        return (
-            <>
-               <button type="button" class="btn btn-link" onClick={ () => addTicketProduct(text)} >
-                   { text in categoryNormalize ? categoryNormalize[text].precioVenta : "" }
-               </button>
-           </>
-        );
-
-    }
-
-    const  getPriceSell = (cell) => {
+    const  getLabelCell = (cell) => {
        var res =  data.filter(pr => pr.codigoInterno == cell.sku)
 
        if (res && res.length > 0) {
            var  x = res[0]
+           if (typeAction == 3){
+             return x.codigoInterno
+           }
            return x.precioVenta;
        }
 
        return ""
     }
   
+    const handleChange = (event) => {
+        setTypeAction(Number(event.target.value));
+      };
 
     return (
         
        <table class="table table-sm table-striped">
          <thead  className="thead-light">
+            <tr>
+            <select value={typeAction} onChange={handleChange}>
+                {opciones.map((opcion, index) => (
+                <option key={index} value={index}>
+                    {opcion}
+                </option>
+                ))}
+            </select>
+            </tr>
              { createHeaders(headers)}
          </thead>
          <tbody>
@@ -156,14 +164,14 @@ export const TablePrice = ( props ) => {
                                                 :
                                                   "TABLE_PRICE_BUTTONS" in parametros && parametros["TABLE_PRICE_BUTTONS"] == "false" ?
 
-                                                        <button className='w-100 btn text-primary' onClick={ () => addTicketProduct(data.sku)}   > 
-                                                            {getPriceSell(data)}
+                                                        <button className='w-100 btn text-primary' onClick={ () => executeAction(data)}   > 
+                                                            {getLabelCell(data)}
                                                         </button>
                                                     : 
                                                     <div className="row ">
-                                                        <div className="col" onClick={ () => addTicketProduct(data.sku)}>
+                                                        <div className="col" onClick={ () => executeAction(data)}>
                                                             <button className='btn'   > 
-                                                                {getPriceSell(data)}
+                                                                {getLabelCell(data)}
                                                             </button>
                                                         </div>
 
