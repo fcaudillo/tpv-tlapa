@@ -1,17 +1,13 @@
 import React, {useState, useRef} from 'react';
-import { Box, Grid } from '@mui/material'
+import { Row, Col } from 'antd'
 import Navbar from './Navbar';
 import TicketScreen from '../components/TicketScreen'
-import { Link } from 'react-router-dom';
-import { Form , Modal, Button } from 'antd'
+
+import { Form, Modal, Tabs } from 'antd'
 import { useDispatch, useSelector } from 'react-redux';
 import { SaveProductAction } from '../bussiness/actions/SaveProductAction'
 import  FormProduct  from '../pages/FormProduct'
-import 'antd/dist/antd.css';
-import { Tabs } from 'antd';
-const { TabPane } = Tabs;
-import { AutoComplete, Input } from 'antd';
-import ScreenLoading  from './ScreenLoading';
+//import 'antd/dist/antd.min.css';
 import CodigoBarras from '../pages/CodigoBarras';
 import ListaCambioPrecio from '../pages/ListaCambioPrecio';
 import VentaDiaria from '../pages/VentaDiaria'
@@ -26,7 +22,6 @@ import { ajax } from 'rxjs/ajax'
 import { SearchProductAction  } from '../bussiness/actions/SearchProductAction';
 import { SearchProductCategoryAction } from '../bussiness/actions/SearchProductCategoryAction';
 import { SearchCategoryAction } from '../bussiness/actions/SearchCategoryAction';
-import 'antd/dist/antd.css';
 import * as actions from '../actions'
 import { changeTabAction } from '../bussiness/actions/ChangeTabAction'
 import { findAllProductsAction } from '../bussiness/actions/FindAllProductAction';
@@ -389,105 +384,132 @@ function Layout(props) {
     
 }
 
-  return ( 
+  return (
     <React.Fragment>
-
       <Navbar />
-      <Grid container>
-
-        <Grid item xs={3}>
-          <Box>
-          		<TicketScreen />
-          </Box>
-
-        </Grid>
-        <Grid item xs={9}>
-          <Grid container>
-              <Grid item xs={3}>
-
-              <div class="dropdown">
-                  <button type="button" onClick = {() => showCrearProducto() }  class="btn btn-primary dropdown-toggle" >
-                    Crear Producto
-                  </button>
+      <Row>
+        <Col span={6}>
+          <div>
+            <TicketScreen />
+          </div>
+        </Col>
+        <Col span={18}>
+          <Row>
+            <Col span={6}>
+              <div className="dropdown">
+                <button
+                  type="button"
+                  onClick={() => showCrearProducto()}
+                  className="btn btn-primary dropdown-toggle"
+                >
+                  Crear Producto
+                </button>
               </div>
-              </Grid>
-              <Grid item xs={6}>
-                 <SearchText products={productsSearch} categories={categoriesSearchLayout} onChange={onChangeTextSearch} onSelect={onSelectSearch} />
-              </Grid>
-              <Grid item xs={12}>
-              <div  style={{position: 'relative'}}>
-                  <div id="navCategories">
-                      <ul>
-                          
-                          {
-                            categoriesNivel1.map ((cat) => <li> <a  onClick={() => changeNavNew(cat)} id={'idNav'+cat.id} key="{cat.id}" href='#'> {cat.name} </a></li> )
-                          
-                          }                    
+            </Col>
+            <Col span={12}>
+              <SearchText
+                products={productsSearch}
+                categories={categoriesSearchLayout}
+                onChange={onChangeTextSearch}
+                onSelect={onSelectSearch}
+              />
+            </Col>
+            <Col span={24}>
+              <div style={{ position: 'relative' }}>
+                <div id="navCategories">
+                  <ul>
+                    {categoriesNivel1.map((cat) => (
+                      <li key={cat.id}>
+                        <a
+                          onClick={() => changeNavNew(cat)}
+                          id={'idNav' + cat.id}
+                          href="#"
+                        >
+                          {cat.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <MenuCategory
+                  category={categorySelected}
+                  openModal={showCategories}
+                  setOpenModal={setShowCategories}
+                  offsetLeft={offsetLeft}
+                  height={50}
+                />
+              </div>
+            </Col>
+            <Col span={24}>
+              <Tabs
+                activeKey={tabActive}
+                onChange={onChangePanel}
+                items={[
+                  {
+                    key: 'lector',
+                    label: 'Lector',
+                    children: <CodigoBarras />
+                  },
+                  {
+                    key: 'busqueda',
+                    label: 'Busqueda',
+                    children: <SearchProducts />
+                  },
+                  {
+                    key: 'precios',
+                    label: 'Precios',
+                    children: <ListaCambioPrecio />
+                  },
+                  {
+                    key: 'diario',
+                    label: 'Diario',
+                    children: <VentaDiaria />
+                  },
+                  {
+                    key: 'compra',
+                    label: 'Comprar',
+                    children: <ListProductMissing />
+                  },
+                  {
+                    key: 'prodcate',
+                    label: 'Categorias',
+                    children: <ManagmentCategory />
+                  },
+                  {
+                    key: 'hierarchy',
+                    label: 'Jerarquia',
+                    children: <HierarchyCategory />
+                  },
+                  {
+                    key: 'configuraciones',
+                    label: 'Configuraciones',
+                    children: <Configuracion />
+                  }
+                ]}
+              />
+            </Col>
+          </Row>
+        </Col>
+      </Row>
 
-
-                      </ul>
-                  </div>
-                                 
-                  <MenuCategory category={categorySelected} openModal={showCategories} setOpenModal={setShowCategories} offsetLeft={offsetLeft} height={50} />
-
-       
-                </div> 
-              </Grid>
-              <Grid item xs={3}></Grid>
-              <Grid item xs={12}>
-                  <Tabs activeKey={ tabActive } onChange={onChangePanel}>
-                    <TabPane tab="Lector" key="lector">
-                       <CodigoBarras  />
-                    </TabPane>
-                    <TabPane tab="Busqueda" key="busqueda">
-                       <SearchProducts  />
-                    </TabPane>
-                    <TabPane tab="Precios" key="precios">
-                      <ListaCambioPrecio />
-                    </TabPane>
-                    <TabPane tab="Diario" key="diario">
-                      <VentaDiaria />
-                    </TabPane>
-                    <TabPane tab="Comprar" key="compra">
-                      <ListProductMissing />
-                    </TabPane>
-                    <TabPane tab="Categorias" key="prodcate">
-                      <ManagmentCategory />
-                    </TabPane>
-                    <TabPane tab="Jerarquia" key="hierarchy">
-                      <HierarchyCategory />
-                    </TabPane>
-
-                    <TabPane tab="Configuraciones" key="configuraciones">
-                      <Configuracion />
-                    </TabPane>
-                    
-                 </Tabs>
-                </Grid>
-             
-          </Grid>
-        </Grid>
-      </Grid>
-
-     
-      <Modal 
-            title="Crear producto"
-            centered
-            visible={visibleCrearProducto}
-            onOk={() => crearProducto()}
-            onCancel={() => {
-                   setVisibleCrearProducto(false)
-                   enterLoading(LOADING_CREAR_PRODUCTO,false)
-               }
-            }
-            width={1000}
-          >
-          
-            <FormProduct formInstance={form}  hideModal={ () => setVisibleCrearProducto(false)} 
-             enterLoading={enterLoading}
-             mode="Create"  />
+      <Modal
+        title="Crear producto"
+        centered
+        visible={visibleCrearProducto}
+        onOk={() => crearProducto()}
+        onCancel={() => {
+          setVisibleCrearProducto(false);
+          enterLoading(LOADING_CREAR_PRODUCTO, false);
+        }}
+        width={1000}
+      >
+        <FormProduct
+          formInstance={form}
+          hideModal={() => setVisibleCrearProducto(false)}
+          enterLoading={enterLoading}
+          mode="Create"
+        />
       </Modal>
-      
     </React.Fragment>
   );
 }

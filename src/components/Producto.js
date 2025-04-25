@@ -10,7 +10,7 @@ import * as actions from '../actions'
 import Button2 from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 
 
@@ -38,7 +38,7 @@ const Producto = (props) => {
         const listaTicketNormalizado = useSelector(store => store.reducer.listaTicketNormalizado);
         const [anchorEl, setAnchorEl] = React.useState(null);
         const open = Boolean(anchorEl);
-        const history = useHistory();
+        const navigate = useNavigate();
 
     
         const { edit, editProductMissing } = props
@@ -52,7 +52,7 @@ const Producto = (props) => {
         };
 
         const handleAction = (action, key) => {
-          //history.push("/puntoventa/add/"+ key);
+          //navigate("/puntoventa/add/"+ key);
            if (action == "editar"){
               edit(key)
               handleClose();

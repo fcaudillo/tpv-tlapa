@@ -1,29 +1,33 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import 'bootstrap/dist/css/bootstrap.css';
 import { Provider } from 'react-redux'
 import store from './store'
 import { ProviderContext }  from './Context';
 import { StyledEngineProvider } from '@mui/material/styles';
-import 'antd/dist/antd.css';
+import 'antd/dist/reset.css';
 
 import './global.css';
 import App from './components/App';
 
 const container = document.getElementById('app');
-function render() {
-  ReactDOM.render(
+const root = createRoot(container);
 
-    <ProviderContext>
-  	  <Provider store={store}>
-        <StyledEngineProvider injectFirst>
-  	      <App />
-        </StyledEngineProvider>
-      </Provider>
-    </ProviderContext>
-  	, container);
+function render() {
+  root.render(
+    <React.StrictMode>
+      <ProviderContext>
+        <Provider store={store}>
+          <StyledEngineProvider injectFirst>
+            <App />
+          </StyledEngineProvider>
+        </Provider>
+      </ProviderContext>
+    </React.StrictMode>
+  );
 }
-render()
+
+render();
 
 if (module.hot) {
   module.hot.accept('./components/App', () => {

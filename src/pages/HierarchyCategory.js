@@ -75,13 +75,20 @@ const HierarchyCategory = (props) => {
       dataIndex: 'name'      
     }
   ]
+React.useEffect(() => {
+    const fetchCategories = async () => {
+        var categories = await funcs.findByCategories();
+        setCategories(categories);
+        console.log(categories);
+        //dispatch(funcs.findSubcategories("root"));
+    };
 
-  React.useEffect(async () => {
-     var categories = await funcs.findByCategories();
-     setCategories(categories);
-     console.log(categories);
-     //dispatch(funcs.findSubcategories("root"));
-  },[])
+    fetchCategories();
+
+    return () => {
+        // No specific cleanup needed in this case
+    };
+}, []);
 
   React.useEffect(() => {
 

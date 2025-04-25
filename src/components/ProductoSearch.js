@@ -10,7 +10,7 @@ import * as actions from '../actions'
 import Button2 from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles({
     root: {
@@ -36,7 +36,7 @@ const ProductoSearch = (props) => {
         const listaTicketNormalizado = useSelector(store => store.reducer.listaTicketNormalizado);
         const [anchorEl, setAnchorEl] = React.useState(null);
         const open = Boolean(anchorEl);
-        const history = useHistory();
+        const navigate = useNavigate();
         const { data, edit, editProductMissing } = props
 
  

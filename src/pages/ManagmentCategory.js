@@ -150,33 +150,40 @@ const ManagmentCategory = (props) => {
     
   },[globalCodebar])
 
-  React.useEffect(async () => {
-     var categories = await funcs.findByCategories();
-     setCategories(categories);
-    // subscribe to 
-    textSearch.current.asObservable()
-          .pipe (
-            debounceTime(500),
-            filter( data => data.length > 3)
-          ).subscribe( text => {
-            
-            ajax.post(SEARCH_AUTOCOMPLETE,
-                       {textSearch: text, maxOccurrences: 200},
-                       { 'Content-Type': 'application/json' })
-                       .pipe(
-                          map(r  => r.response.aggregations.autocomplete),
-                          mergeMap( m => m.buckets),
-                          map( e => ({value: e.key}) ),
-                          toArray()
-                       )
-                       .subscribe (data => {
-                          setOptions(data);
-                          console.log('data = ' + data);
-                       });
-         });
+React.useEffect(() => {
+    const fetchCategories = async () => {
+        var categories = await funcs.findByCategories();
+        setCategories(categories);
+        
+        // subscribe to 
+        const subscription = textSearch.current.asObservable()
+            .pipe(
+                debounceTime(500),
+                filter(data => data.length > 3)
+            ).subscribe(text => {
+                ajax.post(SEARCH_AUTOCOMPLETE,
+                    { textSearch: text, maxOccurrences: 200 },
+                    { 'Content-Type': 'application/json' })
+                    .pipe(
+                        map(r => r.response.aggregations.autocomplete),
+                        mergeMap(m => m.buckets),
+                        map(e => ({ value: e.key })),
+                        toArray()
+                    )
+                    .subscribe(data => {
+                        setOptions(data);
+                        console.log('data = ' + data);
+                    });
+            });
 
+        // Return a cleanup function to unsubscribe
+        return () => {
+            subscription.unsubscribe();
+        };
+    };
 
-  },[])
+    fetchCategories();
+}, []);
 
   const enviaTest = () => {
     dispatch(actions.modifyGlobalCodebar({"barcode": '1514', "date": new Date()}));

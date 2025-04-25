@@ -28,6 +28,7 @@ const useStyles = makeStyles({
 });
 
 const SearchProducts = (props) => {
+  // return () => {}
   const classes = useStyles();
   const value = useContext(ApplicationContext);
   const [visible, setVisible] = React.useState(false);
@@ -67,10 +68,16 @@ const SearchProducts = (props) => {
     setActiveKeys([]);
   }  
   
-  React.useEffect(async () => {
-    var categories = await funcs.findByCategories();
-    setCategories(categories);
-  },[])
+  React.useEffect(() => {
+    const fetchCategories = async () => {
+        var categories = await funcs.findByCategories();
+        setCategories(categories);
+    };
+
+    fetchCategories();
+
+    return () => {};
+}, []);
 
   React.useEffect( () => {
      console.log("efecto subcategoriesBusqueda")

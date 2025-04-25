@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ApplicationContext } from '../Context';
 import Cookies from 'js-cookie'
 import { TextField, Grid, Icon, FormControl, Input, FormHelperText } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import icons from '@ant-design/icons'
 import { Modal, Button, Form } from 'antd';
 import { Table, Tag, Space } from 'antd';
@@ -18,7 +18,7 @@ import ProductMissing from './ProductMissing';
 
 const ListProductMissing = (props) => {
   const value = useContext(ApplicationContext);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { proveedores, parametros } = value;
   const proveedorRef = useRef();
   const [listaProductMissing, setListaProductMissing] = React.useState([]);

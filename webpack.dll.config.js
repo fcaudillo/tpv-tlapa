@@ -1,7 +1,7 @@
 const path = require('path')
 const webpack = require('webpack')
 const TersetJSPlugin = require('terser-webpack-plugin')
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
 
 module.exports = {
   entry: {
@@ -14,7 +14,7 @@ module.exports = {
   optimization: {
     minimizer: [
       new TersetJSPlugin(),
-      new OptimizeCSSAssetsPlugin()
+      new CssMinimizerPlugin()
     ]
   },
   output: {

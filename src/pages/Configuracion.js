@@ -42,48 +42,40 @@ const Configuracion = (props) => {
   const [allProducts, setAllProducts] = React.useState([]);
   const [productsNormalize, setProductsNormalize] = React.useState({});
 
-  React.useEffect(async () => {
+React.useEffect(() => {
+    const setupSearch = () => {
+        const subscription = textSearch.current.asObservable()
+            .pipe(
+                debounceTime(500),
+                filter(data => data.length > 3)
+            ).subscribe(text => {
+                console.log("Buscando en base de datos : " + text);
+                dispatch(SearchProductAction(
+                    {
+                        type: "DESCRIPTION",
+                        description: text,
+                        page: 1,
+                        sizePage: 20
+                    }, sourceScreen
+                ));
 
-      textSearch.current.asObservable()
-        .pipe (
-          debounceTime(500),
-          filter( data => data.length > 3)
-        ).subscribe( text => {
-            console.log("Buscando en base de datos : " + text);
-            dispatch(SearchProductAction(
-              {
-                type: "DESCRIPTION",
-                description: text,
-                page: 1,
-                sizePage: 20
-              },sourceScreen
-            ))
+                dispatch(SearchCategoryAction(
+                    {
+                        textSearch: text,
+                        page: 1,
+                        sizePage: 20
+                    }, sourceScreen
+                ));
+            });
 
-            dispatch(SearchCategoryAction(
-              {
-                textSearch: text,
-                page: 1,
-                sizePage: 20
-              },sourceScreen
-            ))
-          /*
-          ajax.post(SEARCH_AUTOCOMPLETE,
-                    {textSearch: text, maxOccurrences: 200},
-                    { 'Content-Type': 'application/json' })
-                    .pipe(
-                        map(r  => r.response.aggregations.autocomplete),
-                        mergeMap( m => m.buckets),
-                        map( e => ({value: e.key}) ),
-                        toArray()
-                    )
-                    .subscribe (data => {
-                        setOptions(data);
-                        console.log('data = ' + data);
-                    });
-            */
-      });
- 
-  },[])
+        // Return a cleanup function to unsubscribe
+        return () => {
+            subscription.unsubscribe();
+        };
+    };
+
+    setupSearch();
+}, []);
 
   React.useEffect( () => {
 

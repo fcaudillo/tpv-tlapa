@@ -2,7 +2,7 @@ import React, { useRef, useContext } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ApplicationContext } from '../Context';
 import { TextField, Grid, Icon, FormControl, Input, FormHelperText } from '@mui/material';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import icons from '@ant-design/icons'
 import { Modal, Button, Form } from 'antd';
 import { Table, Tag, Space } from 'antd';
@@ -15,7 +15,7 @@ import { URL_FIND_CAMBIO_PRECIOS, URL_DELETE_CAMBIO_PRECIO } from '../bussiness/
 
 const ListaCambioPrecio = (props) => {
   const value = useContext(ApplicationContext);
-  const history = useHistory();
+  const navigate = useNavigate();
   const { proveedores, parametros } = value;
   const proveedorRef = useRef();
   const [listaCambios, setListaCambios] = React.useState([]);
