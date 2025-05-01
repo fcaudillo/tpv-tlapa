@@ -2,7 +2,7 @@ import React, { useRef, useContext, useCallback } from 'react';
 import { ApplicationContext } from '../Context';
 import * as yup from "yup";
 import { useSelector, useDispatch } from 'react-redux'
-import { Form } from 'antd'
+import { Form, Tabs } from 'antd'
 import { UpdateProductAction } from '../bussiness/actions/UpdateProductAction'
 import { SaveProductAction } from '../bussiness/actions/SaveProductAction';
 import { LoadProductHistoryAction } from '../bussiness/actions/LoadProductHistoryAction'
@@ -11,6 +11,7 @@ import { useFormik } from 'formik'
 import Select from '../ComponentsHtml/Select'
 import TextInput from '../ComponentsHtml/TextInput'
 import CheckBox from '../ComponentsHtml/CheckBox';
+import TextArea from '../ComponentsHtml/TextArea';
 import { Search } from 'react-bootstrap-icons';
 
 
@@ -22,6 +23,13 @@ const porcentajes = [
 
 const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  => {
   const [add, setAdd] = React.useState(true);
+  const [showMaxMin, setShowMaxMin] = React.useState(true);
+
+  const handleReabastecimientoChange = (evt) => {
+    const value = evt.target.value;
+    setShowMaxMin(value === "0");
+    formik.setFieldValue("tipoReabastecimiento", value);
+  };
   const value = useContext(ApplicationContext);
   const [precioCompraHistorico, setPrecioCompraHistorico] = React.useState("");
   const [precioVentaHistorico, setPrecioVentaHistorico] = React.useState("");
@@ -144,6 +152,13 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
         await  formik.setFieldValue("maximoExistencia",data.maximoExistencia);
         await  formik.setFieldValue("puedeVenderse",data.puedeVenderse);  
         await  formik.setFieldValue("ubicacion", data.ubicacion);
+        await  formik.setFieldValue("unidadCompra", data.unidadCompra);
+        await  formik.setFieldValue("cantPorUnidadCompra", data.cantPorUnidadCompra);
+        await  formik.setFieldValue("cantPorUnidadVenta", data.cantPorUnidadVenta);
+        await  formik.setFieldValue("estatusNormalizacion", data.estatusNormalizacion);
+        await  formik.setFieldValue("listaPrecios", data.listaPrecios);
+        await  formik.setFieldValue("descripcionCorta", data.descripcionCorta);
+        await  formik.setFieldValue("descripcionBusqueda", data.descripcionBusqueda);
         proveedorRef.current.selectedIndex = -1;
         proveedorRef.current.value = data.proveedorId
           
@@ -244,94 +259,121 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
             </div>
          </div>
               
-        <div className="row">
-           <div className="col-md-2">
-                    <TextInput 
-                        label = "Precio compra"
-                        value = {formik.values.precioCompra}
-                        error = {formik.errors.precioCompra}
-                        type = "number"
-                        onChange={(evt) => formik.setFieldValue("precioCompra", evt.target.value)} />
-                  {precioCompraHistorico != "" && <div> <a onClick={() =>changePrice() }>{precioCompraHistorico}</a> </div>}
-           </div>
-           <div className="col-md-1">
+        <Tabs defaultActiveKey="1">
+          <Tabs.TabPane tab="Precios" key="1">
+            <div className="row">
+              <div className="col-md-2">
+                <TextInput 
+                  label = "Precio compra"
+                  value = {formik.values.precioCompra}
+                  error = {formik.errors.precioCompra}
+                  type = "number"
+                  onChange={(evt) => formik.setFieldValue("precioCompra", evt.target.value)} />
+                {precioCompraHistorico != "" && <div> <a onClick={() =>changePrice() }>{precioCompraHistorico}</a> </div>}
+              </div>
+              <div className="col-md-1"></div>
+              <div className="col-md-2">
+                <TextInput 
+                  label = "Precio venta"
+                  value = {formik.values.precioVenta}
+                  error = {formik.errors.precioVenta}
+                  type = "number"
+                  onChange={(evt) => formik.setFieldValue("precioVenta", evt.target.value)} />
+                {precioVentaHistorico != "" && <div> <p>{precioVentaHistorico}</p> </div>}
+              </div>
+              <div className="col-md-1"></div>
+              <div className="col-md-2">  
+                <TextInput 
+                  label = "Unidad venta"
+                  value = {formik.values.unidadVenta}
+                  error = {formik.errors.unidadVenta}
+                  onChange={(evt) => formik.setFieldValue("unidadVenta", evt.target.value)} />
+              </div>
+            </div>
+          </Tabs.TabPane>
 
-           </div>
-           <div className="col-md-2">
+          <Tabs.TabPane tab="Inventario" key="2">
+            <div className='row'>
+              <div className="col-md-2">
+                <TextInput 
+                  label = "Existencia"
+                  value = {formik.values.existencia}
+                  error = {formik.errors.existencia}
+                  type = "number"
+                  onChange={(evt) => formik.setFieldValue("existencia", evt.target.value)} />
+              </div>
+              <div className="col-md-1"></div>
+              <div className="col-md-4">
+                <Select 
+                  label = "Tipo reabastecimiento"
+                  options = {[{label: "Maximos y minimos", value: "0"}, {label: "Solicitar inmediato", value: "1"}]}
+                  onChange={handleReabastecimientoChange} />
+              </div>
+            </div>
+            {showMaxMin && (
+              <div className='row'>
+                <div className="col-md-2">
                   <TextInput 
-                        label = "Precio venta"
-                        value = {formik.values.precioVenta}
-                        error = {formik.errors.precioVenta}
-                        type = "number"
-                        onChange={(evt) => formik.setFieldValue("precioVenta", evt.target.value)} />
-                  {precioVentaHistorico != "" && <div> <p>{precioVentaHistorico}</p> </div>}
-           </div>
-           <div className="col-md-1">
-             
-           </div>
-           <div className="col-md-2">  
-                   <TextInput 
-                        label = "Unidad venta"
-                        value = {formik.values.unidadVenta}
-                        error = {formik.errors.unidadVenta}
-                        onChange={(evt) => formik.setFieldValue("unidadVenta", evt.target.value)} />
-          </div>
-
-        </div>
-
-        <div className='row'>
-           <div className="col-md-2">
-                 <TextInput 
-                        label = "Existencia"
-                        value = {formik.values.existencia}
-                        error = {formik.errors.existencia}
-                         type = "number"
-                        onChange={(evt) => formik.setFieldValue("existencia", evt.target.value)} />
-           </div>
-           <div className="col-md-1">
-
-           </div>
-           <div className="col-md-2">
-                   <TextInput 
-                        label = "Minimo existencia"
-                        value = {formik.values.minimoExistencia}
-                        error = {formik.errors.minimoExistencia}
-                         type = "number"
-                        onChange={(evt) => formik.setFieldValue("minimoExistencia", evt.target.value)} />
-           </div>
-           <div className="col-md-1">
-             
-           </div>
-           <div className="col-md-2">
+                    label = "Minimo existencia"
+                    value = {formik.values.minimoExistencia}
+                    error = {formik.errors.minimoExistencia}
+                    type = "number"
+                    onChange={(evt) => formik.setFieldValue("minimoExistencia", evt.target.value)} />
+                </div>
+                <div className="col-md-1"></div>
+                <div className="col-md-2">
                   <TextInput 
-                        label = "Maximo existencia"
-                        value = {formik.values.maximoExistencia}
-                        error = {formik.errors.maximoExistencia}
-                        type = "number"
-                        onChange={(evt) => formik.setFieldValue("maximoExistencia", evt.target.value)} />
-           </div>
+                    label = "Maximo existencia"
+                    value = {formik.values.maximoExistencia}
+                    error = {formik.errors.maximoExistencia}
+                    type = "number"
+                    onChange={(evt) => formik.setFieldValue("maximoExistencia", evt.target.value)} />
+                </div>
+              </div>
+            )}
 
-
-        </div>
-
-        <div className="row">
-          <div className="col-md-2">
-                  <TextInput 
-                        label = "Ubicacion"
-                        value = {formik.values.ubicacion}
-                        error = {formik.errors.ubicacion}
-                        onChange={(evt) => formik.setFieldValue("ubicacion", evt.target.value)} />
-          </div> 
-          <div className="col-md-1"></div>
-          <div className="col-md-2">
-             <CheckBox 
-                        label = "Puede venderse"
-                        checked={formik.values.puedeVenderse}
-                        error = {formik.errors.puedeVenderse}
-                        onChange={(evt) => formik.setFieldValue("puedeVenderse", evt.target.checked)} />
+            <div className="row">
+              <div className="col-md-2">
+                <TextInput 
+                  label = "Ubicacion"
+                  value = {formik.values.ubicacion}
+                  error = {formik.errors.ubicacion}
+                  onChange={(evt) => formik.setFieldValue("ubicacion", evt.target.value)} />
+              </div> 
+              <div className="col-md-1"></div>
+              <div className="col-md-2">
+                <CheckBox 
+                  label = "Puede venderse"
+                  checked={formik.values.puedeVenderse}
+                  error = {formik.errors.puedeVenderse}
+                  onChange={(evt) => formik.setFieldValue("puedeVenderse", evt.target.checked)} />
                
-          </div> 
-        </div>
+              </div>
+            </div>
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="Busqueda inteligente" key="3">
+
+              <div className="row">
+                <div className="col-md-11">
+                      <TextInput 
+                            label = "Descripcion Corta"
+                            value = {formik.values.descripcionCorta}
+                            error = {formik.errors.descripcionCorta}
+                            onChange={(evt) => formik.setFieldValue("descripcionCorta", evt.target.value)} />
+                </div>
+                <div className="col-md-11">
+                      <TextArea 
+                            label = "Descripcion busqueda"
+                            value = {formik.values.descripcionBusqueda}
+                            error = {formik.errors.descripcionBusqueda}
+                            onChange={(evt) => formik.setFieldValue("descripcionBusqueda", evt.target.value)} />
+                </div>
+
+                
+              </div>
+            </Tabs.TabPane>
+
+            </Tabs>
 
        </Form>    
  
@@ -355,7 +397,14 @@ function initialValues() {
      minimoExistencia: 1,
      maximoExistencia: 3,
      ubicacion : "UNK",
-     puedeVenderse: true
+     puedeVenderse: true,
+     unidadCompra: "PZA",
+     cantPorUnidadCompra: 1,
+     cantPorUnidadVenta: 1,
+     estatusNormalizacion: 1,
+     listaPrecios: "",
+     descripcionCorta: "",
+     descripcionBusqueda: ""
   }
 }
 function validationSchema() {
@@ -369,10 +418,17 @@ function validationSchema() {
     precioVenta: yup.number().positive().required(),
     unidadVenta:  yup.string().required(),
     existencia: yup.number().positive().integer().required(),
-    minimoExistencia: yup.number().positive().integer().required(),
-    maximoExistencia: yup.number().positive().integer().required(),
+    minimoExistencia: yup.number().positive().integer(),
+    maximoExistencia: yup.number().positive().integer(),
     puedeVenderse: yup.boolean(),
-    ubicacion: yup.string()    
+    ubicacion: yup.string(),
+    unidadCompra: yup.string(),
+    cantPorUnidadCompra: yup.number().positive(),
+    cantPorUnidadVenta: yup.number().positive(),
+    estatusNormalizacion: yup.number().positive(),
+    listaPrecios: yup.string() ,
+    descripcionCorta: yup.string(),
+    descripcionBusqueda: yup.string()
   }
 }
 

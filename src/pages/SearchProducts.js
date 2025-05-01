@@ -104,7 +104,8 @@ const SearchProducts = (props) => {
      }
      if (products != null && source === sourceScreen) {
         setActiveCategory(null);
-        setQueryProducts(products);
+        //fdcp lo cambio windsurf
+        setQueryProducts(products?.filter(prod => prod != null) || []);
      }
 
 
