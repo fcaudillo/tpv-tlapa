@@ -149,11 +149,16 @@ const SearchProducts = (props) => {
 
  
  const actualizarProducto = () => {
-   console.log("llamando actionFormProduct con update")
-   
-   form.submit()
-   onChangeCategory();
-   console.log("fin ")
+  console.log("llamando actionFormProduct con update")
+  
+  form.validateFields()
+    .then(values => {
+      form.submit();
+      onChangeCategory();
+    })
+    .catch(errorInfo => {
+      console.log("Errores de validación:", errorInfo);
+    });
  }
 
  const onChangeCategory = () => {

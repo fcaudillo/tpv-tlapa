@@ -33,6 +33,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
   const value = useContext(ApplicationContext);
   const [precioCompraHistorico, setPrecioCompraHistorico] = React.useState("");
   const [precioVentaHistorico, setPrecioVentaHistorico] = React.useState("");
+  const [descOriginalProveedor, setDescOriginalProveedor] = React.useState("");
   const { proveedores, findProveedores } = value
   const proveedorRef = useRef()
   const [ disabledCodigoInterno, setDisabledCodigoInterno] = React.useState(false)
@@ -80,6 +81,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
     if (saveProduct && 'saveProductPurge' in saveProduct){
         setPrecioCompraHistorico("");
         setPrecioVentaHistorico(""); 
+        setDescOriginalProveedor("");
         (async () => {
             await formik.setValues(initialValues())
             
@@ -108,16 +110,17 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
 
   React.useEffect(() => { 
     setPrecioCompraHistorico("");
-    setPrecioVentaHistorico("");     
+    setPrecioVentaHistorico(""); 
+    setDescOriginalProveedor("");  
     if (historyProduct && 'dataHistorico' in historyProduct && historyProduct.isOk == true ){
-      populteHistory(historyProduct.dataHistorico);
+      populateHistory(historyProduct.dataHistorico);
     }
 
   }, [historyProduct])
 
 
-  const populteHistory = async ( dataHistorico ) => {
-    await formik.setFieldValue("descripcion",dataHistorico.descripcion.toUpperCase());
+  const populateHistory = async ( dataHistorico ) => {
+    await formik.setFieldValue("descripcion", dataHistorico.descripcion != null ? dataHistorico.descripcion.toUpperCase() :"");
     await formik.setFieldValue("unidadVenta",dataHistorico.unidad);
     await formik.setFieldValue("codigoProveedor", dataHistorico.codigoProveedor);
     await formik.setFieldValue("codigoBarras", dataHistorico.codigobarras);
@@ -130,6 +133,8 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
     await formik.setFieldValue("puedeVenderse",true);
     setPrecioCompraHistorico(dataHistorico.precioCompra);
     setPrecioVentaHistorico(dataHistorico.precioPublico);
+    setDescOriginalProveedor(dataHistorico.descripcion != null ? dataHistorico.descripcion.toUpperCase() :"");
+
   }
   
   const populateForm = async (data, dataHistorico) => {
@@ -139,6 +144,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
         setAdd(false)
         setPrecioCompraHistorico("");
         setPrecioVentaHistorico("");
+        setDescOriginalProveedor("");
         await formik.setFieldValue("codigoInterno",data.codigointerno);
         await  formik.setFieldValue("descripcion",data.description);
         await  formik.setFieldValue("unidadVenta",data.unidadVenta);
@@ -159,6 +165,8 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
         await  formik.setFieldValue("listaPrecios", data.listaPrecios);
         await  formik.setFieldValue("descripcionCorta", data.descripcionCorta);
         await  formik.setFieldValue("descripcionBusqueda", data.descripcionBusqueda);
+        await  formik.setFieldValue("costoVenta",data.costoVenta);
+        await  formik.setFieldValue("porcentajeUtilidad",data.porcentajeUtilidad);
         proveedorRef.current.selectedIndex = -1;
         proveedorRef.current.value = data.proveedorId
           
@@ -166,6 +174,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
         if (dataHistorico){
           setPrecioCompraHistorico(dataHistorico.precioCompra);
           setPrecioVentaHistorico(dataHistorico.precioPublico);
+          setDescOriginalProveedor(dataHistorico.descripcion.toUpperCase());
         }  
      }else{
        formik.resetForm()
@@ -182,25 +191,49 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
     dispatch(LoadProductHistoryAction({proveedorId: formik.values.proveedor , codigoProveedor: formik.values.codigoBarras}))
  }
 
-  const  changePrice = async () => {
+  const  changePriceCompra = async () => {
     await formik.setFieldValue("precioCompra",precioCompraHistorico);
-    if (precioVentaHistorico && precioVentaHistorico > 0) {
-      await formik.setFieldValue("precioVenta", precioVentaHistorico);
-    }
   }
-  
+
+
+  const handleFinish = (values) => {
+    console.log("Formulario enviado:", values);
+    console.log("Errores", formik.errors);
+    console.log("Valores", formik.values);
+
+    formik.validateForm().then((errors) => {
+      if (Object.keys(errors).length === 0) {
+        formik.handleSubmit();
+      } else {
+        console.log("Errores en formulario", errors);
+      }
+    });
+    
+  };
+
+  const changeCostoVenta = async (costoVenta) => {
+    await formik.setFieldValue("costoVenta", parseFloat(costoVenta).toFixed(2));
+  }
+
+  const changeGanancia = async (ganancia) => {
+    await formik.setFieldValue("porcentajeUtilidad", parseFloat(ganancia).toFixed(2));
+  }
+
+  const changePrecioVenta = async (precioVenta) => {
+    await formik.setFieldValue("precioVenta", parseFloat(precioVenta).toFixed(2));
+  }
   
   return (
     <div>
 
-      <Form form={formInstance} onFinish={formik.handleSubmit} layout="vertical">
+<Form form={formInstance} onFinish={handleFinish} layout="vertical" >
         <div className="row">
            <div className="col-md-5">
                <TextInput 
                    label = "Codigo interno"
-                   value = {formik.values.codigoInterno}
+                    value = {formik.values.codigoInterno}
                    error = {formik.errors.codigoInterno}
-                   onChange={(evt) => formik.setFieldValue("codigoInterno", evt.target.value)} />
+                         onChange={(evt) => formik.setFieldValue("codigoInterno", evt.target.value)} />
             </div>
 
             <div className="col-md-2">
@@ -258,41 +291,113 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
                         onChange={(evt) => formik.setFieldValue("descripcion", evt.target.value)} />
             </div>
          </div>
-              
+         <div className="row">      
+           <div className="col-md-12">
+              <p style={{fontSize: '0.8em'}}>Descripcion original: <a href="#" onClick={(evt) => {evt.preventDefault(); formik.setFieldValue("descripcion", descOriginalProveedor)}}>{descOriginalProveedor}</a></p>
+           </div>
+         </div>   
         <Tabs defaultActiveKey="1">
-          <Tabs.TabPane tab="Precios" key="1">
-            <div className="row">
-              <div className="col-md-2">
-                <TextInput 
-                  label = "Precio compra"
-                  value = {formik.values.precioCompra}
-                  error = {formik.errors.precioCompra}
-                  type = "number"
-                  onChange={(evt) => formik.setFieldValue("precioCompra", evt.target.value)} />
-                {precioCompraHistorico != "" && <div> <a onClick={() =>changePrice() }>{precioCompraHistorico}</a> </div>}
-              </div>
-              <div className="col-md-1"></div>
-              <div className="col-md-2">
+          <Tabs.TabPane tab="Precio de venta" key="1">
+            <div className="row" >            
+              <div className="col-md-2" style={{padding: '10px'}}>
                 <TextInput 
                   label = "Precio venta"
                   value = {formik.values.precioVenta}
                   error = {formik.errors.precioVenta}
                   type = "number"
                   onChange={(evt) => formik.setFieldValue("precioVenta", evt.target.value)} />
-                {precioVentaHistorico != "" && <div> <p>{precioVentaHistorico}</p> </div>}
+                {precioVentaHistorico != "" && <div style={{fontSize: '0.6em'}}> Precio sugerido por el proveedor: <a href="#" onClick={(evt) => {evt.preventDefault(); formik.setFieldValue("precioVenta", precioVentaHistorico)}}>{precioVentaHistorico}</a> </div>}
               </div>
-              <div className="col-md-1"></div>
-              <div className="col-md-2">  
+              <div className="col-md-2" style={{padding: '10px'}}>  
                 <TextInput 
                   label = "Unidad venta"
                   value = {formik.values.unidadVenta}
                   error = {formik.errors.unidadVenta}
                   onChange={(evt) => formik.setFieldValue("unidadVenta", evt.target.value)} />
               </div>
+              <div className="col-md-2" style={{padding: '10px'}}>
+                <TextInput 
+                  label = "Cantidad x unidad de venta"
+                  value = {formik.values.cantPorUnidadVenta}
+                  error = {formik.errors.cantPorUnidadVenta}
+                  type = "number"
+                  onChange={(evt) => formik.setFieldValue("cantPorUnidadVenta", evt.target.value)} />
+                </div>
+              <div className="col-md-2" style={{padding: '10px'}}>
+                  <TextInput 
+                    label = "Costo de venta"
+                    value = {formik.values.costoVenta}
+                    error = {formik.errors.costoVenta}
+                    type = "number"
+                    onChange={(evt) => formik.setFieldValue("costoVenta", evt.target.value)} />
+                </div>
+                <div className="col-md-2" style={{padding: '10px'}}>
+                  <TextInput 
+                    label = "% Ganancia"
+                    value = {formik.values.porcentajeUtilidad}
+                    error = {formik.errors.porcentajeUtilidad}
+                    type = "number"
+                    onChange={(evt) => formik.setFieldValue("porcentajeUtilidad", evt.target.value)} />
+                </div>
+            </div>
+
+            <div className="row">
+              <p> Costo venta &nbsp;
+                 <a onClick={() => changeCostoVenta(formik.values.precioCompra / formik.values.cantPorUnidadCompra * formik.values.cantPorUnidadVenta)}>
+                    {(formik.values.precioCompra / formik.values.cantPorUnidadCompra * formik.values.cantPorUnidadVenta).toFixed(2)}
+                 </a> = Precio compra ({formik.values.precioCompra} ) / ({formik.values.cantPorUnidadCompra} ) cantidad por unidad de compra * ({formik.values.cantPorUnidadVenta} ) cantidad por unidad de venta 
+              </p> 
+              {formik.values.costoVenta != 0 && formik.values.porcentajeUtilidad != 0 && 
+                <p> Precio de venta a partir del costo venta y porcentaje de utilidad &nbsp; $
+                 <a onClick={() => changePrecioVenta((formik.values.costoVenta * (1 + (formik.values.porcentajeUtilidad / 100))).toFixed(2))}>
+                    {(formik.values.costoVenta * (1 + (formik.values.porcentajeUtilidad / 100))).toFixed(2)}
+                 </a> 
+                </p>
+               }
+              {formik.values.costoVenta != 0 && formik.values.precioVenta != 0 && 
+                <p> Ganancia calculada a partir del precio de venta &nbsp; %
+                 <a onClick={() => changeGanancia((formik.values.precioVenta - formik.values.costoVenta) / formik.values.costoVenta * 100)}>
+                    {((formik.values.precioVenta - formik.values.costoVenta) / formik.values.costoVenta * 100).toFixed(2)}
+                 </a> 
+                </p>
+               }
+
             </div>
           </Tabs.TabPane>
 
-          <Tabs.TabPane tab="Inventario" key="2">
+          <Tabs.TabPane tab="Precio de compra" key="2">
+            <div className="row">
+              <div className="col-md-2"> 
+                <TextInput 
+                  label = "Precio compra"
+                  value = {formik.values.precioCompra}
+                  error = {formik.errors.precioCompra}
+                  type = "number"
+                  onChange={(evt) => formik.setFieldValue("precioCompra", evt.target.value)} />
+                {precioCompraHistorico != "" && <div style={{fontSize: '0.6em'}}> Precio compra proveedor: <a onClick={() =>changePriceCompra() }>{precioCompraHistorico}</a> </div>}
+              </div>
+              <div className="col-md-1"></div>
+              <div className="col-md-2">  
+                <TextInput 
+                  label = "Unidad de compra"
+                  value = {formik.values.unidadCompra}
+                  error = {formik.errors.unidadCompra}
+                  onChange={(evt) => formik.setFieldValue("unidadCompra", evt.target.value)} />
+              </div>
+              <div className="col-md-1"></div>
+              <div className="col-md-2">
+                <TextInput 
+                  label = "Cantidad x unidad de compra"
+                  value = {formik.values.cantPorUnidadCompra}
+                  error = {formik.errors.cantPorUnidadCompra}
+                  type = "number"
+                  onChange={(evt) => formik.setFieldValue("cantPorUnidadCompra", evt.target.value)} />
+               </div>
+
+            </div>
+          </Tabs.TabPane>
+
+          <Tabs.TabPane tab="Inventario" key="3">
             <div className='row'>
               <div className="col-md-2">
                 <TextInput 
@@ -351,7 +456,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
               </div>
             </div>
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Busqueda inteligente" key="3">
+            <Tabs.TabPane tab="Busqueda inteligente" key="4 ">
 
               <div className="row">
                 <div className="col-md-11">
@@ -404,31 +509,35 @@ function initialValues() {
      estatusNormalizacion: 1,
      listaPrecios: "",
      descripcionCorta: "",
-     descripcionBusqueda: ""
+     descripcionBusqueda: "",
+     costoVenta: 0,
+     porcentajeUtilidad: 0
   }
 }
 function validationSchema() {
   return {
-    codigoInterno:  yup.number().positive().integer(),
+    codigoInterno:  yup.number().positive().integer().notRequired(),
     proveedor: yup.number().required(),
     codigoProveedor: yup.string().required(),
-    codigoBarras: yup.string(),
+    codigoBarras: yup.string().notRequired(),
     descripcion: yup.string().required(),
     precioCompra: yup.number().positive().required(),
     precioVenta: yup.number().positive().required(),
     unidadVenta:  yup.string().required(),
     existencia: yup.number().positive().integer().required(),
-    minimoExistencia: yup.number().positive().integer(),
-    maximoExistencia: yup.number().positive().integer(),
-    puedeVenderse: yup.boolean(),
-    ubicacion: yup.string(),
-    unidadCompra: yup.string(),
-    cantPorUnidadCompra: yup.number().positive(),
-    cantPorUnidadVenta: yup.number().positive(),
-    estatusNormalizacion: yup.number().positive(),
-    listaPrecios: yup.string() ,
-    descripcionCorta: yup.string(),
-    descripcionBusqueda: yup.string()
+    minimoExistencia: yup.number().positive().integer().notRequired(),
+    maximoExistencia: yup.number().positive().integer().notRequired(),
+    puedeVenderse: yup.boolean().notRequired(),
+    ubicacion: yup.string().notRequired(),
+    unidadCompra: yup.string().required(),
+    cantPorUnidadCompra: yup.number().positive().required(),
+    cantPorUnidadVenta: yup.number().positive().required(),
+    estatusNormalizacion: yup.number().positive().notRequired(),
+    listaPrecios: yup.string().notRequired() ,
+    descripcionCorta: yup.string().notRequired(),
+    descripcionBusqueda: yup.string().notRequired(),
+    costoVenta: yup.number().positive().required(),
+    porcentajeUtilidad: yup.number().positive().required()
   }
 }
 

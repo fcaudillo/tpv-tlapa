@@ -118,8 +118,10 @@ const ProductoSearch = (props) => {
                                     "ubicacion": data.ubicacion,
                                     "codigointerno": data.codigoInterno,
                                     "proveedor": "",
-                                    "active": false
-                                  
+                                    "active": false,
+                                    "costoVenta": data.costoVenta,
+                                    "porcentajeUtilidad": data.porcentajeUtilidad,
+                                    "tipoSurtido": data.tipoSurtido
                                   }));
                                 }else{
                                   //Mapear la data de elasticsearch a los datos que requiere la lista de tickets.
