@@ -28,7 +28,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
   const handleReabastecimientoChange = (evt) => {
     const value = evt.target.value;
     setShowMaxMin(value === "0");
-    formik.setFieldValue("tipoReabastecimiento", value);
+    formik.setFieldValue("tipoSurtido", value);
   };
   const value = useContext(ApplicationContext);
   const [precioCompraHistorico, setPrecioCompraHistorico] = React.useState("");
@@ -36,6 +36,8 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
   const [descOriginalProveedor, setDescOriginalProveedor] = React.useState("");
   const { proveedores, findProveedores } = value
   const proveedorRef = useRef()
+  const selectReabastecimientoRef = useRef()
+  const [listTipoReabastecimiento, setListTipoReabastecimiento] = React.useState([])
   const [ disabledCodigoInterno, setDisabledCodigoInterno] = React.useState(false)
 
   const EditProduct = useSelector(store => store.editProduct);
@@ -60,6 +62,13 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
     }
   })
   
+  React.useEffect ( () => {
+    setListTipoReabastecimiento( [
+      {label: "Maximos y minimos", value: "0"},
+      {label: "Solicitar inmediato", value: "1"}
+    ]);
+
+  },[])
 
   React.useEffect ( () => {
        if (mode != "Editar"){
@@ -83,12 +92,14 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
         setPrecioVentaHistorico(""); 
         setDescOriginalProveedor("");
         (async () => {
-            await formik.setValues(initialValues())
-            
+            await formik.setValues(initialValues())   
             formik.setFieldError("descripcion", "");
             await formik.setFieldValue("proveedor", proveedorRef.current.value);
+            await formik.setFieldValue("tipoSurtido", "0");
+
             formik.setErrors({errors : {}})
             enterLoading(0,false);
+            
         }) ();
     }
 
@@ -163,13 +174,13 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
         await  formik.setFieldValue("cantPorUnidadVenta", data.cantPorUnidadVenta);
         await  formik.setFieldValue("estatusNormalizacion", data.estatusNormalizacion);
         await  formik.setFieldValue("listaPrecios", data.listaPrecios);
-        await  formik.setFieldValue("descripcionCorta", data.descripcionCorta);
-        await  formik.setFieldValue("descripcionBusqueda", data.descripcionBusqueda);
-        await  formik.setFieldValue("costoVenta",data.costoVenta);
-        await  formik.setFieldValue("porcentajeUtilidad",data.porcentajeUtilidad);
+        await  formik.setFieldValue("descripcionCorta", data.descripcionCorta || "");
+        await  formik.setFieldValue("descripcionBusqueda", data.descripcionBusqueda || "");
+        await  formik.setFieldValue("costoVenta",data.costoVenta || 0);
+        await  formik.setFieldValue("porcentajeUtilidad",data.porcentajeUtilidad || 0);
+        await  formik.setFieldValue("tipoSurtido",data.tipoSurtido || "0");
         proveedorRef.current.selectedIndex = -1;
-        proveedorRef.current.value = data.proveedorId
-          
+        proveedorRef.current.value = data.proveedorId  
           
         if (dataHistorico){
           setPrecioCompraHistorico(dataHistorico.precioCompra);
@@ -222,6 +233,30 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
   const changePrecioVenta = async (precioVenta) => {
     await formik.setFieldValue("precioVenta", parseFloat(precioVenta).toFixed(2));
   }
+
+  const copiarDescripcionPortapales = (event) =>  {
+    event.preventDefault(); // Evita comportamiento por defecto del <a>
+    const texto = event.target.innerText; // Obtiene el texto del enlace
+    navigator.clipboard.writeText(texto)
+      .then(() => {
+        console.log("Texto copiado al portapapeles:", texto);
+      })
+      .catch(err => {
+        console.error("Error al copiar:", err);
+      });
+  }
+
+  const copiarDescripcionProductoPortapales = (event) =>  {
+    event.preventDefault(); // Evita comportamiento por defecto del <a>
+    const texto = formik.values.descripcion;
+    navigator.clipboard.writeText(texto)
+      .then(() => {
+        console.log("Texto copiado al portapapeles:", texto);
+      })
+      .catch(err => {
+        console.error("Error al copiar:", err);
+      });
+  }
   
   return (
     <div>
@@ -242,6 +277,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
                   <Select ref={proveedorRef} 
                      label = "Proveedor"
                      options = {proveedores}
+                     value = {formik.values.proveedor}
                      onChange={(evt) => {
                             console.log("select evt")
                             console.log(evt)
@@ -293,7 +329,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
          </div>
          <div className="row">      
            <div className="col-md-12">
-              <p style={{fontSize: '0.8em'}}>Descripcion original: <a href="#" onClick={(evt) => {evt.preventDefault(); formik.setFieldValue("descripcion", descOriginalProveedor)}}>{descOriginalProveedor}</a></p>
+              <p style={{fontSize: '0.8em'}}><a href="#" onClick={(evt) => {copiarDescripcionProductoPortapales(evt)}}>Producto</a> Descripcion original: <a href="#" onClick={(evt) => {copiarDescripcionPortapales(evt)}}>{descOriginalProveedor}</a></p>
            </div>
          </div>   
         <Tabs defaultActiveKey="1">
@@ -348,7 +384,7 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
                  </a> = Precio compra ({formik.values.precioCompra} ) / ({formik.values.cantPorUnidadCompra} ) cantidad por unidad de compra * ({formik.values.cantPorUnidadVenta} ) cantidad por unidad de venta 
               </p> 
               {formik.values.costoVenta != 0 && formik.values.porcentajeUtilidad != 0 && 
-                <p> Precio de venta a partir del costo venta y porcentaje de utilidad &nbsp; $
+                <p> Precio de venta a partir del costo venta y porcentaje de ganancia &nbsp; $
                  <a onClick={() => changePrecioVenta((formik.values.costoVenta * (1 + (formik.values.porcentajeUtilidad / 100))).toFixed(2))}>
                     {(formik.values.costoVenta * (1 + (formik.values.porcentajeUtilidad / 100))).toFixed(2)}
                  </a> 
@@ -409,10 +445,12 @@ const FormProduct = ({formInstance, hideModal, enterLoading, mode = "Editar"})  
               </div>
               <div className="col-md-1"></div>
               <div className="col-md-4">
-                <Select 
+                <Select ref={selectReabastecimientoRef}
                   label = "Tipo reabastecimiento"
-                  options = {[{label: "Maximos y minimos", value: "0"}, {label: "Solicitar inmediato", value: "1"}]}
+                  options = {listTipoReabastecimiento}
+                  value = {formik.values.tipoSurtido}
                   onChange={handleReabastecimientoChange} />
+
               </div>
             </div>
             {showMaxMin && (
@@ -507,11 +545,12 @@ function initialValues() {
      cantPorUnidadCompra: 1,
      cantPorUnidadVenta: 1,
      estatusNormalizacion: 1,
-     listaPrecios: "",
+     listaPrecios: "{}",
      descripcionCorta: "",
      descripcionBusqueda: "",
      costoVenta: 0,
-     porcentajeUtilidad: 0
+     porcentajeUtilidad: 0,
+     tipoSurtido: "0"
   }
 }
 function validationSchema() {
@@ -537,7 +576,8 @@ function validationSchema() {
     descripcionCorta: yup.string().notRequired(),
     descripcionBusqueda: yup.string().notRequired(),
     costoVenta: yup.number().positive().required(),
-    porcentajeUtilidad: yup.number().positive().required()
+    porcentajeUtilidad: yup.number().positive().required(),
+    tipoSurtido: yup.number().required()
   }
 }
 
