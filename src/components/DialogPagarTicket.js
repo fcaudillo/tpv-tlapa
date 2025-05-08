@@ -65,19 +65,19 @@ function DialogPagarTicket(props) {
  
   }
 
-  const createTemplate = () => {
+  const createTemplate = (movimientoId, fecha) => {
    const adicionalEncabezado = parametros["TICKET_ADICIONAL"];
    const adicionalPie = parametros["TICKET_PIE"];
    const data = {
      "encabezado": {
         "giro": parametros["CLIENTE_GIRO"],
         "negocio": parametros["CLIENTE_NOMBRE"],
-        "fecha": getFormatDate(new Date()),
+        "fecha": fecha,
         "adicional": adicionalEncabezado.split("|"),
      },
      "productos": [...listaTicket],
      "pie": {
-       "numero_ticket": 1414,
+       "numero_ticket": movimientoId,
        "adicional": adicionalPie.split("|"),
 
      }
@@ -98,26 +98,8 @@ function DialogPagarTicket(props) {
      return data;
   }
 
-/*
-  const imprimirTicket = (imprimirconticket) => {
-    const dataPrintTicket = createTemplate();
-    const dataMovimiento = createTemplateMovimiento(imprimirconticket);
-    const ticket = {
-       movimiento: dataMovimiento,
-       printTicket: dataPrintTicket,
-    };
-    dispatch(actions.sendTicket(ticket));
-    console.log(ticket);
-  }
-**/
-
  const  imprimirTicket = async (imprimirconticket) => {
-   const dataPrintTicket = createTemplate();
    const dataMovimiento = createTemplateMovimiento(imprimirconticket);
-   const ticket = {
-      movimiento: dataMovimiento,
-      printTicket: dataPrintTicket,
-   };
    const response = await fetch(URL_ADD_TICKET,
       {
           headers: {
@@ -130,25 +112,28 @@ function DialogPagarTicket(props) {
 
       if (response.status === 200) {
          console.log(response);
+         const result = await response.json();
          if (imprimirconticket == 1){
+           const dataPrintTicket = createTemplate(result.folio, result.fecha);
            const respImp = await fetch( URL_PRINT_TICKET,{
                headers: {'Content-Type':'application/json'},
                method: 'POST',
                body: JSON.stringify(dataPrintTicket)
              })
+            console.log(dataPrintTicket);
             if (respImp.status != 200){
                alert("Error de impresion")
             } 
          }
          dispatch(actions.clearTicket())
          handleClose();
-         
+;
        }else {
          const errorMessage = await response.json()
          dispatch(actions.addTicketFail({message:errorMessage}));
        }
       
-   console.log(ticket);
+   
  }
 
 

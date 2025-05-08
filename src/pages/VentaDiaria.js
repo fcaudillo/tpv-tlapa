@@ -7,23 +7,29 @@ import icons from '@ant-design/icons'
 import { Modal, Button, Form } from 'antd';
 import { Table, DatePicker, Space } from 'antd';
 import { useDispatch, useSelector } from 'react-redux'
-import { VENTA_DIARIA_URL, URL_PRINT_TICKET, FIND_TICKET_URL, DEVOLUCION_PRODUCTO } from '../bussiness/endpoints'
+import { VENTA_DIARIA_URL, URL_PRINT_TICKET, FIND_TICKET_URL } from '../bussiness/endpoints'
+import DialogDevolucion from '../components/DialogDevolucion'
 
 const VentaDiaria = (props) => {
   const value = useContext(ApplicationContext);
   const [ventaDiaria, setVentaDiaria] = React.useState([]);
   const [visible, setVisible] = React.useState(false);
+  const [visibleDevolucion, setVisibleDevolucion] = React.useState(false);
   const dispatch = useDispatch()
   const [ fechaIni, setFechaIni] = React.useState("");
   const [ fechaFin, setFechaFin] = React.useState("")
-
+  const [detalleMovimiento, setDetalleMovimiento] = React.useState({});
+  // devolucionProducto(record.movimientoId,record.detalleMovientoId)
   const columns = [
     {
       title: 'Action',
       key: 'action',
       render: (text, record) => (
         <Space size="middle">
-          <a onClick={(event) => devolucionProducto(record.detalleMovientoId)}>Devolucion</a>
+          <a onClick={(event) => {
+            setDetalleMovimiento(record);
+            setVisibleDevolucion(true);
+          }}>Devolucion</a>
           <a onClick={() => {
               imprimirTicket(record.movimientoId)
           }}>Reimprimir</a>
@@ -59,30 +65,6 @@ const VentaDiaria = (props) => {
   ]
  
  
-  const devolucionProducto = async (id) => {
-    console.log("Devolucion producto: " + id)
-    var url = DEVOLUCION_PRODUCTO + "/" + id;
-    console.log("get devolucion" + url);
- 
-    const response = await fetch(url,
-                    {
-                        headers: {
-                          'Accept': 'application/json',
-                          'Content-Type': 'application/json'
-                        },
-                        method: "GET"
-                    });
-    if (response.status == 200){
-      console.log("devlucion exitosa--")
-      alert("devolucion exitosa")
-      const result = await response.json()
-      handleSearch (none);     
-    }else{
-      alert("Error en en la devolucion")
-    }
-  
-  }
-
   const handleSearch = async (event) => {
     var url = VENTA_DIARIA_URL + "/" + fechaIni + "/" + fechaFin;
     console.log("get datos a 2 " + url);
@@ -182,6 +164,7 @@ const VentaDiaria = (props) => {
           >
           <p> ¿Desea devolver este producto?</p>
        </Modal>
+       <DialogDevolucion visible={visibleDevolucion} setVisible={setVisibleDevolucion} detalleMovimiento={detalleMovimiento} refreshData={handleSearch} />
     </div>
   );
 }
